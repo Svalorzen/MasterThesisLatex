@@ -1,0 +1,193 @@
+\section{Active Perception}
+
+The field of Active Perception focuses on efficiently employing sensors to gather data. This
+decisional task is important in numerous real-world applications because of a number of factors:
+
+\begin{itemize}
+\item Limits in sensor number and capabilities. Ideally, we want to be able to obtain the maximum
+performance possible from limited resources.
+\item Energy, bandwidth and communication constraints. Not only these resources have a direct cost for
+usage, but in many applications there are hard limits on how much a system is allowed to consume.
+Again, we want to squeeze out as much performance is possible within our limits.
+\item Storage constraints. It is important to reduce the amount of non-informative data that is gathered
+by the sensors. Not everything is equally important. Being able to decide whether to gather data or
+not helps in the long run maintaining reasonable sized data logs requiring less storage space and
+easing possible future data searches.
+\end{itemize}
+
+In Active Perception there is no control over the environment; instead the task requires to affect
+the way the available sensors collect data. This can mean actively directing sensors towards
+environment areas that need to be observed, or by simply selecting the most informative subset
+of data gathered by multiple sensors. All data gathered is then used in real time to further improve
+the collection strategy, by automatically determining missing information that still needs to be
+gathered.
+
+Some of the great challenges faced by Active Perception systems are the following:
+
+\begin{description}
+\item[Knowledge Representation] The system managing the sensors needs to be able to correctly
+maintain a representation of its knowledge, and how to gather more. This can get quite expensive
+computationally when the size of the environment is non-trivial.
+\item[Reward Measure] While knowledge representation is a problem in itself, the system also needs
+to be able to tell which knowledge is actually important, and what measure of uncertainty it should
+try to minimize. A popular target function is entropy; at the same time entropy estimation is a very
+complex topic of research, and it has also been demonstrated that it is always subject to bias
+\cite{cit:badentropy}.
+\item[Action Selection] When multiple sensors are available the number of possible ways in which the
+agent can observe the environment explodes exponentially, which usually requires some way to
+approximate optimal action selection.
+\item[Non-Myopicity] We argue that an optimal Active Perception solution needs to be able to take into
+account the information that the system will be able to obtain in the future. This requires the
+ability to forecast possible outcomes from the observation process in order to determine optimal
+sequences of actions over continued periods of time.
+\end{description}
+
+All these problems make Active Perception systems very hard to scale effectively; at the same time,
+real-world data gathering systems become bigger by the day. These challenges are what motivated this
+thesis work.
+
+\section{Application}
+
+The applications of Active Perception cover essentially every possible use of sensors ever. It can
+be used on physical detectors, like robotics, CCTV and surveillance, military reconnaissance. Or it
+can be used to control data collection in virtual environments, such as social networks or online
+retailer websites. In order to test our approaches, in this work we are going to consider the field
+of multi-camera systems.
+
+With the advent of cheap hardware, these last few years have brought an incredible widespread
+adoption of multi-camera systems. These systems can be used for surveillance, real-time tracking and
+many other purposes. Deployment expenses of such systems have progressively decreased with the
+advent of digital multiplexing, the Internet and new manufacturing techniques. At the same time the
+cost for operating the cameras and storing/analyzing the incredible amount of data they provide has
+been increasing ever since, also due to their increasing numbers.
+
+Although automatic mechanisms that try to record only useful footage do already exist the cameras
+have still the need to be turned on at all times. An example of this are motion detectors. A motion
+triggered camera would write its data to disk only when motion appeared on the screen, even though
+the camera would still be on when nothing was happening in front of it, to keep the motion detector
+on.
+
+In addition to the "always on" problem, new video processing techniques can now be applied to
+captured footage, such as face recognition and person tracking, which require non-trivial amount of
+computation and bandwidth to be run together with the cameras themselves. This incurs in significant
+energy and hardware costs, since they have to be applied to all cameras. Communicating all camera
+data and perform remote computations can be even \textit{more} expensive.
+
+Hard constraints on such resources make this field a great target for Active Perception. By
+selecting at any one time a subset of cameras to use for detection, we reduce at the same time
+energy costs, bandwidth and processing power, while at the same time trying to obtain the maximum
+amount of information from the system.
+
+A possible real-world application of multi-camera systems are Closed-Circuit Television (CCTV)
+systems. More and more municipalities and private businesses are adopting them in order to improve
+public safety and decrease crimes\cite{cit:cctv}. Though once widespread diffusion of this
+technology was impaired by low image quality and a limited ability to record the camera view
+requiring dedicated employees monitoring the video stream constantly, these limits have since been
+overcome by new technology advances. At the same time, they can incur in significant energy and
+communication costs \cite{cit:cctvenergy}.
+
+\section{Research Questions}
+
+Active Perception is an active field of research, and so many approaches to the problem have been
+experimented with. In particular, this work tries to give an answer to the following questions,
+which to our knowledge have not been answered yet:
+
+\begin{itemize}
+\item To what extent is a non-myopic solution necessary in order to achieve an optimal solution
+within the Active Perception problem?
+\item What are the trade-offs for using Monte Carlo approximations in Active Perception?
+\end{itemize}
+
+\section{Approach}
+
+We are going to approach Active Perception by leveraging a powerful and flexible decision-theoretic
+tool, called Partially Observable Markov Decision Process (POMDP) \cite{cit:pomdp}. We introduce
+this powerful framework in Section \ref{ref:background}. POMDPs allow to model the interactions
+between a decision making entity, called agent, and a partially observable, stochastic environment.
+In this framework, the agent's objective is to maximize reward collection according to a predefined
+reward function.
+
+The main reason why we use POMDPs is that they easily allow for the computation of non-myopic
+strategies for using the sensors. In fact, POMDPs are specifically structured as to allow this type
+of planning. This means that the system will try to gather information in order to improve not only
+its current knowledge of the environment, but also its future one. While myopic strategies can
+sometimes be good approximations, we argue that to achieve optimality non-myopicity is required, as
+shown in Chapter \ref{ref:experiments}.
+
+In POMDPs, the agent tracks is current status via a \textit{belief}, which is a probability
+distribution over the possible states of the underlying world. This belief is used to compute
+possible outcomes for actions undertaken by the system, and to predict future rewards. This belief
+is updated depending on the observation that the system receives from the sensors, taking into
+account possible ambiguity (perceptual aliasing) that could result from imperfect knowledge.
+
+Finally, POMDPs are a widely explored topic in the decision theoretic literature, with known
+properties and already available solution methods, which allows us to stand on shoulders of giants.
+We discuss on POMDPs solution methods in Chapter \ref{ref:background}.
+
+One of the active topics of research in decision theory regards the efficient computation of POMDP
+policies. When dealing with non-trivial models, the time needed to compute an optimal policy and the
+space needed to store it increase exponentially with the complexity of the problem \cite{cit:pomdp}.
+This has led to the development of methods that allow for approximate solutions.
+
+In particular, our approach is based on online planning. This type of approach is based on
+determining an optimal course of action applicable only to the situation that is currently faced by
+the agent. This is in contrast with offline planning, where the whole problem is tackled at once
+before deployment and the resulting policy stored for future usage. This usually requires a
+significant amount of time in advance, and computation of the policy must be performed every time
+the underlying model changes. The advantage of offline planning is that it requires virtually no
+computing power when the final policy has to be applied by the agent, but at the same time the size
+of problems that are currently possible to tackle in this way remain small.
+
+On the other hand, online approaches can handle problems orders of magnitude bigger, at the expense
+of having to compute the policy on the fly, requiring ultimately more processing power, but stretched
+over time. At the same time, it is easier to experiment with different models, as there is no
+pre-computation required. An example of the power of online methods are Monte Carlo methods, which
+have demonstrated incredible performances in the Go board game \cite{cit:mcts}.
+
+POMDPs in particular have been approached in an online way by approximating beliefs about the world
+using particles, and using Monte-Carlo simulation to provide an effective way of approximating the
+optimal solution \cite{cit:pomcp}.
+
+At the same time, the active sensing problem is inherently about reducing uncertainty about the
+world, which translates into a reward scheme based on the knowledge of the agent, rather than the
+state of the world. Such a class of problems, denominated $\rho$POMDP, has been examined in
+\cite{cit:rpomdp}. In this work we modify the existing Monte-Carlo POMDP approach to be able to work
+using belief-based goals. This will allow an easily deployable and testable method to work with
+active sensing problems.
+
+
+\section{Contributions}
+
+In this work we consider the problem of tracking a person moving throughout an environment which is
+covered by a multi-camera system. We try to devise a centralized, intelligent method to
+automatically activate cameras by predicting the movement of the target within range of the cameras,
+and reducing as much as possible the uncertainty of their positions with limited resources. The idea
+is to select the cameras which will provide the maximum amount of information within the available
+resource limits. In a real world setting, such limits are generally defined as computational costs,
+energy requirements and communication costs.
+
+The camera selection problem is defined on already deployed systems, where camera positions and
+orientations are known, and not modifiable. The goal is to be able to select a subset $k$ of the $n$
+total cameras deployed, so as to maximize our knowledge of the state of the world; this is
+equivalent of minimizing the entropy of our knowledge. In our particular approach, we consider the
+case of tracking a single target using multiple sensors.
+
+In this work we are going to use passive sensors in the form of fixed cameras. These cameras can be
+seen as passive sensors since they only collect video information in a limited, non-interactive way.
+The idea is to actively utilize these sensors by using only a subset of them at any time, in order
+to reduce at the same time computational, energy and communication costs. We reduce energy by using
+less cameras at any one time, and we can reduce computational and communication costs by reducing
+the amount of data that needs to be processed concurrently.
+
+
+
+
+
+\subsection{Chapter Overview}
+Throughout Chapter \ref{ref:background} we introduce the background theory and models that support
+our approach, and define the terms we use within this work. In Chapter \ref{ref:solutions} we
+introduce the already existing techniques that led to our particular approach on the problem. In
+Chapter \ref{ref:approach} we discuss the unique problems that we faced in this work, and our
+proposed solutions. In Chapter \ref{ref:experiments} we show our experiments and results. Finally,
+in Chapter \ref{ref:conclusion} we discuss our results and offer our insights.
+

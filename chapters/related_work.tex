@@ -1,0 +1,56 @@
+\section{Active Perception}
+Active perception has been approached in numerous ways and not simply using reinforcement learning
+techniques.
+
+\cite{cit:relworktanks} use particle distributions in order to keep track of multiple targets moving
+within a finite environment. Action selection tries to maximize the expected information gain with a
+particle sample, and subsequently use the gained information to update the posterior probabilities
+for the new particles.
+
+\cite{cit:relworklagrange} consider dynamic programming and linear solvers in order to balance the
+trade-offs between gathering information and energy costs due to communication. A Monte-Carlo
+approach is then used to effectively approximate the dynamic program results in a practical way.
+
+\cite{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
+analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
+that on average the heuristic is able to select the sensor which maximizes the mutual information
+between target location and sensor observation.
+
+\cite{cit:relworkconvex} tackle the problem of selecting $k$ sensors out of a pool of $n$ sensors.
+They approximate the information function defined from the usage of any $k$ sensors with a convex
+function, that can be then solved efficiently with linear solvers. Once this is done, the found
+solution is checked for improvement by testing possible swaps with the sensors that were not selected.
+
+Going back to reinforcement learning approaches, \cite{cit:relworkspaan} used POMDPs to approach
+nearly the same problem tackled in this work. Their work, however, focused on offline planning using
+a point-based approximate algorithm, which required some hours in order to compute the policy for
+their model. This comes with the advantages of offline computing, but also with the same
+disadvantages.
+
+\section{POMDP}
+
+Our work in particular is based upon POMCP, an online solver that takes its strengths from
+Monte-Carlo simulations \cite{cit:pomcp}. In particular, POMCP follows the approach of Monte Carlo
+Tree Search, which progressively builds a tree of outcomes by using a generative model to generate
+sample outcomes. This tree is then used to approximate the values of all states. POMCP uses particle
+approximations of beliefs throughout this tree, in order to avoid the expensive cost of computing
+belief updates at every action-observation step.
+
+One of the earliest explorations into online POMDP solvers has been been done by
+\cite{cit:relworkonline1}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
+algorithm creates a tree out of every possible result, and computes full belief updates and value
+backups in order to determine the best actions at each step. In order to decrease computational
+cost, a branch and bound strategy is employed to avoid exploring actions that have been proved not
+useful. This strategy, however, can be used only by computing bounds offline, and then applying that
+information to the leaves on the tree.
+
+Other algorithms, such as BI-POMDP \cite{cit:relworkonlinebi} and AEMS \cite{cit:relworkonlineaems}
+function similarly to the RTBSS algorithm, but rely on internal heuristics, rather than a branch and
+bound strategy, to determine how to prune the tree to explore.
+
+An alternative to tree exploration approaches is the RTDP-BEL algorithm \cite{cit:relworkonlineq}.
+This algorithm learns progressively values for a discretized set of beliefs from direct interaction
+with the environment, using a Q-Learning type of approach.
+
+A good overview of existing POMDP online approaches can be found in \cite{cit:relworkonlineall}.
+

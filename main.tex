@@ -1,0 +1,105 @@
+\documentclass[10pt,twoside]{report}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\usepackage[numbers]{natbib}
+\usepackage{color}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\usepackage{etoolbox}
+\apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
+
+\title{
+    {Dynamic Resource Allocation for Multi-Camera Systems}\\
+    {University of Amsterdam}\\\vspace{1cm}
+    {\includegraphics[width=0.5\textwidth]{UvA-logo}}
+}
+\author{Eugenio Bargiacchi}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+%\chapter*{Abstract}
+%\chapter*{Dedication}
+%\chapter*{Declaration}
+%\chapter*{Acknowledgements}
+
+\tableofcontents
+
+\chapter{Introduction}\label{ref:intro}
+\include{chapters/introduction}
+
+\chapter{Background}\label{ref:background}
+\include{chapters/background}
+
+\chapter{Solution Methods}\label{ref:solutions}
+
+    \section{Planning vs Reinforcement Learning}
+
+    \section{Offline vs Online}
+        \subsection{Value Iteration}
+        \subsection{Incremental Pruning}
+        \subsection{Point Based Value Iteration}
+        \subsection{Other Offline Approaches}
+
+    \section{Monte Carlo Method}
+        \subsection{Guarantees}
+        \subsection{Applications}
+
+    \section{Sparse Sampling}
+
+    \section{Monte Carlo Tree Search}
+
+    \section{Upper Confidence Bounds for Trees}
+
+    \section{Partially Observable Monte-Carlo Planning}
+        \subsection{Particle Belief}
+
+\chapter{Approach}\label{ref:approach}
+
+    \section{Problem Setting}
+        \subsection{State Space}
+        \subsection{Action Space}
+        \subsection{Observation Space}
+        \subsection{Transition Function}
+        \subsection{Reward Function}
+        \subsection{Discount and Horizon}
+
+    \section{Method}
+        \subsection{Max vs Mean}
+        \subsection{Entropy Estimation}
+        \subsection{Value Backpropagation}
+
+\chapter{Related Work}\label{ref:relwork}
+\include{chapters/related_work}
+
+\chapter{Experiments}\label{ref:experiments}
+    \section{Cell World}
+        \subsection{Max vs Mean}
+        \subsection{Non-Myopic World}
+        \subsection{Square-Grid World}
+    \section{Real Data}
+
+\chapter{Conclusion}\label{ref:conclusion}
+
+\nocite{*}
+\appendix
+
+\chapter{Appendix?}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}
