@@ -39,33 +39,11 @@
 \tableofcontents
 
 \chapter{Introduction}\label{ref:intro}
-\include{chapters/introduction}
+\input{chapters/introduction}
 
 \chapter{Background}\label{ref:background}
-\include{chapters/background}
-
-\chapter{Solution Methods}\label{ref:solutions}
-
-    \section{Planning vs Reinforcement Learning}
-
-    \section{Offline vs Online}
-        \subsection{Value Iteration}
-        \subsection{Incremental Pruning}
-        \subsection{Point Based Value Iteration}
-        \subsection{Other Offline Approaches}
-
-    \section{Monte Carlo Method}
-        \subsection{Guarantees}
-        \subsection{Applications}
-
-    \section{Sparse Sampling}
-
-    \section{Monte Carlo Tree Search}
-
-    \section{Upper Confidence Bounds for Trees}
-
-    \section{Partially Observable Monte-Carlo Planning}
-        \subsection{Particle Belief}
+\input{chapters/background}
+\input{chapters/solutions}
 
 \chapter{Approach}\label{ref:approach}
 
@@ -95,9 +73,9 @@
 \chapter{Conclusion}\label{ref:conclusion}
 
 \nocite{*}
-\appendix
+% \appendix
 
-\chapter{Appendix?}
+% \chapter{Appendix?}
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}

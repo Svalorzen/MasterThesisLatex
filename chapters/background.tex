@@ -65,6 +65,9 @@ referred to as $S$. This is the first element of the MDP tuple.
 
 \[ S = \{s_0, s_1, s_2, ..., s_{|S|}\} \]
 
+Note that we assume that all sets presented in this thesis work to be finite, unless where
+specifically noted.
+
 In order to describe how the environment is allowed to change over time, we can define
 cause-effect links between states. This is effectively equivalent to a state machine.
 
@@ -209,7 +212,7 @@ agent has access to actions, and it knows how these actions affect the environme
 transition function. Using this function it can determine the best sequence of actions to select in
 order to steer the environment towards a particular state. Finally, the state to reach is determined
 by weighting pros and cons of any specific trajectory within the environment, and all intermediate
-rewards the agent could pick along the way.
+rewards the agent could pick up along the way.
 
 \subsection{Discount and Horizon}
 
@@ -221,7 +224,7 @@ can define it as a simple summation:
 \[ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^h R(s_t, a_t, s_{t+1}) \right ] \]
 
 An important fact is that the optimal policy is very dependent on the exact amount of time that the
-agent think its going to act within the environment. This time is called \textit{horizon}, and is
+agent thinks it's going to act within the environment. This time is called \textit{horizon}, and is
 represented by $h$ in the above equation.
 
 An horizon of 1 timestep generates what is generally known as a \textit{greedy policy}. Such a
@@ -250,17 +253,17 @@ decreased geometrically by a discount factor $\gamma \in [0,1]$:
 a_t, s_{t+1}) \right ] \]
 
 In this way, rewards that are far in the future become essentially meaningless, forcing the agent to
-consider the present as more important of the far future. When $\gamma$ is 0 we have a single-step
-problem, where the agent wants to maximize its currently available reward using a greedy policy.
-When $\gamma$ is 1 we have again the situation where there is no incentive for an agent to act,
-since it will still be able to act in the future. $\gamma$ is the fifth and final element of the MDP
-tuple.
+consider the present as more important of the far future. In essence, we are forcing the discounted
+return to converge to a finite quantity. When $\gamma$ is 0 we have a single-step problem, where the
+agent wants to maximize its currently available reward using a greedy policy.  When $\gamma$ is 1 we
+have again the situation where there is no incentive for an agent to act, since it will still be
+able to act in the future. $\gamma$ is the fifth and final element of the MDP tuple.
 
 \subsection{Policy}
 
-At this point we have introduced all elements that compose the MDP. We can talk about the solution
-itself, how it looks like and what it represents, while in Section \ref{ref:solutions} we discuss
-how solutions can be computed.
+At this point we have introduced all elements that compose the MDP. Here we talk about the solution
+itself, how it looks like and what it represents, while postponing the discussion about solving
+algorithms for Section \ref{ref:solutions} onward.
 
 A solution for an MDP is called a \textit{policy}. This policy specifies a sequence of actions to
 be taken by the agent, depending on the states the agent will face while acting in the model. In
@@ -277,24 +280,26 @@ probability of the action being chosen:
 \[ \pi : H \times S \times A \rightarrow [0,1] \]
 \[ \pi(h, s, a) \in [0,1] \]
 
-Or, simply as a function that from a state and an horizon returns an action:
+We can also define it as a function, taking a state and an horizon, returning a distribution over
+action, which one can sample:
 
-\[ \pi(h, s) = a \]
+\[ a \sim \pi(h, s) \]
 
 A useful property of the optimal policy is that is composed recursively. An optimal policy for
 horizon $h$ only defines a single action to be taken per state. Once that action has been performed,
-the agent can safely adopt the optimal policy for horizon $h-1$. This means that any optimal policy
-for a particular horizon also contains implicitly all optimal policies for all lower horizons.
+the agent can safely adopt the optimal policy for horizon $h-1$ from its resulting next state. This
+means that any optimal policy for a particular horizon also contains implicitly all optimal policies
+for all lower horizons.
 
 \subsection{Value Function}
 
 Since the environment, as encoded in the transition function, is stochastic, the agent cannot
 predict with full accuracy which states it will experience during an episode, nor how much reward a
 certain sequence of actions will be able to accumulate. What it can do instead is to compute the
-expected return that will be accumulated, as in the average reward that the agent would collect if
-it was allowed to retry the same sequence of actions from the same state many, many times. This
-expected return is of course computed with respect to a certain policy, since as we said the reward
-obtained depends on which actions the agent performs.
+expected return that will be obtained, as in the average cumulative reward that the agent would
+collect if it was allowed to retry the same sequence of actions from the same state many, many
+times. This expected return is of course computed with respect to a certain policy, since as we said
+the reward obtained depends on which actions the agent performs.
 
 The expected return depends on the state $s$ the environment is in where the agent needs to act.
 Thus it is also called the \textit{value} of state $s$ with respect to, or under, some particular
@@ -302,9 +307,8 @@ policy $\pi$. This value of course depends also on how many steps the agent has 
 Formally then we can define the value of a state as:
 
 \[ V^\pi_{s\:h} = \mathbb{E}^\pi_h \left [\text{discounted return} \mid s_0 = s \right ] \]
-\[ = \sum_{t=0}^{h} \gamma^k \sum_{s'} T(s_t, a_t, s')
-             R(s_{t}, a_t, s') \hspace{0.5cm}\text{where }s_0 = s \text{ and }a_t = \pi(h-t,
-             s_t) \]
+\[ = \mathbb{E} \left [\sum_{t=0}^{h} \gamma^t R(s_{t}, a_t, s_{t+1}) \right ]
+    \hspace{0.5cm}\text{where }s_0 = s \text{ and }a_t \sim \pi(h-t, s_t) \]
 
 This value is very important because it lets us compare and evaluate policies. A better policy does
 in fact have a higher value or equal value for every possible state than an inferior policy.
@@ -321,12 +325,10 @@ the expected reward that the agent can obtain in the next timestep, plus a disco
 represents what is going to happen in the future. The fact that this equation is recursive is
 immensely important and forms a base for many offline planning algorithms.
 
-In general, when we are looking for a solution we are looking for a policy $\pi$ such that
+In general, when we are looking for a solution we are looking for a policy $\pi^*$that maximizes the value
+of all states:
 
-\[ V^{*}_h = \max_\pi V^{\pi}_h \]
-
-which means that we try to maximize the expected reward we can get in any state, at any timestep,
-and in turn we obtain $V^*$, the optimal value function.
+\[ V^{\pi^*}_h = \max_\pi V^{\pi}_h \]
 
 \subsection{Q-function}
 
@@ -360,8 +362,8 @@ take current decisions based on that information.
 In the real world, however, most always an agent does not have access to the true underlying state
 of the world. Instead what often happens is that the agent has access to imperfect sensors, which
 rely incomplete information useful to understand in which state the environment is currently in. The
-agent then needs to take into account the probability that the environment is in a state rather than
-another into its computations.
+agent then needs to take into account the probability that the environment is in a state versus another
+before deciding how to act.
 
 Thus we extend the MDP framework into a \textit{Partially Observable Markov Decision Process}
 (POMDP). In a POMDP all terms that we have defined previously are still used and taken into account,
@@ -373,7 +375,7 @@ A POMDP can be defined as a tuple $<S,A,T,R,\Omega,O,\gamma>$. We now define $\O
 
 In a POMDP the agent does not have access to the current state of the environment. The state is
 still there, and the environment is always in a particular state at any timestep, but the agent has
-no direct way to know which one. The agent instead receives, at each timestep, an
+no direct way to know which one it is. The agent instead receives, at each timestep, an
 \textit{observation}, which depends on the action that the agent performed and on the new state that
 has been reached.
 
@@ -401,9 +403,9 @@ Note that the state is the one of \textit{arrival}, not the one where the action
 
 The observation function does not allow the agent to disambiguate between states, or the problem
 would convert directly to an MDP. Instead, what happens is called \textit{perceptual aliasing}: each
-obtained observation is compatible with a subset of $S$. The agent must reason about what possible
-underlying state of the environment is compatible with the observations obtained in order to plan
-its moves.
+obtained observation is compatible with a subset of $S$. The agent must reason about which of the
+possible underlying states of the environment are compatible with the observation obtained in order
+to plan its moves.
 
 Unfortunately, this implies that the agent is now unable to reason about the present. While the
 environment states maintain their Markov property, the agent cannot observe them. Instead it needs
@@ -428,7 +430,7 @@ it is a probability vector.
 
 The belief allows for a reinterpretation of the POMDP framework. The belief can in fact be used in
 lieu of a state, since it is possible to compute new transition and reward functions that depend on
-the belief rather than states. This transforms automatically the POMDP into an MDP, where the
+beliefs rather than states. This transforms automatically the POMDP into an MDP, where the
 belief is now the state of the agent.
 
 We can show how this can be done using $\tau$ as the new transition function and $\rho$ as the new
@@ -464,12 +466,12 @@ problem.
 
 The value function of a POMDP is a function dependent on beliefs. Thus, the value function is
 defined on a simplex space of $|S|-1$ dimensions. The property that makes POMDPs tractable is
-that their value function is \textit{piecewise linear and convex}. In addition, the number of
-segments of which it is composed has a finite bound at any horizon - exponential in the number of
+that their value function is \textit{piecewise linear and convex} (PLC). In addition, the number of
+polytopes of which it is composed has a finite bound at any horizon - exponential in the number of
 possible observations.
 
 These properties bound the number of optimal values that actually need to be stored, as only one
-value for each linear segment needs to be stored, making possible to solve a POMDP exactly. For a
+value for each linear polytope needs to be stored, making possible to solve a POMDP exactly. For a
 more in-depth analysis of POMDP properties refer to \cite{cit:pomdp}.
 
 \subsection{Policy}
@@ -479,30 +481,50 @@ such sequence is associated with a single state. This allows the agent to act no
 its starting state.
 
 This is similar in a POMDP, with the difference that a different sequence of actions needs to be
-stored for each linear segment of the value function, instead that for each unique belief. The
+stored for each linear polytope of the value function, instead that for each unique belief. The
 optimal policy maintains the recursive property that we have defined previously for MDPs, where any
 strategy for a particular horizon $h$ and belief $b$ is composed by a particular action plus the
 optimal policy for horizon $h-1$.
 
-\section{Generative Model}% START FROM HERE
+%\section{Generative Model}% START FROM HERE
+%
+%What we have described up until now are models which assume that you have a lot of explicit
+%knowledge about the problem you want to solve. This is because you need to know perfectly the
+%transition function, observation function and reward function. Having this kind of intimate
+%knowledge of a problem is, unfortunately, relatively rare.
+%
+%Thankfully, in order to apply Monte-Carlo techniques there is no need to have this level of detail
+%in the description of a problem. Instead it is possible to work solely on a generative model which
+%the agent can sample from in order to reproduce the behavior of the world, but is at the same time a
+%black box with respect to its inner workings. Samples drawn from a generative model are
+%indistinguishable from those sampled from a full-fledged model.
+%
+%Generative models are useful as one can gather real world data from an unknown stochastic process
+%and use it to feed a Monte-Carlo planner, without the need to accurately study the process and
+%determine exact probabilities and rewards for the transition and reward functions. It can also
+%happen that computationally, a generative model is faster to run than a model which requires
+%maintaining huge internal tables to store the transition and reward functions.
+%
+%In both cases, it is important to keep in mind that not all components of an MDP need to be directly
+%available in order to be able to compute a good policy.
 
-One last thing that we need to talk about, mostly due on how many online solving methods work, is
-the definition of a generative model. What we have described up until now is a full MDP model, where
-the agent knows the transition function and reward function directly. Many methods which rely on
-Monte-Carlo techniques however do not require this level of description. Instead, they can work
-solely on a generative model, which is a model that the agent is able to sample from in order to
-reproduce the behavior of the world, but is a black box with respect to its inner workings. Samples
-drawn from a generative model are indistinguishable from those sampled from a full-fledged model.
+\section{$\rho$POMDP}
 
-Generative models are useful as one can gather real world data from an unknown stochastic process
-and use it to feed a Monte-Carlo planner, without the need to accurately study the process and
-determine exact probabilities and rewards for the transition and reward functions. It can also
-happen that computationally, a generative model is faster to run than a model which requires
-maintaining huge internal tables to store the transition and reward functions.
+As we have already mentioned, in a POMDP the reward is defined in terms of the belief, as a linear
+combination of the basic MDP reward function:
 
-In both cases, it is important to keep in mind that not all components of an MDP need to be directly
-available in order to be able to compute a good policy.
+\[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
 
-\section{Belief Dependent Reward}
-\subsection{Prediction Actions}
+However, in many cases, such as ours, this definition is limiting and cannot be used. If the reward
+function is truly dependent on the information the agent has on the current state of the world,
+rather than on the underlying state of the world itself, the MDP reward function becomes useless,
+and as such our definition of $\rho$. In the case of surveillance, the agent actions should maximize
+the knowledge that the agent has of the world, independently of which state the world is currently
+in.
 
+In this case, the $\rho$ function is defined independently, and not tied to states anymore.
+Unfortunately, this means giving up on the PLC properties of the value function, which
+were the only ways in which we were able to solve a POMDP in the first place. While it has
+been proved in \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PLC then the
+value function will be PLC as well, functions such as entropy are not PLC in the first place. We
+discuss how we overcame this problem in Section \ref{ref:approach}.

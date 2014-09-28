@@ -1,0 +1,192 @@
+\section{Planning vs Reinforcement Learning}\label{ref:solutions}
+
+While often the possible states, actions and observations of a particular environment are easy to
+define, it does not always happen that the transition, observation and reward functions are known in
+advance.
+
+When they are known, the solving process is called \textit{planning}, and consists in efficiently
+looking through all possible transitions the agent could experience, and finding the best path
+through them in order to maximize the return.
+
+On the other hand, when they are not known, \textit{reinforcement learning} is used. In this case the
+focus is on gathering knowledge about the environment while at the same time exploiting that
+knowledge to obtain the maximum return. Reinforcement learning methods can range from approximating
+the unknown functions from experience and then planning, to approximating the optimal Q-function of the
+model and using it to obtain a policy, or even directly approximating the optimal policy.
+
+In this work we are mostly interested in the problem of selecting subset of sensors, and so we
+assume we have a complete model that we can use to plan.
+
+\section{Offline vs Online}
+
+An optimal policy can be applied at virtually no computational cost with the knowledge that the
+behavior is constantly optimal. Computing such a solution in advance and using it later is called
+\textit{offline planning}. The main disadvantage of offline planning is its very heavy upfront cost:
+it needs to store all possible policies to be applied to any reachable belief at any horizon. This
+is expensive not only in terms of space, but even more on computation, since any non-trivial POMDP
+has an exponential explosion in the number of possible histories that an agent can experience and
+each one of them has to be considered in order to evaluate the final policy. In addition, any small
+change in the original model requires a full recomputation of the optimal policy, which limits the
+amount of tuning that can be feasibly done on the model.
+
+Offline planning methods generally leverage the Bellman equation and the recursive nature of the
+value function; they plan in reverse temporal order, from the last steps the agent will take to the
+first ones. This is because a policy for a certain horizon $h$ is always composed by a set of
+actions to apply in certain beliefs which then leads to a policy for horizon of $h-1$. Thus, the
+final policy needed is computed incrementally. All possible state, actions and observations are
+considered, so as to provide the correct action in every possible situation.
+
+In order to avoid the computational cost of offline methods, a new venue of approach was invented
+called \textit{online planning}. In online planning the agent continuously plans for its current
+belief, and nothing else. This requires constant computations, but at the same time makes possible
+to tackle problems orders of magnitude bigger than what is possible with offline planning, and allow
+for flexibility in updating the model, since there is no need to recompute a complete solution. In
+addition, many online planning methods are \textit{any time}: this means that they can run for
+whatever time is available, and they are always able to provide some sort of solution. The more time
+is available, the more refined the solution will be. This is in contrast with offline methods, that
+need to run to completion or otherwise nothing is gained.
+
+In online planning computations go forward in time. From the current state/belief of the agent
+possible futures are expanded in a tree of possibilities and rewards. In the end, the best action
+for the current state is picked, the environment is advanced one step, and the process repeats
+again.
+
+In this work we chose to use an online approach, given the flexibility and power provided over
+offline techniques, and because one of our goals was to scale to real-world scenarios, which are
+generally intractable with offline approaches.
+
+\section{Monte Carlo Algorithms}
+
+At the time of writing, one of the most prominent ways of planning online is by using \textit{Monte
+Carlo algorithms}. Monte Carlo algorithms are a class of randomized algorithms which use random
+processes in order to compute their output. The output will be correct within a certain probability,
+which trades off with their speed and their deterministic running time.
+
+In the MDP/POMDP frameworks Monte Carlo algorithms only need results from samples of the
+environment; as in, transition and reward results sampled from the model's distribution using
+particular state-action pairs as inputs. Such a model is also called a \textit{generative model}. A
+generative model $G$ fed with state $s$ and action $a$ would return a new state $s'$ and reward $r$
+respecting the model probabilities:
+
+\[ s', r \sim G(s, a) \]
+
+An advantage of using such a model is that it many cases it is possible to obtain samples without
+having the whole transition function for the model in an explicit form. The samples obtained can
+then be used to approximate average returns, which in turns can be used to obtain an optimal policy.
+
+\section{Monte Carlo Tree Search}
+
+The most widely known algorithm using Monte Carlo techniques is called \textit{Monte Carlo Tree
+Search} (MCTS). This algorithm is an MDP online planner which has received high praise for its
+contributions in the development of highly performant board game AIs.
+
+MCTS was originally devised as a method to approach the board game Go. The algorithm runs Monte
+Carlo simulations from the current state of the agent, which is the input, and progressively builds
+a tree of outcomes.
+
+The tree starts out as root-only, where the root represents the current state of the agent. From
+there, the algorithm selects an action. Initially the actions are selected randomly, but as more
+simulations are performed MCTS starts to favor the actions with better value estimates, in order to
+focus available computation time on promising branches. Once an action has been selected, MCTS uses
+a generative model of the MDP to obtain a sample new state and reward.
+
+If the new state already has a branch from the current node, MCTS follows the branch and repeats the
+sample process again. If the new state does not have a branch, we attach a new single node to the
+tree, and proceed in that direction. In MCTS a single node is added to the tree per simulated
+episode; this is done in order to keep memory usage low, so that only the most promising paths will
+be stored. Note that it is possible for MCTS to have multiple nodes representing the same state, but
+in different histories. We do not consider the case where those nodes are merged together.
+
+Once the sampling process arrives at a point where a new node needs to be added, the action
+selection process changes to a default predetermined policy, which usually selects actions randomly
+at uniform. This is done because MCTS has no information outside of the tree in order to do any
+meaningful decision, and so it needs to rely on a predefined policy. Random actions is often useful
+due to its lack of bias, and so it can give a better estimate of which paths are actually better.
+When using the default policy, no new nodes are added to the tree, but the obtained reward outside
+the tree is still recorded.
+
+This process is repeated until a certain target horizon, or when a terminal state is reached. This
+concludes a single sample episode. Once the episode is concluded, MCTS backpropagates obtained
+rewards up the chain, and each node value is computed as the average of all obtained returns from
+paths down from it. This allows for a new estimation of action values at any point in the tree
+branch that has been explored.
+
+At this point, a new sample episode is started from the root of the tree. This process is repeated
+until there is time left.
+
+A nice property of MCTS is that it is guaranteed to converge to the optimal policy as long as the
+most promising actions are given a higher probability of being chosen than the others. This is
+because in the long run the value averages will converge to the values of the actions taken most
+often.  In addition, since it builds a tree, part of the work done can be reused on the next time
+step. Once a move is tried in the real world, the tree root can be moved to the new state perceived,
+while the rest of the tree is discarded.
+
+
+\section{Upper Confidence Bounds for Trees}
+
+A technique which has recently gained popularity to exactly determine which actions should be chosen
+in the tree and which ratio should be used between promising actions and the rest is called
+\textit{Upper Confidence Bounds for Trees} (UCT). UCT tries to empirically derive a variance
+estimate from the data, sorting actions by their upper bounds on value.
+
+The upper bound estimate is composed of two parts: the currently estimated value of the action $v$,
+and the estimated UCT variance. Thus the value that UCT assigns at a given action $a$ is:
+
+\[ UCT(a) = v + c*\sqrt{\frac{\log{N}}{n}} \]
+
+Where $N$ is the number of times the node in the tree currently being considered has been visited,
+and $n$ is the number of times action $a$ has already been tried from the node. $c$ is a constant
+which is dependent on the problem, which defines the amplitude of the variance, which needs to be in
+tune with the magnitude of the rewards of the MDP. This number is generally tuned manually, and is
+around the maximum return that can be obtained by the agent.
+
+In this way actions that have not been tried for a long time still have a chance of being selected,
+which prevents hard pruning in the tree which may prevent a better solution to be discovered.
+
+\section{Partially Observable Monte-Carlo Planning}
+
+\cite{cit:pomcp} extended the MCTS framework to POMDPs, creating one of the best POMDP online
+solvers available today, \textit{Partially Observable Monte-Carlo Planning}(POMCP). This algorithm
+incorporates the advantages of MCTS while adding support for belief states and observations.
+
+The trouble of naively applying MCTS to a belief MDP extracted from a POMDP is its necessity to
+sample directly from state to state. While this can be a cheap operation in MDPs, requiring 
+samples from relatively simple distributions, computing a new belief given a previous belief and
+observation in a POMDP, called \textit{belief update}, can be a very expensive operation. Recall that a belief
+update can be performed using the following formula:
+
+\[ b'(s') = \frac{O(s', a, o)\sum_{s\in S}T(s,a,s')b(s)}{Pr(o|a,b)} \]
+
+For a full belief, this requires $O(|S|^2)$ operations, which for POMDPs with a large state space
+can result in an extremely expensive operation. Since MCTS requires a very high number of samples in
+order to provide useful answers, each sample needs to be performed in as little time as possible.
+
+POMCP solves this problem by representing beliefs as particle vectors containing a certain amount of
+state particles. Such a \textit{particle belief} can be created by repeatedly sampling a belief, and
+gathering all samples in a vector - not a set.
+
+POMCP starts its execution with a belief state as input, just as MCTS started with a single state as
+input. It converts this belief into a particle belief. Then, for each sample episode, it samples a
+state directly from the particle belief. This state is then used, together with an action, to
+generate a new possible state, observation and reward. The observation is the one determining the
+next node that the sample episode continues to.
+
+This next node is itself associated with a particle belief: every time this node is visited, its
+respective particle belief incorporates the new sample state that was generated together with the
+observation. This constitute a cheap belief update which is performed by the generative model over
+the previous particle belief to the current particle belief.
+
+One of the drawbacks of particle beliefs is the fact that, being approximate representations of the
+true underlying beliefs, over time they can be affected by particle deprivation. This can be
+resolved via particle reinvigoration, and its actual effect on the solution is dependent on the type
+of problem being solved.
+
+Once in the new node, the state that has just been added to the node's particle belief is then
+combined with a new action to generate the next step state, observation and reward. Rewards are used
+in the same way as in the MCTS algorithm, providing a value for all nodes and actions that are in
+the tree. Actions are again selected using UCT. The episode continues up until a leaf, a single node
+is added, and then a default policy is used to complete the episode.
+
+When the time allotted to POMCP is over, the algorithm returns its best guess for the optimal
+action. Once the action is used in the real world, POMCP can obtain an observation and prune its
+internal tree, without having ever the need to perform a true belief update.
