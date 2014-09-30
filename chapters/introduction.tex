@@ -1,13 +1,13 @@
 \section{Active Perception}
 
-In this work we will approach a general class of problems which is referred to as the Active
+In this work we will \ys{"will" not required} approach a general class of problems which is referred to as the Active
 Perception task. In this task a decision making entity called \textit{agent}, subject to resource
-constraints, needs to take actions in order to reduce some form of uncertainty within a particular
+constraints, needs to take actions in order to reduce some form of uncertainty \ys{uncertainty about what} within a particular
 environment. The agent's role in this task is purely observational: it will not influence the
 overall evolution of the environment over time, but it can only selectively gather data to maximally
-improve its knowledge.
+improve its knowledge. \ys{If you want to mention this in introduction, a more general way of writing it would be something like this - "In active perception task, the agent may or may not affect the state of the envirornment example : something" then give example for both type of task, then tell how your problem is related to first type of example}
 
-Active Perception covers essentially every possible use of sensors, both physical and virtual.
+Active Perception covers essentially every possible use of sensors, both physical and virtual. \ys{not sure what you want to say here }
 Robotics sensors, camera surveillance, military reconnaissance, data collection in social networks
 and online retailer websites are all examples of practical instances of the Active Perception task.
 
@@ -47,23 +47,23 @@ the Active Perception task:
 \item[Scalability:] Real world Active Perception systems often have to deal with very sizable
     environments. It is important that deployable solutions can deal with such complexity.
     Additionally, they should able to adapt to possible changes in the environment - for example new
-    sensor deployments - as painlessly as possible.
-\item[Non-Myopicity:] We argue that an optimal Active Perception solution can need to take into
-    account the information that the agent will be able to obtain in the future. This requires the
+    sensor deployments - as painlessly as possible. \ys{are we dealing with this "change in environment" issue?}
+\item[Non-Myopicity:] We argue that an optimal Active Perception solution can need \ys{can need?} to take into
+    account the information that the agent will be able to obtain in the future. \ys{how about? - need to take into account how environment might evolve in future?} This requires the
     ability to forecast possible outcomes from the observation process in order to determine optimal
     sequences of actions over continued periods of time.
 \end{description}
 
 \section{Application}
 
-The Active Perception task is a very general abstraction that can be applied to multiple real world
+The Active Perception task is a very \ys{"very" not required} general abstraction that can be applied to multiple real world
 problems. At the same time, focusing attention on a specific subproblem produces more realistic
 tests where solutions can be evaluated and may also produce real world value. While keeping
 generality of approach, in this work we focused our attention onto a particular set of Active
 Perception tasks: multi-camera systems, which are themselves a sub-class of multi-sensor systems.
 
 With the advent of cheap hardware, these last few years have brought an incredible widespread
-adoption of multi-camera systems. These systems can be used for surveillance, real-time tracking and
+adoption of multi-camera systems. These systems can be \ys{'are' instead of 'can be'} used for surveillance, real-time tracking and
 many other purposes. Deployment expenses of such systems have progressively decreased with the
 advent of digital multiplexing, the Internet and new manufacturing techniques. At the same time the
 cost for operating the cameras and storing/analyzing the incredible amount of data they provide has
@@ -93,6 +93,7 @@ Perceptions. In particular, we focus on the following:
 \item[Number of Targets:] Each tracked target contributes exponentially in increasing the complexity
     of the environment. In addition the number of targets to look for could be unknown in advance,
     which significantly complicates modeling the resulting environment.
+    \ys{If we are not solving this problem, there is no point of mentioning it}
 \end{description}
 
 %\section{Research Questions}
@@ -119,7 +120,7 @@ is to maximize reward collection according to a predefined reward function.
 The main reason why we use POMDPs is that they naturally allow for the computation of non-myopic
 strategies for using the sensors. In fact, POMDPs are specifically structured as to allow this type
 of planning. This means that the system will try to gather information in order to improve not only
-its current knowledge of the environment, but also its future one. We argue that while myopic
+its current knowledge of the environment, but also its future one. \ys{how about - while reasoning about all future possibilities?} We argue that while myopic
 strategies can sometimes suffice, many Active Perception problems require non-myopicity to achieve
 optimality.
 
@@ -129,7 +130,7 @@ optimality.
 %is updated depending on the observation that the system receives from the sensors, taking into
 %account possible ambiguity (perceptual aliasing) that could result from imperfect knowledge.
 
-POMDPs are also a widely explored topic in the decision theoretic literature, with known properties
+POMDPs are also \ys{'also' not needed} a widely explored topic in the decision theoretic literature, with known properties
 and already available solution methods, which allows us to stand on the shoulders of giants. We
 discuss some POMDPs solution methods in Chapter \ref{ref:solutions}.
 
@@ -150,6 +151,8 @@ tackles one of the challenges we have mentioned: scalability. In addition, it is
 experiment with different models, as online methods do not require any pre-computation. An example
 of the power of online methods are Monte Carlo methods, which have demonstrated incredible
 performance in the Go board game \cite{cit:mcts}.
+\ys{I am not sure of message of this paragraph, I think Monte carlo methods enable the scaling, not all online planning methods have this property. It sounds like you are saying that}
+
 
 In this work we extend one of the fastest online Monte Carlo approaches for POMDPs, Partially
 Observable Monte Carlo Planning (POMCP) \cite{cit:pomcp}. This method approximates beliefs about the
@@ -161,7 +164,8 @@ The limitation of POMCP with respect to the Active Perception task is that rewar
 directly from the state of the world, rather than the current knowledge that the planner possesses.
 POMDPs where rewards are based on knowledge, rather than state, have been examined in
 \cite{cit:rpomdp}. In this work we present a modification of the POMCP algorithm, which we named
-$\rho$-POMCP, with the following characteristics:
+$\rho$-POMCP, with the following characteristics: 
+\ys{explain this in more detail, specially the part, where you highlight that POMCP is a sampling based method, hence belief based reward are a challenge}
 
 \begin{description}
     \item[Belief based reward function:] We modify the POMCP algorithm in order to evaluate actions
@@ -174,7 +178,7 @@ $\rho$-POMCP, with the following characteristics:
         it since POMCP uses particle beliefs which are approximations of the true beliefs. While
         sample rewards are usually averaged in order to estimate the true reward, in our case we
         estimate the reward directly, and each new estimate is an improvement over the old one, so they
-        should not be mixed up.
+        should not be mixed up. \ys{not sure what this means}
     \item[Mean vs Max:] We test against two different functions used for value back-propagation within
         the lookup tree used by POMCP. The original algorithm computes the value of a particular
         belief as the weighted average over tried actions, instead that over the best available
