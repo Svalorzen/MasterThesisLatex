@@ -11,8 +11,8 @@ through them in order to maximize the return.
 On the other hand, when they are not known, \textit{reinforcement learning} is used. In this case the
 focus is on gathering knowledge about the environment while at the same time exploiting that
 knowledge to obtain the maximum return. Reinforcement learning methods can range from approximating
-the unknown functions from experience and then planning, to approximating the optimal Q-function of the
-model and using it to obtain a policy, or even directly approximating the optimal policy.
+the unknown functions from experience and then planning, to approximating the optimal value function
+of the model and using it to obtain a policy, or even directly approximating the optimal policy.
 
 In this work we are mostly interested in the problem of selecting subset of sensors, and so we
 assume we have a complete model that we can use to plan.
@@ -53,7 +53,9 @@ again.
 
 In this work we chose to use an online approach, given the flexibility and power provided over
 offline techniques, and because one of our goals was to scale to real-world scenarios, which are
-generally intractable with offline approaches.
+generally intractable with offline approaches. An additional advantage which we will explore later
+is that online planners are able to deal with non-PWLC value functions, which is a challenge when
+using negative entropy as a reward function.
 
 \section{Monte Carlo Algorithms}
 
@@ -84,6 +86,60 @@ MCTS was originally devised as a method to approach the board game Go. The algor
 Carlo simulations from the current state of the agent, which is the input, and progressively builds
 a tree of outcomes.
 
+\begin{algorithm}[H]
+\begin{multicols}{2}
+    \caption{Monte Carlo Tree Search}
+    \SetKwFunction{mcts}{MCTS}
+    \SetKwFunction{simulate}{Simulate}
+    \SetKwFunction{rollout}{Rollout}
+
+    \SetKwProg{main}{Algorithm}{}{}
+    \main{\mcts{s, h}}{
+        \KwData{State s, Horizon h}
+\nl     \While{enough time is available}{
+\nl         \simulate{tree root, s, 0}\;
+        }
+\nl     \KwRet most valued action in tree root\;
+    }
+
+    \setcounter{AlgoLine}{0}
+    \SetKwProg{myproc}{Procedure}{}{}
+    \myproc{\rollout{s, d}}{
+        \KwData{State s, Depth d}
+\nl     r = 0\;
+\nl     discount = 1\;
+\nl     \While{$d <$ horizon}{
+\nl         ($s', r'$) $\sim$ G($s$, random action)\;
+\nl         r = r + discount * $r'$\;
+\nl         discount = discount * $\gamma$\;
+\nl         $s$ = $s'$\;
+        }
+\nl     \KwRet r\;
+    }
+
+    \setcounter{AlgoLine}{0}
+    \SetKwProg{simul}{Procedure}{}{}
+    \simul{\simulate{n, s, d}}{
+        \KwData{Node n, State s, Depth d}
+\nl     select action $\tilde{a}$\;
+\nl     ($s', r$) $\sim$ G(s,$\tilde{a}$)\;
+\nl     \If{$d < $ horizon}{
+\nl         \eIf{n($\tilde{a},s'$) is in the tree}{
+\nl             futureRew = \simulate{$n(\tilde{a},s'), s', d+1$}\;
+            }{
+\nl             add n($\tilde{a},s'$) to the tree\;
+\nl             futureRew = \rollout{s', d+1}\;
+            }
+\nl         r = r + $\gamma$ * futureRew\;
+            }
+\nl     increment seen counter for n($\tilde{a}$)\;
+\nl     n($\tilde{a}$) value += $\frac{r-n(\tilde{a}) \text{ value}}{n(\tilde{a}) \text{ seen counter}}$\;
+\nl     \KwRet r\;
+    }
+
+\end{multicols}
+\end{algorithm}
+
 The tree starts out as root-only, where the root represents the current state of the agent. From
 there, the algorithm selects an action. Initially the actions are selected randomly, but as more
 simulations are performed MCTS starts to favor the actions with better value estimates, in order to
@@ -93,15 +149,15 @@ a generative model of the MDP to obtain a sample new state and reward.
 If the new state already has a branch from the current node, MCTS follows the branch and repeats the
 sample process again. If the new state does not have a branch, we attach a new single node to the
 tree, and proceed in that direction. In MCTS a single node is added to the tree per simulated
-episode; this is done in order to keep memory usage low, so that only the most promising paths will
+episode; this is done in order to keep memory usage low, so that only the most often occurring paths will
 be stored. Note that it is possible for MCTS to have multiple nodes representing the same state, but
-in different histories. We do not consider the case where those nodes are merged together.
+in different histories. We do not consider the case where such nodes are merged together.
 
 Once the sampling process arrives at a point where a new node needs to be added, the action
 selection process changes to a default predetermined policy, which usually selects actions randomly
 at uniform. This is done because MCTS has no information outside of the tree in order to do any
-meaningful decision, and so it needs to rely on a predefined policy. Random actions is often useful
-due to its lack of bias, and so it can give a better estimate of which paths are actually better.
+meaningful decision, and so it needs to rely on a predefined policy. Random actions are often useful
+due to their lack of bias, and so they can give a better estimate of which paths are actually better.
 When using the default policy, no new nodes are added to the tree, but the obtained reward outside
 the tree is still recorded.
 
@@ -125,7 +181,7 @@ while the rest of the tree is discarded.
 \section{Upper Confidence Bounds for Trees}
 
 A technique which has recently gained popularity to exactly determine which actions should be chosen
-in the tree and which ratio should be used between promising actions and the rest is called
+within the tree and which ratio should be used between promising actions and the rest is called
 \textit{Upper Confidence Bounds for Trees} (UCT). UCT tries to empirically derive a variance
 estimate from the data, sorting actions by their upper bounds on value.
 
@@ -143,14 +199,16 @@ around the maximum return that can be obtained by the agent.
 In this way actions that have not been tried for a long time still have a chance of being selected,
 which prevents hard pruning in the tree which may prevent a better solution to be discovered.
 
-\section{Partially Observable Monte-Carlo Planning}
+\section[]{Partially Observable Monte-Carlo Planning%
+\sectionmark{POMCP}}
+\sectionmark{POMCP}
 
 \cite{cit:pomcp} extended the MCTS framework to POMDPs, creating one of the best POMDP online
 solvers available today, \textit{Partially Observable Monte-Carlo Planning}(POMCP). This algorithm
 incorporates the advantages of MCTS while adding support for belief states and observations.
 
 The trouble of naively applying MCTS to a belief MDP extracted from a POMDP is its necessity to
-sample directly from state to state. While this can be a cheap operation in MDPs, requiring 
+sample directly from state to state. While this can be a cheap operation in MDPs, requiring
 samples from relatively simple distributions, computing a new belief given a previous belief and
 observation in a POMDP, called \textit{belief update}, can be a very expensive operation. Recall that a belief
 update can be performed using the following formula:
@@ -164,6 +222,62 @@ order to provide useful answers, each sample needs to be performed in as little 
 POMCP solves this problem by representing beliefs as particle vectors containing a certain amount of
 state particles. Such a \textit{particle belief} can be created by repeatedly sampling a belief, and
 gathering all samples in a vector - not a set.
+
+\begin{algorithm}[H]
+    \caption{Partially Observable Monte-Carlo Planning}
+\begin{multicols}{2}
+    \SetKwFunction{pomcp}{POMCP}
+    \SetKwFunction{simulate}{Simulate}
+    \SetKwFunction{rollout}{Rollout}
+
+    \SetKwProg{main}{Algorithm}{}{}
+    \main{\pomcp{b, h}}{
+        \KwData{Belief b, Horizon h}
+\nl     \While{enough time is available}{
+\nl         s $\sim$ b\;
+\nl         \simulate{tree root, s, 0}\;
+        }
+\nl     \KwRet most valued action in tree root\;
+    }
+
+    \setcounter{AlgoLine}{0}
+    \SetKwProg{myproc}{Procedure}{}{}
+    \myproc{\rollout{s, d}}{
+        \KwData{State s, Depth d}
+\nl     r = 0\;
+\nl     discount = 1\;
+\nl     \While{$d <$ horizon}{
+\nl         (s', r') $\sim$ G(s, random action)\;
+\nl         r = r + discount * r'\;
+\nl         discount = discount * $\gamma$\;
+\nl         s = s'\;
+        }
+\nl     \KwRet r\;
+    }
+
+    \setcounter{AlgoLine}{0}
+    \SetKwProg{simul}{Procedure}{}{}
+    \simul{\simulate{n, s, d}}{
+        \KwData{Node n, State s, Depth d}
+\nl     select action $\tilde{a}$ with UCT\;
+\nl     (s', o, r) $\sim$ G(s,$\tilde{a}$)\;
+\nl     \If{$d < $ horizon}{
+\nl         \eIf{n($\tilde{a},o$) is in the tree}{
+    \nl             futureRew = \simulate{$n(\tilde{a},o), s', d+1$}\;
+            }{
+\nl             add n($\tilde{a},o$) to the tree\;
+\nl             futureRew = \rollout{s', d+1}\;
+            }
+\nl         r = r + $\gamma$ * futureRew\;
+            }
+\nl     add $s'$ to the particle belief of $n$\;
+\nl     increment seen counter for n($\tilde{a}$)\;
+\nl     n($\tilde{a}$) value += $\frac{r-n(\tilde{a}) \text{ value}}{n(\tilde{a}) \text{ seen counter}}$\;
+\nl     \KwRet r\;
+    }
+
+\end{multicols}
+\end{algorithm}
 
 POMCP starts its execution with a belief state as input, just as MCTS started with a single state as
 input. It converts this belief into a particle belief. Then, for each sample episode, it samples a
