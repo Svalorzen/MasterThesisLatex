@@ -86,7 +86,7 @@ MCTS was originally devised as a method to approach the board game Go. The algor
 Carlo simulations from the current state of the agent, which is the input, and progressively builds
 a tree of outcomes.
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \begin{multicols}{2}
     \caption{Monte Carlo Tree Search}
     \SetKwFunction{mcts}{MCTS}
@@ -94,10 +94,10 @@ a tree of outcomes.
     \SetKwFunction{rollout}{Rollout}
 
     \SetKwProg{main}{Algorithm}{}{}
-    \main{\mcts{s, h}}{
-        \KwData{State s, Horizon h}
+    \main{\mcts{s}}{
+        \KwData{State s}
 \nl     \While{enough time is available}{
-\nl         \simulate{tree root, s, 0}\;
+\nl         \simulate{\O, s, 0}\;
         }
 \nl     \KwRet most valued action in tree root\;
     }
@@ -119,21 +119,22 @@ a tree of outcomes.
 
     \setcounter{AlgoLine}{0}
     \SetKwProg{simul}{Procedure}{}{}
-    \simul{\simulate{n, s, d}}{
-        \KwData{Node n, State s, Depth d}
-\nl     select action $\tilde{a}$\;
-\nl     ($s', r$) $\sim$ G(s,$\tilde{a}$)\;
+    \simul{\simulate{h, s, d}}{
+        \KwData{History h, State s, Depth d}
+\nl     select action $a$\;
+\nl     ($s', r$) $\sim$ G($s,a$)\;
 \nl     \If{$d < $ horizon}{
-\nl         \eIf{n($\tilde{a},s'$) is in the tree}{
-\nl             futureRew = \simulate{$n(\tilde{a},s'), s', d+1$}\;
+\nl         \eIf{T($h,a,s'$) is not \O}{
+\nl             futureRew = \simulate{$(h,a,s'), s', d+1$}\;
             }{
-\nl             add n($\tilde{a},s'$) to the tree\;
+\nl             initialize T($h,a,s'$)\;
+\nl             N($h,a$) = V($h,a$) = 0\;
 \nl             futureRew = \rollout{s', d+1}\;
             }
 \nl         r = r + $\gamma$ * futureRew\;
             }
-\nl     increment seen counter for n($\tilde{a}$)\;
-\nl     n($\tilde{a}$) value += $\frac{r-n(\tilde{a}) \text{ value}}{n(\tilde{a}) \text{ seen counter}}$\;
+\nl     N($h,a$) = N($h,a$) + 1\;
+\nl     V($h,a$) += $\frac{r-V(h,a)}{N(h,a)}$\;
 \nl     \KwRet r\;
     }
 
@@ -223,7 +224,7 @@ POMCP solves this problem by representing beliefs as particle vectors containing
 state particles. Such a \textit{particle belief} can be created by repeatedly sampling a belief, and
 gathering all samples in a vector - not a set.
 
-\begin{algorithm}[H]
+\begin{algorithm}
     \caption{Partially Observable Monte-Carlo Planning}
 \begin{multicols}{2}
     \SetKwFunction{pomcp}{POMCP}
@@ -231,11 +232,11 @@ gathering all samples in a vector - not a set.
     \SetKwFunction{rollout}{Rollout}
 
     \SetKwProg{main}{Algorithm}{}{}
-    \main{\pomcp{b, h}}{
-        \KwData{Belief b, Horizon h}
+    \main{\pomcp{b}}{
+        \KwData{Belief b}
 \nl     \While{enough time is available}{
 \nl         s $\sim$ b\;
-\nl         \simulate{tree root, s, 0}\;
+\nl         \simulate{\O, s, 0}\;
         }
 \nl     \KwRet most valued action in tree root\;
     }
@@ -257,22 +258,23 @@ gathering all samples in a vector - not a set.
 
     \setcounter{AlgoLine}{0}
     \SetKwProg{simul}{Procedure}{}{}
-    \simul{\simulate{n, s, d}}{
-        \KwData{Node n, State s, Depth d}
-\nl     select action $\tilde{a}$ with UCT\;
-\nl     (s', o, r) $\sim$ G(s,$\tilde{a}$)\;
+    \simul{\simulate{h, s, d}}{
+        \KwData{History h, State s, Depth d}
+\nl     select action $a$ with UCT\;
+\nl     ($s', o, r$) $\sim$ G($s,a$)\;
 \nl     \If{$d < $ horizon}{
-\nl         \eIf{n($\tilde{a},o$) is in the tree}{
-    \nl             futureRew = \simulate{$n(\tilde{a},o), s', d+1$}\;
+\nl         \eIf{T($h,a,o$) is not \O}{
+\nl             futureRew = \simulate{$(h,a,o), s', d+1$}\;
             }{
-\nl             add n($\tilde{a},o$) to the tree\;
+\nl             initialize T($h,a,o$)\;
+\nl             N($h,a$) = V($h,a$) = 0\;
 \nl             futureRew = \rollout{s', d+1}\;
             }
 \nl         r = r + $\gamma$ * futureRew\;
             }
-\nl     add $s'$ to the particle belief of $n$\;
-\nl     increment seen counter for n($\tilde{a}$)\;
-\nl     n($\tilde{a}$) value += $\frac{r-n(\tilde{a}) \text{ value}}{n(\tilde{a}) \text{ seen counter}}$\;
+\nl     B(h) = B(h) $\bigcup \;\{ s' \}$\;
+\nl     N($h,a$) = N($h,a$) + 1\;
+\nl     V($h,a$) += $\frac{r-V(h,a)}{N(h,a)}$\;
 \nl     \KwRet r\;
     }
 

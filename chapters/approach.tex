@@ -289,6 +289,67 @@ over actions actually improves performance.
 We implemented both backup methods for $\rho$-POMCP in order to determine which one would perform
 best under different conditions.
 
+\subsection{Algorithm}
+
+Here we describe the full $\rho$-POMCP algorithm in more detail.
+
+\begin{algorithm}[H]
+    \caption{$\rho$-Partially Observable Monte-Carlo Planning}
+\begin{multicols}{2}
+    \SetKwFunction{pomcp}{$\rho$-POMCP}
+    \SetKwFunction{simulate}{Simulate}
+
+    \SetKwProg{main}{Algorithm}{}{}
+    \main{\pomcp{b}}{
+        \KwData{Belief b}
+\nl     \While{enough time is available}{
+\nl         s $\sim$ b\;
+\nl         \simulate{\O, s, 0}\;
+        }
+\nl     \KwRet most valued action in tree root\;
+    }
+
+    \setcounter{AlgoLine}{0}
+    \SetKwProg{simul}{Procedure}{}{}
+    \simul{\simulate{h, s, d}}{
+        \KwData{History h, State s, Depth d}
+\nl     select action $a$ with UCT\;
+\nl     ($s', o$) $\sim$ G($s,a$)\;
+\nl     \If{$d < $ horizon}{
+\nl         \eIf{T($h,a,o$) is not \O}{
+\nl             futureRew = \simulate{$(h,a,o), s', d+1$}\;
+            }{
+\nl             initialize T($h,a,o$)\;
+\nl             N($h$) = N($h,a$) = V($h,a$) = F($h,a$) = 0\;
+\nl             futureRew = 0\;
+            }
+        }
+\nl     B(h) = B(h) $\bigcup \;\{ s' \}$\;
+\nl     r = estimate reward from B(h)\;
+\nl     N($h$) = N($h$) + 1\;
+\nl     N($h,a$) = N($h,a$) + 1\;
+\nl     F($h,a$) += $\frac{futureRew - F(h,a)}{N(h,a)}$\;
+\nl     V($h,a$) = r + $\gamma$ * F($h,a$)\;
+\nl     oldV = V($h$)\;
+\nl     V($h$) = $\max_{a'} V(h,a')$\;
+\nl     \KwRet N($h$) * ( V($h$) - oldV ) + V($h$);
+    }
+\end{multicols}
+\end{algorithm}
+
+$\rho$-POMCP starts off as POMCP, by extracting a particle state from the root belief and simulating
+an episode from it. Since the model does not provide rewards, they are directly estimated from the
+particle belief. Once this is done, $\rho$-POMCP re-evaluates the value for the specific action
+tried by setting it as the sum of the immediate reward just computed, and an average over
+backpropagated reward.
+
+Then it computes the value to backpropagate so that the new estimate for the reward of the particle
+belief is successfully corrected towards the root.
+
+An additional difference between POMCP and $\rho$-POMCP is the lack of a rollout procedure. This is
+because, when outside of the tree, $\rho$-POMCP has no way to approximate rewards, and so skips
+random policy rollouts altogether.
+
 \section{Multi Person}
 
 One of the main limiting factors for Monte-Carlo online methods is the branching factor of the
