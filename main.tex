@@ -19,6 +19,9 @@
 \usepackage[ruled]{algorithm2e}
 \usepackage{multicol}
 
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
 \usepackage{etoolbox}
 \apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
 
@@ -51,19 +54,7 @@
 \input{chapters/solutions}
 
 \chapter{Approach}\label{ref:approach}
-
-    \section{Problem Setting}
-        \subsection{State Space}
-        \subsection{Action Space}
-        \subsection{Observation Space}
-        \subsection{Transition Function}
-        \subsection{Reward Function}
-        \subsection{Discount and Horizon}
-
-    \section{Method}
-        \subsection{Max vs Mean}
-        \subsection{Entropy Estimation}
-        \subsection{Value Backpropagation}
+\input{chapters/approach}
 
 \chapter{Related Work}\label{ref:relwork}
 \include{chapters/related_work}

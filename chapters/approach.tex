@@ -1,0 +1,313 @@
+\section{Myopicity of Active Perception}
+
+As we have already said, POMDPs are a framework useful in order to extract non-myopic policies from
+a problem. However, in order to justify the usage of POMDPs, we have to demonstrate that Active
+Perception in general requires the usage of non-myopic solutions in the first place. This is because
+not all problems necessarily require non-myopic solutions.
+
+We propose two different POMDP models of Active Perception problems. For one of the models we will
+prove that a non-myopic solution is required in order to obtain an optimal solution. For the second
+we will prove that a non-myopic solution is not required. The results we show are for both max of
+belief and negative entropy reward functions.
+
+While we were not able to demonstrate a general way to show whether any particular problem will need
+non-myopicity in the solution, the fact that Active Perception tasks exist which require
+non-myopicity is sufficient to motivate our choice of POMDPs in this work.
+
+\subsection{Non-Myopic World}
+
+Let's consider a world where the agent is tasked with tracking a single person that is walking. The
+person can, at any moment, be in one of a series of rooms, and can transition between them. In each
+room there is a camera which can observe the room itself and nothing else. If the agent activates
+the camera situated in a room the person just entered there is a $0.8$ probability that the agent will
+obtain a ``found'' observation, and a $0.2$ probability that it will obtain a ``null'' observation.
+On the other hand, if the agent activates any other camera, it will obtain a ``null'' observation
+with $0.8$ probability and a ``found'' observation with $0.2$ probability. Each time a camera is
+activated, the person will move to another accessible room. The agent's goal is to guess correctly
+where the person has moved for two times in a row, knowing only that at the start the person could
+be in any room.
+
+We will now create an instance of the problem we have just finished describing. Let's now suppose
+that in our world there are 6 rooms, and we know that the person will transition from one to another
+with the following probabilities:
+
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (s1) at (0,0) [state] {S1};
+\node (s2) at (2,3) [state] {S2};
+\node (s3) at (4,0) [state] {S3};
+\node (s4) at (6,0) [state] {S4};
+\node (s5) at (8,3) [state] {S5};
+\node (s6) at (10,0) [state] {S6};
+
+\path
+    (s1) edge [loop below] node {0.333} (s1)
+         edge [bend left] node {0.333} (s2)
+         edge [bend left=10] node[below] {0.333} (s3)
+    (s2) edge [loop above] node {0.333} (s2)
+         edge [bend left=10] node[above,rotate=60] {0.333} (s1)
+         edge [bend left] node {0.333} (s3)
+    (s3) edge [loop below] node {0.333} (s3)
+         edge [bend left=10] node[above,rotate=-60] {0.333} (s2)
+         edge [bend left] node {0.333} (s1)
+    (s4) edge [bend left] node {1.0} (s5)
+    (s5) edge [bend left] node {1.0} (s6)
+    (s6) edge [bend left] node {1.0} (s4);
+
+\end{tikzpicture}
+\end{center}
+
+As we said, at first the agent does not know where the person is at all. The myopic expected return
+for the first step only is:
+
+\[ E[\text{return}| a_1 ] = \sum_{o\in \Omega} p(o | b, a_1) \cdot \rho(b') \]
+
+Where $b'$ is the result of the belief update of $b$ with $o$ and $a_1$. The non-myopic expected return over
+both steps is:
+
+\[ E[\text{return}| a_1, a_2] = \sum_{o \in \Omega} p(o | b, a_1) \left ( \rho(b') + \sum_{o' \in
+\Omega} p(o'| b', a_2) \cdot \rho(b'') \right ) \]
+
+Where $b''$ updates from $b'$, $o'$ and $a_2$. It is easy to show that, both for max of belief and
+negative entropy as $\rho$, all actions in the presented problem have the same myopic one-step
+expected return from a uniform belief. This is done by simply computing the previously described
+summatory over every term and performing the appropriate belief updates.
+
+However, expected non-myopic returns are not the same for all choices of $a_1$ and $a_2$. For
+example selecting $a_1 = S1$ and any $a_2$ results in a certain expected return $v$.  On the other
+hand, if $a_1 = S4$, all expected returns are greater than $v$ for all but one choice of $a_2$. In
+other words, selecting $a_1 = S1$ leads necessarily to a lower two-step expected return, since the
+agent can select $a_2$ to only pick the best cases.
+
+Selecting $a_1$ to avoid the worst cases can only be done when there is a way to distinguish between
+two different $a_1$.  Since myopic expected returns are the same for all actions, this is impossible
+to do with a myopic solution.
+
+Note that the problem considered can be extended into uncountably many models where the same
+properties apply. This could be done for example by adding a certain number of rooms that the person
+needs to go through before ending up in the model presented, and so on. Thus a non-myopic solution
+is required for uncountably many Active Perception tasks.
+
+\subsection{Myopic World}
+
+A different instance of the previous problem is one where there are only 4 rooms, and the person
+will transition from state to state with the following probabilities:
+
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (s1) at (0,0) [state] {S1};
+\node (s2) at (0,4) [state] {S2};
+\node (s3) at (4,4) [state] {S3};
+\node (s4) at (4,0) [state] {S4};
+
+\path
+    (s1) edge [bend right] node {0.5} (s4)
+         edge [bend left] node {0.5} (s2)
+    (s2) edge [bend left] node {0.5} (s1)
+         edge [bend right] node {0.5} (s3)
+    (s3) edge [bend right] node {0.5} (s2)
+         edge [bend left] node {0.5} (s4)
+    (s4) edge [bend left] node {0.5} (s3)
+         edge [bend right] node {0.5} (s1);
+
+\end{tikzpicture}
+\end{center}
+
+Once again, we can compute both myopic and non-myopic expected returns. This time, no matter the
+choice of actions, there is no particular incentive for an agent to select a pair over another. If
+$\rho$ is negative entropy, certain pair of actions have a higher expected return than others. But
+for each $a_1$ there is a $a_2$ which obtains the maximum expected return possible.
+
+Thus, non-myopic in this particular model has no particular advantage over a more simple myopic
+solution. Once again this problem can be extended into uncountably infinite examples of Active
+Perception tasks.
+
+\section{$\rho$-POMCP}
+
+In this Section we present a modification of the algorithm POMCP which is able to deal with a
+belief-based reward function in POMDPs. An important fact to note that this algorithm is able to
+deal with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm
+can be applied to problems where the agent can influence the state of the world, and also (with
+minor modifications to reintroduce state dependent rewards) when the reward function is both
+dependent on states and belief.
+
+\subsection{Non-PWLC Value Function}
+
+Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
+uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for offline
+planning since usual solving techniques rely on the PWLC property in order to detect beliefs where
+the currently computed optimal policy is not actually optimal. Once such a belief point is
+discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
+belief too.
+
+This problem is solved in our approach since online planning does not suffer from that problem. This
+is because online planning directly approximates rewards for the possible futures of any given
+situation, without the need to solve a POMDP completely for any possible beliefs. Thus, witness
+points do not need to be discovered, and we can ignore the PWLC property.
+
+\subsection{Reward Estimation}
+
+The main challenge when applying POMCP to a $\rho$-POMDP is that the algorithm can only extract
+reward information from a generative model. This cannot be done for a belief-dependent reward
+function, since the belief is an abstraction created by the agent, which does not actually exist in
+the environment.  Thus, a generative model is unable to sample from a belief-dependent reward
+function.
+
+To avoid this, we estimate the immediate reward for a specific action-observation transition by
+using maximum-likelihood estimates of the belief extracted from the particle beliefs POMCP
+generates. However, since particle beliefs are updated constantly, computing a direct estimate of
+every belief reached during each sample episode would excessively hamper performance. We solved this problem
+differently for estimating max of belief rewards and negative entropy rewards.
+
+%% CHECK AGAIN WITH CODE CAN'T REMEMBER
+For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in each
+particle belief, the number of particles for each type of particle and which particle is the most
+common. At each particle insertion the number of particles for that type is compared against the
+number of the old most common particle. Whichever is higher becomes the new most common particle,
+and the new max of belief is computed as the ratio between the most common particle count and the
+total number of particles in the belief.
+
+For estimation of entropy, the situation is not quite so easy. Entropy estimation from discrete
+samples is bound to be biased, and there is no way to remove this bias completely
+\cite{cit:badentropy}. On the other hand, techniques to decrease bias are computationally heavy and
+rely on usage of additional complex distributions to account for bias \cite{cit:entropyfixes}.
+Since $\rho$-POMCP needed to be as fast as possible, we decided to try a more direct approach in the
+hope that any inaccuracies would not hamper significantly the search process.
+
+Entropy is computed as a summatory of terms, one for each type of particle. $\rho$-POMCP stores
+internally both the latest negative entropy estimate, and each of the separate terms that compose
+it. At each new particle insertion in a particle belief, we simply remove from our previous full
+estimate the relevant term for the particle state, recompute the term and add it again. This
+approach is not mathematically correct as, in theory, all terms would need to be updated at each
+insertion. This is because each entropy term depends on the probability of such term, which in turn
+depends on the total number of particles in the belief, which has just been increased by one. In
+essence, we are overestimating negative entropy. Again, we would have bias anyway no matter the
+strategy we used.
+
+In practice, this bias turns out not to be a problem as long as each type of particle is added with
+relative frequency, so as to keep all terms that compose the overall negative entropy ``fresh''.
+Such an approach is in any case guaranteed to converge to the true entropy in the limit, when the
+number of samples tends to infinite. This maintains the POMCP property that leads to an optimal
+solution in the limit.
+
+\subsection{Value Backpropagation}
+
+A second problem is dependent on how returns are approximated in POMCP. The value for a
+belief-action pair $b,a$ is computed as the sum of two different factors: the immediate reward
+$\rho(b,a)$ plus a discounted term representing the expected return from then on.
+
+\[ V(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V(b') \]
+
+Recall that in a belief MDP the reward function is defined as:
+
+\[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
+
+To approximate this value POMCP simply averages all results from $R(s,a)$ done using particles
+extracted from the all beliefs and actions encountered during sample episodes.
+
+\[ V(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
+
+Where $N$ is the number of times that action $a$ has been taken in belief $b$, $n_s$ the number of
+times state $s$ has been sampled from $b$ when taking action $a$, $n_o$ is the number of times that
+observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all values backpropagated
+from lower in the tree after observation $o$. In POMCP a backpropagated value is simply the
+discounted sum of all sampled rewards down in the episode. As with MCTS, as long as the better
+actions are chosen more often than the others, this procedure will converge to the true expected
+return.
+
+However, in our case, the reward function is structured in the following way:
+
+\[ \rho(b,a) = \sum_{o\in \Omega} O(o | b, a) \rho(b') \]
+
+This is because both max of belief and negative entropy rewards can be only extracted from a belief,
+and do not depend on actions. Thus, the value for a belief-action pair becomes:
+
+\[ V(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V(b') \]
+
+The problem is that we estimate $\rho(b')$ directly, rather than by averaging samples. At the same
+time, $V(b')$ depends on reward estimates of future beliefs, which again are estimated directly.
+This means that whenever a new estimate for any given $\rho(b)$ is computed, the new value needs to
+substitute the previous one all the way up the chain, and cannot be simply averaged in as it
+happened in POMCP.
+
+We solved this problem by keeping the average mechanism present in POMCP, with the difference that
+we average together fake datapoints built specifically to replace previous estimates. For
+example, suppose we have a particular estimate $r$ for $\rho(b, a)$.
+
+\[ \rho(b,a) \approx r \]
+
+We can decompose this into all our estimates for all beliefs reachable from $b$ and $a$:
+
+\[ \rho(b,a) \approx \frac{\sum_{o\in\Omega} n_o r_o}{N} \]
+
+Suppose now we experience $b$ and $a$ again, and obtain observation $\tilde{o}$. We update our new
+reward estimate for the new belief into $r'_{\tilde{o}}$. If we averaged normally, we would get:
+
+\[ \rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + r'_{\tilde{o}} +
+\sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
+
+This is not what we want, however. Instead, suppose we average in $n_{\tilde{o}}(r'_{\tilde{o}} -
+r_{\tilde{o}}) + r'_{\tilde{o}}$:
+
+\[ \rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + n_{\tilde{o}}(r'_{\tilde{o}} -
+r_{\tilde{o}}) + r'_{\tilde{o}} +
+\sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
+
+\[ \rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + n_{\tilde{o}}r'_{\tilde{o}} -
+        n_{\tilde{o}} r_{\tilde{o}} + r'_{\tilde{o}} +
+\sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
+
+\[ \rho(b,a) \approx \frac{ ( n_{\tilde{o}}+1) r'_{\tilde{o}} +
+\sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
+
+Which is what we wanted. Similarly, we can create fake reward points to backpropagate in the tree so
+that any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backpropagated would be:
+
+\[ N ( V'(b) - V(b) ) + V'(b) \]
+
+\subsection{Max vs Mean}
+
+The POMCP algorithm averages together all sampled rewards, and depends on UCT to let the tree
+converge to the true optimum. This works since UTC samples the best actions infinitely more often in
+the limit, which lets the final estimated value for it converge to the true value. However, this
+procedure needs to sample many more times to make up for the fact that, at first, results for
+suboptimal actions are averaged into estimates too.
+
+POMCP inherits this behaviour from the original MCTS algorithm. However, in the original paper from
+2006 a number of different approaches to merge together backpropagated values were tried
+\cite{cit:mcts}. The authors decided to stick with using the mean operator to backup values since,
+with the computational power available at the time, it gave better and more consistent results.
+However, the authors also demonstrated that if enough samples are available, using a max operator
+over actions actually improves performance.
+
+We implemented both backup methods for $\rho$-POMCP in order to determine which one would perform
+best under different conditions.
+
+\section{Multi Person}
+
+One of the main limiting factors for Monte-Carlo online methods is the branching factor of the
+tackled problem. While MCTS, POMCP and $\rho$-POMCP can deal with incredibly large state and
+observation spaces, they cannot deal easily with a problem that leads to a vast number of branches
+to be explored. This is because each new branch significantly increases the number of sample
+episodes that need to be performed in order to obtain an accurate estimate for the best action.
+
+The main branching factor in the problem we are considering, which is multi-sensor systems, is the
+number of targets to be tracked. This is because each target moves independently, and thus from a
+given state there are many more possible states reachable. Thus, the branching factor for a problem
+is exponential in the number of targets.
+
+In order to avoid dealing with this problem, we setup a system where we run concurrently many
+$\rho$-POMCP instances. Each solver computes an individual policy for a single target only. This
+allows each solver to work on a relatively small tree, without exploding the number of braches.
+
+We then estimate the final action to be performed by merging the separate results of all the
+solvers.  From each solver we then obtain a value estimate for each available action; the final
+action is then the one that maximises the sum of all values across solvers. In order to obtain
+consistent evaluations of all actions so that we can compare them between solvers, we disable UCT
+for the first depth level in the tree, and instead sample equally from each action.
