@@ -1,14 +1,13 @@
 This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: main.aux
-A level-1 auxiliary file: chapters/introduction.aux
-A level-1 auxiliary file: chapters/background.aux
 A level-1 auxiliary file: chapters/related_work.aux
 The style file: unsrtnat.bst
 Database file #1: references.bib
+Warning--I didn't find a database entry for "cit:rhopomdp"
 You've used 25 entries,
             2481 wiz_defined-function locations,
-            758 strings with 10343 characters,
+            757 strings with 10307 characters,
 and the built_in function-call counts, 11766 in all, are:
 = -- 1124
 > -- 480
@@ -47,3 +46,4 @@ warning$ -- 0
 while$ -- 96
 width$ -- 0
 write$ -- 417
+(There was 1 warning)

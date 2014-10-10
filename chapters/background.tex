@@ -1,107 +1,56 @@
 \section{Partially Observable Markov Decision Process}\label{ref:pomdp}
 \sectionmark{POMDP}
 
-In order to be able to take decisions within an environment, a computer system needs to understand
-how it works, and how it responds to actions \ys{how about - agents needs to know the model of the world? }. In order to do this, the complexity of the world needs
-to be wrapped into a formal framework to allow reasoning in a structured way. The
-\textit{Markov Decision Process} (MDP), named after Andrey Markov, was developed for this task.
+In order to compute a strategy to complete a task within an environment we need to model the
+dynamics of the environment together with the task objectives. The framework we are going to use in
+this work stems from the \textit{Markov Decision Process} (MDP), named after Andrey Markov.
 
-MDPs structure reasoning around a stochastic state-machine \ys{cite}, where the agent knows the current state
-of the environment and selects actions in order to steer the environment towards specific
-state-to-state transitions, as to maximize a given reward function.
+MDPs structure reasoning around a probabilistic automaton. The agent \textit{acts} upon the
+environment, which is in a particular \textit{state}. As a result, the environment
+\textit{transitions} stochastically to another state, as defined by a transition function. During
+the transition, the agent receives a certain \textit{reward} representing its achievements
+toward the task at hand.
 
-The \textit{Partially Observable MDP} (POMDP) is an extension of such a framework, and shares with it
-most terminology and functionality. POMDPs are able to deal with partial observability, where the
-agent does not directly know the state of the environment. In POMDPs, the agent receives
-\textit{observations} dependent on the underlying state. These can be used to keep a statistic over
-the states the environment could be in at any given timestep.
+The \textit{Partially Observable MDP} (POMDP) is an extension of such a framework, where the agent
+cannot see the current state of the world. In POMDPs, the agent receives an \textit{observation}
+dependent on the underlying state during each transition, but which does not uniquely disambiguate
+it. These are used to keep a statistic over the states the environment could be in at any given
+timestep.
 
-The advantage of (PO)MDPs over competing approaches is their ability to naturally produce \ys{POMDPs do not produce non-myopic strategies, they have to be solved for that}non-myopic
-strategies, which aim to maximize a goal over the long term.
+Non-myopic strategies can be naturally extracted from MDPs and POMDPs, which is one of their main
+advantages over competing approaches.
 
 A POMDP can be defined formally as a tuple
 
-\[ POMDP = <S,A,T,R,\Omega,O,\gamma> \]
+\[ POMDP = <S,A,T,R,\Omega,O,h> \]
 
 The elements of the tuple are called state space($S$), action space($A$), transition function($T$),
-reward function($R$), observation space($\Omega$), observation function($O$) and discount
-factor($\gamma$). We introduce these terms in the following Sections.
-
-The POMDP framework is best described in terms of two separate components: the \textit{agent} and
-the \textit{environment}. The former represents our computer system and its decision making
-abilities, while the second represents everything else. The agent will then carry out a specific
-\textit{policy} in the environment in order to maximize accrued reward.
+reward function($R$), observation space($\Omega$), observation function($O$) and horizon($h$). We
+introduce these terms in the following Sections.
 
 \subsection{Agent}
 
-The agent is at the core of the decision process. It has a goal: to affect the environment so that
-some form of ``goodness'' within it is achieved. \ys{This really does not sound any technical : option 1 - The agent takes action, while reasoning about uncertaiities in the environment to complete a given task, most efficiently} The agent is an abstract entity: it does not need
-to be part of the environment, or be physically present within it. The only thing the agent needs is
-a way to interact with the environment.
-
-%In essence, the agent represents everything that we are able to control in an \textit{absolute} way
-%within the world we have to work with. Unfortunately, this is not much. To make a simple example, in
-%the case of a robot most often the physical body of the robot is part of the environment, rather
-%than the agent. The agent, or brain, of the robot then acts so that the physical body moves,
-%hopefully as predicted. But since the body can be subject to failure and precise movements and
-%sensors are required to check whether a motion completed successfully, we regard it as environment.
-
-In the POMDP framework this connection is achieved through \textit{actions}. Each action has a
-specific effect on the environment, and the agent tries to choose at any moment the most correct
-one.
+The agent is at the core of the decision process. Its objective is to maximize the reward obtained
+by acting in the environment while reasoning about the state uncertainties. In doing so it will
+accomplish the task that is encoded within the POMDP model.
 
 \subsection{Environment}
 
-The environment represents all that is not the agent. Generally, the environment is described at a
-level of abstraction that allows to predict effects with reasonable accuracy for the task at hand,
-without the need to specify needless details which would only impede the decision making process.
-Just as a person does not consider interactions on a molecular level when making coffee, we want to
-do the same for our description of our environment.
-
-In this way, we want to be able to describe our environment in terms of its possible configurations.
-Each configuration, denoted \textit{state}, represents a unique arrangement of the world at any one
-time. For example, in chess, the environment can be completely described by the positions of all
-pieces on the game board. The full set of states is denoted \textit{state space}, and is usually
-referred to as $S$. This is the first element of the POMDP tuple.
+The environment represents all that is not the agent. The environment is described in terms of its
+possible configurations.  Each configuration, called \textit{state}, represents a unique
+arrangement of the world at any one time. For example, in chess, the environment can be completely
+described by the positions of all pieces on the game board. The full set of states is denoted
+\textit{state space}, and is usually referred to as $S$. This is the first element of the POMDP
+tuple.
 
 \[ S = \{s_0, s_1, s_2, ..., s_{|S|}\} \]
 
 Note that we assume that all sets presented in this work to be finite, unless where specifically
 noted.
 
-%Just as in a state-machine, we can now start to reason in which ways the
-%environment is allowed to change, and what we should do to pick the path that mostly suits our
-%goals. These links need not be deterministic: they can, and will very often be, stochastic. This
-%stochasticity can be used to represent a real stochasticity of the world underlying our abstract
-%environment, or can be used to abstract away details that we know exist but are unwilling to model
-%to reduce overall complexity. All in all, these two options are often much the same. In a dice roll,
-%we could decide to model all physical forces acting on the dice, or just model the result as a
-%stochastic number taken at random.
-
 In the environment, transitions between a state and another state are discrete and instantaneous.
-Each transition happens within a single \textit{timestep}, which represents the atomic unit of time
-within the environment. Note that timesteps do not have to be directly linked with time. Rather, a
-timestep is associated with environment changes that are significant to the decision process, and so
-tie again to the concept of a state-machine. Whether those changes happen in hours of real time or
-in seconds - or whether different changes occur with different durations - does not influence the
-framework. \ys{this explaination about time steps is not necessary} 
-
-%A very important property of our environment, however, is that it is not allowed to contain any
-%external decision-making entities. This is because such entities are themselves able to influence
-%the evolution of the environment over time in ways our agent cannot predict, and modeling them
-%though a state-machine framework is next to impossible. A whole branch of decision theory is
-%dedicated to the study of such systems: multi-agent problems are by far more complex than
-%single-agent ones.
-%
-%In our particular problem, prediction of people movement within a location, each person can be seen
-%as an external entity which decides autonomously where it wants to move. Trying to model each and
-%every person fully is a hopeless endeavor. At the same time, in the context of walking from a point
-%A to a point B, people can be fairly predictable. Thankfully, evolution made us realize a long time
-%ago that the fastest way to travel between two points is a straight line, and that can help in
-%predicting where a person is going to go. Even though the path of each single person will be hard to
-%predict with perfect accuracy, we can predict possible alternatives stochastically with a decent
-%degree of accuracy, and that allows us to ignore the problem of multiple independent autonomous
-%entities affecting the world simultaneously.
+Each transition happens within a single \textit{timestep}, which represents the atomic unit of
+change within the environment.
 
 \subsection{State}
 
@@ -111,16 +60,6 @@ circumstance of the environment, different in some particular way from all other
 a state ignores all that is not relevant to the decision making progress. In a chess game, it does
 not matter whether at the time of playing it's raining, but only the position of the pieces on the
 board.
-
-%There are multiple ways of defining the states of the environment. One way is to enumerate them all.
-%In this case, each state is in some sense independent from all others, and must be specified
-%uniquely and added to the state space. This is called an \textit{extrinsic} definition of the state
-%space. On the other hand, it is possible to define a number of features to define all states. In this
-%way, a feature is a particular property of the environment that can take on a certain number of
-%values. Following, a state is defined by the values all features are taking at any one time, and the
-%whole state-space results from the product of all features. To keep with the chess analogy, one
-%could describe every possible position by a combination of the position of every single piece - a
-%feature. Such description of the state space is called \textit{intrinsic}.
 
 An extremely important property that each state needs to have is called the \textit{Markov}
 property. This property requires that the evolution of the environment depends solely on the
@@ -138,11 +77,6 @@ features into the state-space definition \cite{cit:boutilier}.
 The agent interacts with the environment through actions. In the POMDP framework, each action
 simultaneously fulfills two purposes: to influence the evolution of the environment, and to gather
 information regarding the state of the environment.
-
-Each action can represent some actual action the agent is allowed to take, such as activating a
-motor, or can express a more abstract function, such as ``walk forward''. Abstract actions can be
-implemented as routines which perform the needed intermediate steps: the only requirement for the
-definition of an action is that its consequences on the environment are understood.
 
 The full set of actions available to the agent is called the \textit{action space}, or otherwise
 referred to as $A$. This is the second element of the POMDP tuple. It is usually assumed that all
@@ -165,8 +99,8 @@ All observations are, as are states and actions, grouped in a set, $\Omega$, whe
 \subsection{Transition Function}
 
 In a POMDP, the evolution dynamics of the environment are encoded in a function, called
-\textit{transition function}. This function allows to specify the interrelations between each state
-and each action, and the consequences of actions in terms of environment progression over time.
+\textit{transition function}. This function encodes the consequences of actions with respect to the
+environment states.
 
 In particular the transition function is a function
 
@@ -208,13 +142,6 @@ Note that the reward function specifies a reward for each single transition the 
 independently from the current timestep. Often most of the transitions have no particular reward,
 but the agent still needs to consider them all when computing its policy.
 
-% After defining the reward function, one can start to imagine how the MDP framework operates. The
-% agent has access to actions, and it knows how these actions affect the environment via the
-% transition function. Using this function it can determine the best sequence of actions to select in
-% order to steer the environment towards a particular state. Finally, the state to reach is determined
-% by weighting pros and cons of any specific trajectory within the environment, and all intermediate
-% rewards the agent could pick up along the way.
-
 \subsection{Observation Function}
 
 The POMDP framework models the way the agent is able to receive information from observations using
@@ -229,11 +156,10 @@ after taking action $a$.
 
 Note that the state is the one of \textit{arrival}, not the one where the action is performed.
 
-\subsection{Horizon and Discount}
+\subsection{Horizon}
 
-As we mentioned before, a POMDP is a tool that takes into account future rewards in order to compute
-the best possible policy \ys{POMDP is a tool to model the world,}. The agent does in fact try to maximize its \textit{expected return} within
-an \textit{episode}: the expected sum of all rewards obtained within a single try at the task.
+In the POMDP framework the agent tries to maximize its \textit{expected return} within an
+\textit{episode}: the expected sum of all rewards obtained within a single try at the task.
 
 The length of a specific episode is determined by a parameter called \textit{horizon}. An horizon of
 1 timestep generates what is generally known as a \textit{myopic policy}. Such a policy acts in a
@@ -242,39 +168,15 @@ increases the final policy takes into account more and more possible outcomes, b
 but, depending on the task, more performant overall. We can describe the goal function of a POMDP
 with finite horizon $h$ as:
 
-% Infinite horizons have a disadvantage though. While in finite horizons the agent has an incentive as
-% to act optimally, in order to obtain the maximum possible reward within its alloted time, in an
-% infinite horizon there is no such urgency. Reward obtaining actions can be postponed indefinitely,
-% since in the limit the reward the agent will be able to obtain will remain the same (infinite).
-
 \[ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ] \]
-
-A different way of presenting the concept of horizon is with the concept of \textit{discounting}.
-Discounting makes rewards less valuable the further away in time they get collected. A simple
-real-world example are banks interest rates: they lend money in the present, and to compensate for
-that, they ask in return more money in the future. This is precisely because obtaining something now
-is more valuable than obtaining it in the future.
-
-Using discounting, an agent tries to maximize the \textit{expected discounted return}. All gained rewards are
-decreased geometrically by a discount factor $\gamma \in [0,1]$ (note the $\infty$ instead of $h$):
-
-\[ \mathbb{E}[\text{discounted return}] = \mathbb{E} \left [ \sum_{t=0}^{\infty} \gamma^t R(s_t,
-a_t, s_{t+1}) \right ] \]
-
-In this way, rewards that are far in the future become essentially meaningless, forcing the agent to
-consider the present as more important of the far future. In essence, we are forcing the discounted
-return to converge to a finite quantity. When $\gamma$ is 0 we have a single-step problem, where the
-agent wants to maximize its immediate reward using a myopic policy. When $\gamma$ is 1 we
-have a situation where there is no incentive for an agent to act, since the expected return will not
-change. $\gamma$ is the seventh element of the POMDP tuple.
 
 \subsection{History and Belief}
 
-The observation function does not allow the agent to disambiguate between states \ys{completely}, or the problem
-would convert directly to an MDP. Instead, what happens is called \textit{perceptual aliasing}: each
-obtained observation is compatible with a subset of $S$. For example, in a room where half the walls
-are white, a robot seeing white would not know for certain where it is looking. At the same time, it
-would still be better off than not knowing anything at all.
+The observation function does not allow the agent to disambiguate between states unambiguously, or
+the problem would convert directly to an MDP. Instead, what happens is called \textit{perceptual
+aliasing}: each obtained observation is compatible with a subset of $S$. For example, in a room
+where half the walls are white, a robot seeing white would not know for certain where it is looking.
+At the same time, it would still be better off than not knowing anything at all.
 
 The agent must reason about which of the possible underlying states of the environment are
 compatible with all previously obtained observations in order to plan its moves.
@@ -302,13 +204,11 @@ it is a probability vector.
 
 The belief allows for a reinterpretation of the POMDP framework. The belief can in fact be used in
 lieu of a state, since it is possible to compute new transition and reward functions that depend on
-beliefs rather than states. This transforms automatically the POMDP into an MDP \ys{just say belief MDP, and then cite a paper}(called
-\textit{belief MDP}), where the belief is now the state of the agent. An MDP \ys{belief MDP} is simply a POMDP where
-the agent can see the state - in this case the belief - and there are no observations nor
-observation function.
+beliefs rather than states. This transforms automatically the POMDP into a \textit{belief MDP}
+\cite{cit:pomdp}, where the belief is now the state of the agent.
 
-We can show how this can be done using $\tau$ as the new transition function and $\rho$ as the new
-reward function:
+The belief MDP is created by generating a new transition function $\tau$ and reward function $\rho$
+as follows:
 
 \[ \tau(b,a,b') = \sum_{o\in \Omega} Pr(b' | b, a, o) \sum_{s\in S} O(s,a,o) b(s) \]
 
@@ -350,27 +250,6 @@ actions:
 
 \[ a \sim \pi(h, b) \]
 
-% In general we are interested in what is called the \textit{optimal policy}, which is the one whose
-% actions maximize the expected (discounted) return: it behaves better than all other policies on
-% average. Policies can be stochastic, so that in a given state there may be multiple action options
-% from where one is randomly picked up.
-%
-% A useful property of the optimal policy is that is composed recursively. An optimal policy for
-% horizon $h$ only defines a single action to be taken per state. Once that action has been performed,
-% the agent can safely adopt the optimal policy for horizon $h-1$ from its resulting next state. This
-% means that any optimal policy for a particular horizon also contains implicitly all optimal policies
-% for all lower horizons.
-%
-% A policy in a finite-horizon MDP is a set of sequences of actions that need to be taken, where each
-% such sequence is associated with a single state. This allows the agent to act no matter what it is
-% its starting state.
-%
-% This is similar in a POMDP, with the difference that a different sequence of actions needs to be
-% stored for each hyperplane of the value function, instead that for each unique belief. The
-% optimal policy maintains the recursive property that we have defined previously for MDPs, where any
-% strategy for a particular horizon $h$ and belief $b$ is composed by a particular action plus the
-% optimal policy for horizon $h-1$.
-
 \subsection{Value Function}
 
 In order to know whether the agent is performing optimally within a given POMDP, we need a way to measure
@@ -385,86 +264,45 @@ as:
 \[ = \mathbb{E} \left [\sum_{t=0}^{h} \rho(b_{t}, a_t, b_{t+1}) \right ]
     \hspace{0.5cm}\text{where }b_0 = b \text{ and }a_t \sim \pi(h-t, b_t) \]
 
-This value is very important because it lets us compare and evaluate policies. A better policy does
-in fact have a equal or higher value for every possible belief than an inferior policy. \ys{This might not be true, or I dont understand what you are trying to say. Actually I dont know why do we even need a statement like this. You can just talk about policies in general and then explain what an optimal policy is}
+This value is very important because it lets us compare and evaluate policies. This is because a
+better policy does have a equal or higher value for every possible belief than an inferior policy
+\cite{cit:suttonbarto}.
 
 A value function can be expressed recursively with what is called the \textit{Bellman equation}.
 The value of a state can be computed as the expected reward that the agent can obtain in the
-next timestep, plus a discounted total which represents what is going to happen in the future.
+next timestep, plus a value which represents what is going to happen in the future.
 
-\[ V^{\pi}_{h}(b) = \sum_a \pi(h, b, a) \sum_{b'} \tau(b, a, b') \left [ \rho(b, a, b') + \gamma
+\[ V^{\pi}_{h}(b) = \sum_a \pi(h, b, a) \sum_{b'} \tau(b, a, b') \left [ \rho(b, a, b') +
 V^{\pi}_{h-1}(b') \right ] \]
 
 Since the value function of a POMDP is a function dependent on beliefs, it is defined on a simplex
 space of $|S|-1$ dimensions, which is continuous. The property that makes a belief MDP tractable is
-that its value function is \textit{piecewise linear and convex} (PWLC). \ys{write more about the PWLC property and then try to use it as a context when you describe $rho$POMDP} This means that while it is
-defined over a continuous space, it is in fact composed of a finite number of hyperplanes, which can
-be computed and stored in polynomial time and space. This makes it possible to solve a belief MDP
-exactly \cite{cit:pomdp}.
+that its value function is \textit{piecewise linear and convex} (PWLC). This means that it is
+``determined by a set of hyperplanes, the value at given belief point being that of the highest
+hyperplane'' \cite{cit:rpomdp}. This makes it possible to solve a belief MDP exactly
+\cite{cit:pomdp}.
 
 In general, when we are looking for a solution for a POMDP we are looking for a policy $\pi^*$, called
 \textit{optimal policy}, that maximizes the value over all beliefs:
 
 \[ V^{\pi^*}_h = \max_\pi V^{\pi}_h \]
 
-% \subsection{Q-function}
-%
-% A function that is closely tied with the value function is the \textit{Q-function}. The Q-function
-% also contains values with respect to a policy and a state, but they also depends on an action. The
-% Q-function represents the value a state would have if we performed such an action, and followed the
-% specified policy from there after. In short:
-%
-% \[ Q^{\pi}_{h}(s,a) = \sum_{s'} T(s, a, s') \left [ R(s, a, s') + \gamma
-% V^{\pi}_{s'\:h-1} \right ] \]
-%
-% The Q-function also has an optimal version, $Q^*$, which depends, of course, on $V^*$. Extracting an
-% optimal policy from $Q^*$ is extremely easy, as it is possible to simply perform a maximization on
-% the actions over the Q-function, and the best action is automatically found.
-%
-% \[ a^* = \arg\max_a Q^*_h(s,a) \hspace{.5cm}\forall s \in S\]
-%
-% Many solution methods rely on the direct approximation of the optimal Q-function in order to find
-% the optimal policy. One of the beauties of this approach is the optimal policy can computed via a
-% single-step maximization of the Q-function. This is because the Q-function already encodes
-% internally the expectations over future rewards, and in this way allows us to perform a simple
-% greedy maximization to obtain a non-myopic solution.
-
-%\section{Generative Model}
-%
-%What we have described up until now are models which assume that you have a lot of explicit
-%knowledge about the problem you want to solve. This is because you need to know perfectly the
-%transition function, observation function and reward function. Having this kind of intimate
-%knowledge of a problem is, unfortunately, relatively rare.
-%
-%Thankfully, in order to apply Monte-Carlo techniques there is no need to have this level of detail
-%in the description of a problem. Instead it is possible to work solely on a generative model which
-%the agent can sample from in order to reproduce the behavior of the world, but is at the same time a
-%black box with respect to its inner workings. Samples drawn from a generative model are
-%indistinguishable from those sampled from a full-fledged model.
-%
-%Generative models are useful as one can gather real world data from an unknown stochastic process
-%and use it to feed a Monte-Carlo planner, without the need to accurately study the process and
-%determine exact probabilities and rewards for the transition and reward functions. It can also
-%happen that computationally, a generative model is faster to run than a model which requires
-%maintaining huge internal tables to store the transition and reward functions.
-%
-%In both cases, it is important to keep in mind that not all components of an MDP need to be directly
-%available in order to be able to compute a good policy.
-
 \section{$\rho$POMDP}
 
-As we have already mentioned, in a POMDP the reward is defined in terms of the belief, as a linear
-combination of the basic MDP reward function: \ys{please elaborate on what you are trying to say}
+As we have already mentioned, in a belief MDP the reward is defined in terms of the belief, called
+\textit{belief dependent reward}. $\rho$ is then defined as a linear function over the original
+POMDP reward function and the belief space:
 
 \[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
 
-However, if the reward function is truly \ys{only rather than truly} dependent on the information the agent has on the current
-state of the world, rather than on the underlying state of the world itself, the MDP reward function
-becomes useless, and as such our definition of $\rho$. In the case of surveillance, the agent
-actions should maximize the knowledge that the agent has of the world, independently of which state
-the world is currently in.
+However, in some cases the reward function is solely dependent on the information the agent has on
+the current state of the world, rather than on the underlying state of the world itself. In such
+situations the original POMDP reward function becomes useless, and as such our definition of $\rho$.
+For example, in the case of surveillance, there is no inherent reward for the agent when the
+environment is in a state rather than another. Instead, the agent actions should maximize the
+knowledge that the agent has of the world.
 
-In this case, the $\rho$ function is defined independently, and is not tied to states anymore.
+In such cases the $\rho$ function is defined independently, and is not tied to states anymore.
 Unfortunately, this means giving up on the PWLC property of the value function, which was the only
 way in which it was possible to solve a POMDP in the first place. While it has been proved in
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function

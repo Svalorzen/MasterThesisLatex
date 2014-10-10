@@ -5,31 +5,6 @@
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[Paninski(2003)]{cit:badentropy}
-Liam Paninski.
-\newblock Estimation of entropy and mutual information.
-\newblock \emph{Neural Comput.}, 15\penalty0 (6):\penalty0 1191--1253, June
-  2003.
-\newblock ISSN 0899-7667.
-\newblock \doi{10.1162/089976603321780272}.
-\newblock URL \url{http://dx.doi.org/10.1162/089976603321780272}.
-
-\bibitem[Welsh and Farrington(2009)]{cit:cctv}
-Brandon~C. Welsh and David~P. Farrington.
-\newblock Public area cctv and crime prevention: An updated systematic review
-  and meta-analysis.
-\newblock \emph{Justice Quarterly}, 26\penalty0 (4):\penalty0 716--745, 2009.
-\newblock \doi{10.1080/07418820802506206}.
-\newblock URL \url{http://dx.doi.org/10.1080/07418820802506206}.
-
-\bibitem[Pottie and Kaiser(2000)]{cit:cctvenergy}
-G.~J. Pottie and W.~J. Kaiser.
-\newblock Wireless integrated network sensors.
-\newblock \emph{Commun. ACM}, 43\penalty0 (5):\penalty0 51--58, May 2000.
-\newblock ISSN 0001-0782.
-\newblock \doi{10.1145/332833.332838}.
-\newblock URL \url{http://doi.acm.org/10.1145/332833.332838}.
-
 \bibitem[Kaelbling et~al.(1998)Kaelbling, Littman, and Cassandra]{cit:pomdp}
 Leslie~Pack Kaelbling, Michael~L. Littman, and Anthony~R. Cassandra.
 \newblock Planning and acting in partially observable stochastic domains.
@@ -65,6 +40,36 @@ Craig Boutilier, Thomas~L. Dean, and Steve Hanks.
 \newblock Decision-theoretic planning: Structural assumptions and computational
   leverage.
 \newblock \emph{CoRR}, abs/1105.5460, 2011.
+
+\bibitem[Sutton and Barto(1998)]{cit:suttonbarto}
+Richard~S. Sutton and Andrew~G. Barto.
+\newblock \emph{Introduction to Reinforcement Learning}.
+\newblock MIT Press, Cambridge, MA, USA, 1st edition, 1998.
+\newblock ISBN 0262193981.
+
+\bibitem[Kocsis and Szepesv\'{a}ri(2006)]{cit:uct}
+Levente Kocsis and Csaba Szepesv\'{a}ri.
+\newblock Bandit based monte-carlo planning.
+\newblock In \emph{Proceedings of the 17th European Conference on Machine
+  Learning}, ECML'06, pages 282--293, Berlin, Heidelberg, 2006.
+  Springer-Verlag.
+\newblock ISBN 3-540-45375-X, 978-3-540-45375-8.
+\newblock \doi{10.1007/11871842\_29}.
+\newblock URL \url{http://dx.doi.org/10.1007/11871842\_29}.
+
+\bibitem[Paninski(2003)]{cit:badentropy}
+Liam Paninski.
+\newblock Estimation of entropy and mutual information.
+\newblock \emph{Neural Comput.}, 15\penalty0 (6):\penalty0 1191--1253, June
+  2003.
+\newblock ISSN 0899-7667.
+\newblock \doi{10.1162/089976603321780272}.
+\newblock URL \url{http://dx.doi.org/10.1162/089976603321780272}.
+
+\bibitem[Archer et~al.(2013)Archer, Park, and Pillow]{cit:entropyfixes}
+Evan Archer, Il~Memming Park, and Jonathan~W. Pillow.
+\newblock Bayesian entropy estimation for countable discrete distributions.
+\newblock \emph{CoRR}, abs/1302.0328, 2013.
 
 \bibitem[Kreucher et~al.(2005)Kreucher, Kastella, and Hero]{cit:relworktanks}
 Chris Kreucher, Keith Kastella, and Alfred~O. Hero, III.
@@ -151,12 +156,6 @@ St{\'e}phane Ross, Joelle Pineau, S{\'e}bastien Paquet, and Brahim Chaib-draa.
 \newblock ISSN 1076-9757.
 \newblock URL \url{http://dl.acm.org/citation.cfm?id=1622673.1622690}.
 
-\bibitem[Sutton and Barto(1998)]{cit:suttonbarto}
-Richard~S. Sutton and Andrew~G. Barto.
-\newblock \emph{Introduction to Reinforcement Learning}.
-\newblock MIT Press, Cambridge, MA, USA, 1st edition, 1998.
-\newblock ISBN 0262193981.
-
 \bibitem[Cassandra et~al.(2013)Cassandra, Littman, and Zhang]{cit:incpruning}
 Anthony~R. Cassandra, Michael~L. Littman, and Nevin~Lianwen Zhang.
 \newblock Incremental pruning: A simple, fast, exact method for partially
@@ -176,21 +175,6 @@ Sebastian Thrun, Wolfram Burgard, and Dieter Fox.
 \newblock The MIT Press, 2005.
 \newblock ISBN 0262201623.
 
-\bibitem[Kocsis and Szepesv\'{a}ri(2006)]{cit:uct}
-Levente Kocsis and Csaba Szepesv\'{a}ri.
-\newblock Bandit based monte-carlo planning.
-\newblock In \emph{Proceedings of the 17th European Conference on Machine
-  Learning}, ECML'06, pages 282--293, Berlin, Heidelberg, 2006.
-  Springer-Verlag.
-\newblock ISBN 3-540-45375-X, 978-3-540-45375-8.
-\newblock \doi{10.1007/11871842\_29}.
-\newblock URL \url{http://dx.doi.org/10.1007/11871842\_29}.
-
-\bibitem[Archer et~al.(2013)Archer, Park, and Pillow]{cit:entropyfixes}
-Evan Archer, Il~Memming Park, and Jonathan~W. Pillow.
-\newblock Bayesian entropy estimation for countable discrete distributions.
-\newblock \emph{CoRR}, abs/1302.0328, 2013.
-
 \bibitem[Cassandra et~al.(1994)Cassandra, Kaelbling, and Littman]{cit:tiger}
 Anthony~R. Cassandra, Leslie~Pack Kaelbling, and Michael~L. Littman.
 \newblock Acting optimally in partially observable stochastic domains.
@@ -199,5 +183,21 @@ Anthony~R. Cassandra, Leslie~Pack Kaelbling, and Michael~L. Littman.
   American Association for Artificial Intelligence.
 \newblock ISBN 0-262-61102-3.
 \newblock URL \url{http://dl.acm.org/citation.cfm?id=199480.199520}.
+
+\bibitem[Welsh and Farrington(2009)]{cit:cctv}
+Brandon~C. Welsh and David~P. Farrington.
+\newblock Public area cctv and crime prevention: An updated systematic review
+  and meta-analysis.
+\newblock \emph{Justice Quarterly}, 26\penalty0 (4):\penalty0 716--745, 2009.
+\newblock \doi{10.1080/07418820802506206}.
+\newblock URL \url{http://dx.doi.org/10.1080/07418820802506206}.
+
+\bibitem[Pottie and Kaiser(2000)]{cit:cctvenergy}
+G.~J. Pottie and W.~J. Kaiser.
+\newblock Wireless integrated network sensors.
+\newblock \emph{Commun. ACM}, 43\penalty0 (5):\penalty0 51--58, May 2000.
+\newblock ISSN 0001-0782.
+\newblock \doi{10.1145/332833.332838}.
+\newblock URL \url{http://doi.acm.org/10.1145/332833.332838}.
 
 \end{thebibliography}
