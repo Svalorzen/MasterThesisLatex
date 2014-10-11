@@ -46,10 +46,9 @@ whatever time is available, and they are always able to provide some sort of sol
 is available, the more refined the solution will be. This is in contrast with offline methods, that
 need to run to completion or otherwise nothing is gained.
 
-In online planning computations go forward in time. From the current state/belief of the agent
-possible futures are expanded in a tree of possibilities and rewards. In the end, the best action
-for the current state is picked, the environment is advanced one step, and the process repeats
-again.
+In online planning computations go forward in time. From the current state possible futures are
+expanded in a tree of possibilities and rewards. In the end, the best action for the current state
+is picked, the environment is advanced one step, and the process repeats again.
 
 In this work we chose to use an online approach, given the flexibility and power provided over
 offline techniques, and because one of our goals was to scale to real-world scenarios, which are
@@ -62,7 +61,7 @@ using negative entropy as a reward function.
 At the time of writing, one of the most promising ways of planning online is by using \textit{Monte
 Carlo algorithms}. Monte Carlo algorithms are a class of randomized algorithms which use random
 processes in order to compute their output. The output will be correct within a certain probability,
-which trades off with their speed and their deterministic running time.
+which trades off with their speed, deterministic running time and anytime properties.
 
 In the MDP/POMDP frameworks Monte Carlo algorithms only need results from samples of the
 environment; as in, transition and reward results sampled from the model's distribution using
@@ -83,7 +82,7 @@ Search} (MCTS) \cite{cit:mcts}. This algorithm is an MDP online planner which ha
 praise for its contributions in the development of highly performant board game AIs.
 
 MCTS was originally devised as a method to approach the board game Go. The algorithm runs Monte
-Carlo simulations from the current state of the agent, which is the input, and progressively builds
+Carlo simulations from the current state, which is the input, and progressively builds
 a tree of outcomes.
 
 \begin{algorithm}
@@ -217,7 +216,8 @@ update can be performed using the following formula:
 
 For a full belief, this requires $O(|S|^2)$ operations, which for POMDPs with a large state space
 can result in an extremely expensive operation. Since MCTS requires a very high number of samples in
-order to provide useful answers, each sample needs to be performed in as little time as possible.
+order to provide useful answers, each sample needs to be performed in as little time as possible,
+and such expensive operations are thus not acceptable.
 
 POMCP solves this problem by representing beliefs as particle vectors containing a certain amount of
 state particles. Such a \textit{particle belief} can be created by repeatedly sampling a belief, and
@@ -285,12 +285,12 @@ belief of the agent. POMCP, as MCTS, is again composed of two phases: tree desce
 simulation. The procedures for both are very similar to the MCTS originals.
 
 Starting from the root, POMCP samples a single state $s$ from the root's particle belief. Then,
-using UCT, it selects a state $a$, and uses both to sample a new state $s'$, a reward $r$ and an
-observation $o$. The root children are then searched for a node representing the sequence $(a,o)$. If
-one is found, the algorithm descends one level into the tree. While descending, POMCP appends $s'$
-to the particle belief of the selected child node. Then, it repeats the action selection and
-sampling process using $s'$ as its $s$. This repeats until the algorithm is unable to descend
-further into the tree.
+using UCT, it selects a state $a$, and uses it with $s$ to sample a new state $s'$, a reward $r$ and
+an observation $o$. The root children are then searched for a node representing the sequence
+$(a,o)$. If one is found, the algorithm descends one level into the tree. While descending, POMCP
+appends $s'$ to the particle belief of the selected child node. Then, it repeats the action
+selection and sampling process using $s'$ as its $s$. This repeats until the algorithm is unable to
+descend further into the tree.
 
 The adding of particles to lower level particle beliefs is the way POMCP updates beliefs, without
 the $O(|S|^2)$ complexity.

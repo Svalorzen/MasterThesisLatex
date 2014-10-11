@@ -1,9 +1,9 @@
 \section{Partially Observable Markov Decision Process}\label{ref:pomdp}
 \sectionmark{POMDP}
 
-In order to compute a strategy to complete a task within an environment we need to model the
-dynamics of the environment together with the task objectives. The framework we are going to use in
-this work stems from the \textit{Markov Decision Process} (MDP), named after Andrey Markov.
+In order to optimally perform a task within an environment we need to jointly model the dynamics of
+the environment and the task objectives. The modeling framework we are going to use in this work
+stems from the \textit{Markov Decision Process} (MDP), named after Andrey Markov.
 
 MDPs structure reasoning around a probabilistic automaton. The agent \textit{acts} upon the
 environment, which is in a particular \textit{state}. As a result, the environment
@@ -88,8 +88,8 @@ actions are available to the agent at any timestep.
 
 In a POMDP the agent does not have access to the current state of the environment. The agent instead
 receives, at each timestep, an \textit{observation}, which depends on the action that the agent
-performed and on the new state reached by the environment. Observations generally do not allow
-unambiguous distinction between states, but they restrict the amount of possibilities.
+performed and on the state reached by the environment after the action. Observations generally do
+not allow unambiguous distinction between states, but they restrict the amount of possibilities.
 
 All observations are, as are states and actions, grouped in a set, $\Omega$, where usually $|\Omega| <
 |S|$. This is the fifth element of the POMDP tuple:
@@ -115,8 +115,8 @@ function is to look at it as representing a conditional probability function:
 \[ T(s, a, s') = Pr(s' | s, a) \]
 
 Where $Pr(s'|s,a)$ is the probability of the environment transitioning to $s'$ from $s$ when the
-agent performs action $a$. By using this notation, we can additionally show formally what the
-Markov property is about. This property holds when
+agent performs action $a$. By using this notation, we can show formally what the Markov property is
+about. This property holds when
 
 \[ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S \]
 
@@ -135,8 +135,7 @@ even greater reward for successful efforts. On the other hand, one could allocat
 for failed attempts. All these would influence the final behavior of the agent.
 
 In these terms, all possible achievements and penalties have a weight and can be compared to each
-other, in order to allow the agent to determine which goal to pursue depending on circumstances. The
-usage of numbers is necessary in order for this weighting to take place at all.
+other, in order to allow the agent to determine which goal to pursue depending on circumstances.
 
 Note that the reward function specifies a reward for each single transition the agent encounters,
 independently from the current timestep. Often most of the transitions have no particular reward,
@@ -205,7 +204,7 @@ it is a probability vector.
 The belief allows for a reinterpretation of the POMDP framework. The belief can in fact be used in
 lieu of a state, since it is possible to compute new transition and reward functions that depend on
 beliefs rather than states. This transforms automatically the POMDP into a \textit{belief MDP}
-\cite{cit:pomdp}, where the belief is now the state of the agent.
+\cite{cit:pomdp}, where the belief is now the state of the environment.
 
 The belief MDP is created by generating a new transition function $\tau$ and reward function $\rho$
 as follows:
@@ -226,9 +225,9 @@ Similarly:
 
 \[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
 
-Although this transformation allows us to forget the partial observability, we have now introduced a
-new problem: a continuous state space. Although continuous MDPs are very hard to solve generally,
-the belief MDP can be approached due to its specific properties.
+Although this transformation allows us to forget the partial observability, which is now embedded in
+$\tau$, we have now introduced a new problem: a continuous state space. Although continuous MDPs are
+very hard to solve generally, the belief MDP can be approached due to its specific properties.
 
 \subsection{Policy}
 
