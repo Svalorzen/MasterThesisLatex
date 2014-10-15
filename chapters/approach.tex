@@ -1,9 +1,9 @@
 \section{Myopicity of Active Perception}
 
-As we have already said, POMDPs are a framework useful in order to extract non-myopic policies from
-a problem. However, in order to justify the usage of POMDPs, we have to demonstrate that Active
-Perception in general requires the usage of non-myopic solutions in the first place. This is because
-not all problems necessarily require non-myopic solutions.
+As we have already said, POMDPs can be used naturally to compute non-myopic policies to solve a
+particular task. However, in order to justify the usage of POMDPs, we have to demonstrate that the
+Active Perception task requires the usage of non-myopic solutions in the first place.  This is
+because not all problems necessarily require non-myopic solutions.
 
 We propose two different POMDP models of Active Perception problems. For one of the models we will
 prove that a non-myopic solution is required in order to obtain an optimal solution. For the second
@@ -77,13 +77,13 @@ expected return from a uniform belief. This is done by simply computing the prev
 summatory over every term and performing the appropriate belief updates.
 
 However, expected non-myopic returns are not the same for all choices of $a_1$ and $a_2$. For
-example selecting $a_1 = S1$ and any $a_2$ results in a certain expected return $v$.  On the other
-hand, if $a_1 = S4$, all expected returns are greater than $v$ for all but one choice of $a_2$. In
-other words, selecting $a_1 = S1$ leads necessarily to a lower two-step expected return, since the
-agent can select $a_2$ to only pick the best cases.
+example selecting $a_1 = S1$ always results in a certain expected return $v$, independently from
+$a_2$. On the other hand, if $a_1 = S4$, all expected returns are greater than $v$ for all but one
+choice of $a_2$. In other words, selecting $a_1 = S1$ leads necessarily to a lower two-step expected
+return, since the agent can select $a_2$ to only pick the best cases.
 
 Selecting $a_1$ to avoid the worst cases can only be done when there is a way to distinguish between
-two different $a_1$.  Since myopic expected returns are the same for all actions, this is impossible
+two different $a_1$.  Since myopic expected returns are the same for all $a_1$, this is impossible
 to do with a myopic solution.
 
 Note that the problem considered can be extended into uncountably many models where the same
@@ -162,33 +162,67 @@ function.
 To avoid this, we estimate the immediate reward for a specific action-observation transition by
 using maximum-likelihood estimates of the belief extracted from the particle beliefs POMCP
 generates. However, since particle beliefs are updated constantly, computing a direct estimate of
-every belief reached during each sample episode would excessively hamper performance. We solved this problem
-differently for estimating max of belief rewards and negative entropy rewards.
+every belief reached during each sample episode would excessively hamper performance. We solved this
+problem differently for estimating max of belief rewards and negative entropy rewards.
 
-%% CHECK AGAIN WITH CODE CAN'T REMEMBER
 For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in each
-particle belief, the number of particles for each type of particle and which particle is the most
-common. At each particle insertion the number of particles for that type is compared against the
-number of the old most common particle. Whichever is higher becomes the new most common particle,
-and the new max of belief is computed as the ratio between the most common particle count and the
-total number of particles in the belief.
+particle belief, the number of particles for each type of particle and which type of particle is the
+most common. At each particle insertion the number of particles for that type is compared against
+the number of the old most common particle. Whichever is higher becomes the new most common
+particle, and the new max of belief is computed as the ratio between the most common particle count
+and the total number of particles in the belief.
 
-For estimation of entropy, the situation is not quite so easy. Entropy estimation from discrete
-samples is bound to be biased, and there is no way to remove this bias completely
+\begin{algorithm}[H]
+    \caption{Max of Belief Reward Estimation}
+    \SetKwFunction{update}{Update Estimate}
+
+    \SetKwProg{main}{Algorithm}{}{}
+    \main{\update}{
+        \KwData{Particle Belief b, Particle s}
+\nl     N(s) = N(s) + 1\;
+\nl     \If{N(s) $>$ N(max\_s)}{
+\nl         max\_s = s\;
+        }
+\nl     $\rho(b)$ = $\frac{N(max\_s)}{N(b)}$\;
+    }
+\end{algorithm}
+
+For estimation of entropy, the situation is not quite so straightforward. Entropy estimation from
+discrete samples is bound to be biased, and there is no way to remove this bias completely
 \cite{cit:badentropy}. On the other hand, techniques to decrease bias are computationally heavy and
 rely on usage of additional complex distributions to account for bias \cite{cit:entropyfixes}.
 Since $\rho$-POMCP needed to be as fast as possible, we decided to try a more direct approach in the
 hope that any inaccuracies would not hamper significantly the search process.
 
-Entropy is computed as a summatory of terms, one for each type of particle. $\rho$-POMCP stores
-internally both the latest negative entropy estimate, and each of the separate terms that compose
-it. At each new particle insertion in a particle belief, we simply remove from our previous full
-estimate the relevant term for the particle state, recompute the term and add it again. This
-approach is not mathematically correct as, in theory, all terms would need to be updated at each
-insertion. This is because each entropy term depends on the probability of such term, which in turn
-depends on the total number of particles in the belief, which has just been increased by one. In
-essence, we are overestimating negative entropy. Again, we would have bias anyway no matter the
-strategy we used.
+Negative entropy is computed as a summation of terms, one for each type of particle:
+
+\[ -H(b) = \sum_s p(s) \log p(s) \]
+\[ -H(b) \approx \sum_s \frac{n_s}{N} \log \frac{n_s}{N} \]
+
+$\rho$-POMCP stores internally both the latest negative entropy estimate $-H(b)$, and each of the
+separate terms that compose it. At each new particle insertion in a particle belief, we simply
+remove from our previous full estimate the relevant term for the particle state, recompute the term
+and add it again. This approach is not mathematically correct as, in theory, all terms would need to
+be updated at each insertion. This is because each entropy term depends on the probability of such
+term, which in turn depends on the total number of particles in the belief, which has just been
+increased by one. In essence, we are overestimating negative entropy. Again, we would have bias
+anyway no matter the strategy we used.
+
+\begin{algorithm}[H]
+    \caption{Negative Entropy Reward Estimation}
+    \SetKwFunction{update}{Update Estimate}
+
+    \SetKwProg{main}{Algorithm}{}{}
+    \main{\update}{
+        \KwData{Particle Belief b, Particle Type s}
+\nl     $\rho(b)$ = $\rho(b)$ - $\rho(s)$\;
+\nl     N(s) = N(s) + 1\;
+\nl     p = $\frac{N(s)}{N(b)}$\;
+\nl     $\rho(s)$ = p $\cdot$ log(p)\;
+\nl     $\rho(b)$ = $\rho(b)$ + $\rho(s)$\;
+    }
+
+\end{algorithm}
 
 In practice, this bias turns out not to be a problem as long as each type of particle is added with
 relative frequency, so as to keep all terms that compose the overall negative entropy ``fresh''.
@@ -306,49 +340,55 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
 \nl         s $\sim$ b\;
 \nl         \simulate{\O, s, 0}\;
         }
-\nl     \KwRet most valued action in tree root\;
+\nl     \KwRet $\arg\max_a V(a)$\;
     }
 
     \setcounter{AlgoLine}{0}
     \SetKwProg{simul}{Procedure}{}{}
     \simul{\simulate{h, s, d}}{
         \KwData{History h, State s, Depth d}
+\nl     N($h$) = N($h$) + 1\;
 \nl     select action $a$ with UCT\;
 \nl     ($s', o$) $\sim$ G($s,a$)\;
-\nl     \If{$d < $ horizon}{
-\nl         \eIf{T($h,a,o$) is not \O}{
-\nl             futureRew = \simulate{$(h,a,o), s', d+1$}\;
-            }{
-\nl             initialize T($h,a,o$)\;
-\nl             N($h$) = N($h,a$) = V($h,a$) = F($h,a$) = 0\;
-\nl             futureRew = 0\;
-            }
+\nl     \eIf{T($h,a,o$) is \O}{
+\nl         initialize T($h,a,o$)\;
+\nl         newNode = true\;
+        }{
+\nl         newNode = false\;
         }
-\nl     B(h) = B(h) $\bigcup \;\{ s' \}$\;
-\nl     r = estimate reward from B(h)\;
-\nl     N($h$) = N($h$) + 1\;
+\nl     B($h,a,o$) = B($h,a,o$) $\bigcup \;\{ s' \}$\;
+\nl     \eIf{$d < $ horizon and newNode == false}{
+\nl         r = \simulate{$(h,a,o), s', d+1$}\;
+        }{
+\nl         N($h,a,o$) = N($h,a,o$) + 1\;
+\nl         r = $\rho(h,a,o)$\;
+        }
 \nl     N($h,a$) = N($h,a$) + 1\;
-\nl     F($h,a$) += $\frac{futureRew - F(h,a)}{N(h,a)}$\;
-\nl     V($h,a$) = r + $\gamma$ * F($h,a$)\;
+\nl     V($h,a$) = V($h,a$) + $\frac{r - V(h,a)}{N(h,a)}$\;
 \nl     oldV = V($h$)\;
-\nl     V($h$) = $\max_{a'} V(h,a')$\;
+\nl     V($h$) = $\rho(h)$ + $\gamma \cdot \max_{a'} V(h,a')$\;
 \nl     \KwRet N($h$) * ( V($h$) - oldV ) + V($h$);
     }
 \end{multicols}
 \end{algorithm}
 
-$\rho$-POMCP starts off as POMCP, by extracting a particle state from the root belief and simulating
-an episode from it. Since the model does not provide rewards, they are directly estimated from the
-particle belief. Once this is done, $\rho$-POMCP re-evaluates the value for the specific action
-tried by setting it as the sum of the immediate reward just computed, and an average over
-backpropagated reward.
+$\rho$-POMCP starts off as POMCP, by simulating episodes from the root of the tree.
 
-Then it computes the value to backpropagate so that the new estimate for the reward of the particle
-belief is successfully corrected towards the root.
+Starting from the root, $\rho$-POMCP samples a single state $s$ from the root's particle belief.
+Then, using UCT, it selects a state $a$, and uses it with $s$ to sample a new state $s'$, a reward
+$r$ and an observation $o$. The root child representing the sequence $(a,o)$ is selected, or if it
+did not exist, it is created. The algorithm then updates the particle belief of the child before
+deciding whether to continue to descend the tree. While descending, POMCP appends $s'$ to the
+particle belief of the selected child node. Then, it repeats the action selection and sampling
+process using $s'$ as its $s$. This repeats until the algorithm is unable to descend further into
+the tree, at which point the future reward is approximated as simply the reward of the last
+selected child's belief.
 
-An additional difference between POMCP and $\rho$-POMCP is the lack of a rollout procedure. This is
-because, when outside of the tree, $\rho$-POMCP has no way to approximate rewards, and so skips
-random policy rollouts altogether.
+The algorithm then updates the value of all actions taken during the descent, while backpropagating
+fake datapoints to update all old reward estimates up in the tree.
+
+Notice that $\rho$-POMCP lacks a rollout procedure. This is because $\rho$-POMCP has no way to
+approximate rewards when outside the tree, and so skips random policy rollouts altogether.
 
 \section{Multi Person}
 
@@ -364,11 +404,12 @@ given state there are many more possible states reachable. Thus, the branching f
 is exponential in the number of targets.
 
 In order to avoid dealing with this problem, we setup a system where we run concurrently many
-$\rho$-POMCP instances. Each solver computes an individual policy for a single target only. This
-allows each solver to work on a relatively small tree, without exploding the number of braches.
+$\rho$-POMCP instances. Each solver computes an individual policy for a single target only and
+receives individual observations. This allows each solver to work on a relatively small tree,
+without exploding the number of branches.
 
 We then estimate the final action to be performed by merging the separate results of all the
 solvers.  From each solver we then obtain a value estimate for each available action; the final
-action is then the one that maximises the sum of all values across solvers. In order to obtain
-consistent evaluations of all actions so that we can compare them between solvers, we disable UCT
-for the first depth level in the tree, and instead sample equally from each action.
+action is then the one that maximizes the sum of all values across solvers. In order to obtain
+consistent evaluations of all root actions so that we can compare them between solvers, we disable
+UCT for the first depth level in the tree, and instead sample equally from each action.
