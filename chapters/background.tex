@@ -54,7 +54,7 @@ change within the environment.
 
 \subsection{State}
 
-As we said above, our environment is described through states, which all together form the
+As we said above, our \ys{the} environment is described through states, which all together form the
 \textit{state space} of the problem. Each state is unique, meaning that it represents a unique
 circumstance of the environment, different in some particular way from all others. At the same time,
 a state ignores all that is not relevant to the decision making progress. In a chess game, it does
@@ -72,6 +72,7 @@ While it can happen that a particular environment can evolve in a time-sensitive
 easily shown that all such environments can be modeled in a Markovian way by simply adding more
 features into the state-space definition \cite{cit:boutilier}.
 
+
 \subsection{Action}
 
 The agent interacts with the environment through actions. In the POMDP framework, each action
@@ -86,14 +87,15 @@ actions are available to the agent at any timestep.
 
 \subsection{Observation}
 
-In a POMDP the agent does not have access to the current state of the environment. The agent instead
+In a POMDP the agent does not have \ys{direct} access to the current state of the environment. The agent instead
 receives, at each timestep, an \textit{observation}, which depends on the action that the agent
 performed and on the state reached by the environment after the action. Observations generally do
 not allow unambiguous distinction between states, but they restrict the amount of possibilities.
 
 All observations are, as are states and actions, grouped in a set, $\Omega$, where usually $|\Omega| <
 |S|$. This is the fifth element of the POMDP tuple:
-
+\ys{no need to mention the tuple number repeatedly, Also there is no need to mention $|\Omega| <
+|S|$, this is not necessarily true, is it used somewhere in the thesis?}
 \[ \Omega = \{ o_0, o_1, o_2, ..., o_{|\Omega|} \} \]
 
 \subsection{Transition Function}
@@ -119,11 +121,12 @@ agent performs action $a$. By using this notation, we can show formally what the
 about. This property holds when
 
 \[ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S \]
+\ys{mention here that $s_{t}$, $t$ denotes the time step, earlier you defined $s_{1}$ as first state in the set $S$}
 
 \subsection{Reward Function}
 
 In a POMDP we encode the goals that we wish the agent to achieve as a \textit{reward function}.
-This function is once again defined upon states and actions, but can take values within the real
+This function is once again \ys{once again?} defined upon states and actions, but \ys{but?} can take values within the real
 domain:
 
 \[ R: S\times A\times S \rightarrow \mathbb{R} \]
@@ -135,15 +138,16 @@ even greater reward for successful efforts. On the other hand, one could allocat
 for failed attempts. All these would influence the final behavior of the agent.
 
 In these terms, all possible achievements and penalties have a weight and can be compared to each
-other, in order to allow the agent to determine which goal to pursue depending on circumstances.
+other, in order to allow the agent to determine which goal \ys{which goal sounds like agent has more than one goal, I suppose you mean "which action"} to pursue depending on circumstances.
 
 Note that the reward function specifies a reward for each single transition the agent encounters,
 independently from the current timestep. Often most of the transitions have no particular reward,
 but the agent still needs to consider them all when computing its policy.
+\ys{this statement is unclear, every $<s,a>$ pair has a reward , may be 0}
 
 \subsection{Observation Function}
 
-The POMDP framework models the way the agent is able to receive information from observations using
+The POMDP framework \ys{framework does not model anything, it provides a way to model observation function} models the way the agent is able to receive information from observations using
 an \textit{observation function}. It is a function
 
 \[ O : S' \times A \times O \rightarrow [0,1] \]
@@ -154,6 +158,8 @@ after taking action $a$.
 \[ O(s', a, o) = Pr(o | s', a) \]
 
 Note that the state is the one of \textit{arrival}, not the one where the action is performed.
+
+
 
 \subsection{Horizon}
 
@@ -188,7 +194,7 @@ states are possible at any point in an episode. This long list of actions and ob
 
 An alternative way of maintaining the history is keeping a \textit{belief} over the current state of
 the environment. Such a belief is simply a probability vector in $|S|$ dimensions, where each
-element denotes the probability that the environment is in a particular state. The belief is then a
+element denotes the probability that the environment is in a particular state. The belief is then \ys{then?} a
 \textit{sufficient statistic} of the state of the environment.
 
 At each new timestep, the agent's belief needs to be updated with the new knowledge gained by the
@@ -234,13 +240,14 @@ very hard to solve generally, the belief MDP can be approached due to its specif
 At this point we have introduced all elements that compose a POMDP. Here we talk about the solution
 itself, how it looks like and what it represents, while postponing the discussion about solving
 algorithms for Section \ref{ref:solutions} onward.
+\ys{this intro is not necessary at all!}
 
 A solution for a POMDP is called a \textit{policy}. This policy specifies a sequence of actions to
 be taken by the agent, depending on the beliefs the agent will face while acting in the model. The
 policy's decisions take into account the chosen horizon for the problem. We can define a policy
 $\pi$ as a function, that given an horizon, a belief and action returns the probability of the action
 being chosen:
-
+\ys{"This policy $\dots$  chosen horizon for the problem" is not necessary, can do without it}
 \[ \pi : H \times B \times A \rightarrow [0,1] \]
 \[ \pi(h, b, a) \in [0,1] \]
 
@@ -253,7 +260,7 @@ actions:
 
 In order to know whether the agent is performing optimally within a given POMDP, we need a way to measure
 the performance of any given policy. This is done via the \textit{value function}.
-
+\ys{the first two statements are not necessary}
 The value function maps a policy with its performance in terms of expected return from every
 possible belief the agent may face and a particular horizon. Thus, every belief has a certain
 \textit{value} under a certain policy and horizon. Formally then we can define the value of a belief
@@ -267,7 +274,7 @@ This value is very important because it lets us compare and evaluate policies. T
 better policy does have a equal or higher value for every possible belief than an inferior policy
 \cite{cit:suttonbarto}.
 
-A value function can be expressed recursively with what is called the \textit{Bellman equation}.
+A value function can be expressed recursively with what is called \ys{what is called?} the \textit{Bellman equation}.
 The value of a state can be computed as the expected reward that the agent can obtain in the
 next timestep, plus a value which represents what is going to happen in the future.
 
@@ -307,3 +314,5 @@ way in which it was possible to solve a POMDP in the first place. While it has b
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function
 will be PWLC as well, functions such as entropy are not PWLC in the first place. We discuss how we
 overcame this problem in Section \ref{ref:approach}.
+
+\ys{I am confused, if you are using $\rho$POMDP in your experiments or not. If you are directly computing the belief based reward then you are not using the $\rho$POMDP. If you are using $\rho$ POMDP, then you need to mention here how $rho$ POMDP solves the problem of belief dependent reward. We have not solved that problem, $\rho$ POMDP has! }
