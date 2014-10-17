@@ -17,6 +17,7 @@ of the model and using it to obtain a policy, or even directly approximating the
 In this work we assume we are either given a model, or a model is learned in advance, and that this
 model is used as a base for planning.
 
+
 \section{Offline vs Online}
 
 An optimal policy can be applied at virtually no computational cost with the knowledge that the
@@ -36,7 +37,7 @@ actions to apply in certain beliefs which then leads to a policy for horizon of 
 final policy needed is computed incrementally. All possible state, actions and observations are
 considered, so as to provide the correct action in every possible situation.
 
-In order to avoid the computational cost of offline methods, a new venue of approach was invented
+In order to avoid the computational cost of offline methods, a new venue of approach was invented \ys{new venue of approach was invented? }
 called \textit{online planning}. In online planning the agent continuously plans for its current
 belief, and nothing else. This requires constant computations, but at the same time makes possible
 to tackle problems orders of magnitude bigger than what is possible with offline planning, and allow
@@ -51,7 +52,7 @@ expanded in a tree of possibilities and rewards. In the end, the best action for
 is picked, the environment is advanced one step, and the process repeats again.
 
 In this work we chose to use an online approach, given the flexibility and power provided over
-offline techniques, and because one of our goals was to scale to real-world scenarios, which are
+offline \ys{online - typo?} techniques, and because one of our goals was to scale to real-world scenarios, which are
 generally intractable with offline approaches. An additional advantage which we will explore later
 is that online planners are able to deal with non-PWLC value functions, which is a challenge when
 using negative entropy as a reward function.
