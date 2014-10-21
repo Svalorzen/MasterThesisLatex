@@ -1,15 +1,22 @@
 \section{Active Perception}
-Active perception has been approached in numerous ways and not simply using reinforcement learning
-techniques.
+The Active perception task has been approached in numerous ways.
 
-\cite{cit:relworktanks} use particle distributions in order to keep track of multiple targets moving
-within a finite environment. Action selection tries to maximize the expected information gain with a
-particle sample, and subsequently use the gained information to update the posterior probabilities
-for the new particles.
+\cite{cit:relworklagrange} tackle multi-sensor system management, considering dynamic programming
+and linear solvers in order to balance the trade-offs between gathering information and energy costs
+due to communication.
 
-\cite{cit:relworklagrange} consider dynamic programming and linear solvers in order to balance the
-trade-offs between gathering information and energy costs due to communication. A Monte-Carlo
-approach is then used to effectively approximate the dynamic program results in a practical way.
+\cite{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
+a neural network. The neural network has the task of recognizing a particular visual pattern, which
+is observed through a visual sensor, which can only read portions of the pattern at any single time.
+The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
+the pattern from different point of views.
+
+\cite{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
+of each target position they use weighted Monte-Carlo particles which are updated using a model of
+the environment. Action selection tries to maximize the expected Rényi information divergence to
+reduce entropy with respect to the posterior distribution of targets. They extend their approach to
+non-myopic solutions by direct enumeration of all possible outcomes, which is computationally
+expensive and non-scalable.
 
 \cite{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
 analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
@@ -21,11 +28,11 @@ They approximate the information function defined from the usage of any $k$ sens
 function, that can be then solved efficiently with linear solvers. Once this is done, the found
 solution is checked for improvement by testing possible swaps with the sensors that were not selected.
 
-Going back to reinforcement learning approaches, \cite{cit:relworkspaan} used POMDPs to approach
-nearly the same problem tackled in this work. Their work, however, focused on offline planning using
-a point-based approximate algorithm, which required some hours in order to compute the policy for
-their model. This comes with the advantages of offline computing, but also with the same
-disadvantages.
+\cite{cit:relworkspaan} uses POMDPs to approach the multi-sensor system management problem, where
+only a subset of $k$ sensors out of a pool of $n$ sensors can be selected. Their approach is based
+on state-based reward functions, where the agent is rewarded for activating cameras with a target in
+the field of view. Their approach focused on approximate offline planning for the model using
+the SYMBOLIC PERSEUS algorithm, a variant of PERSEUS \cite{cit:perseus}.
 
 \section{POMDP}
 

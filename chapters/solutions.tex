@@ -37,25 +37,25 @@ actions to apply in certain beliefs which then leads to a policy for horizon of 
 final policy needed is computed incrementally. All possible state, actions and observations are
 considered, so as to provide the correct action in every possible situation.
 
-In order to avoid the computational cost of offline methods, a new venue of approach was invented \ys{new venue of approach was invented? }
-called \textit{online planning}. In online planning the agent continuously plans for its current
-belief, and nothing else. This requires constant computations, but at the same time makes possible
-to tackle problems orders of magnitude bigger than what is possible with offline planning, and allow
-for flexibility in updating the model, since there is no need to recompute a complete solution. In
-addition, many online planning methods are \textit{any time}: this means that they can run for
-whatever time is available, and they are always able to provide some sort of solution. The more time
-is available, the more refined the solution will be. This is in contrast with offline methods, that
-need to run to completion or otherwise nothing is gained.
+\textit{Online planning} avoids the computational cost of offline methods. In online planning the
+agent continuously plans for its current belief, and nothing else. This requires constant
+computations, but at the same time makes possible to tackle problems orders of magnitude bigger than
+what is possible with offline planning, and allow for flexibility in updating the model, since there
+is no need to recompute a complete solution. In addition, many online planning methods are
+\textit{any time}: this means that they can run for whatever time is available, and they are always
+able to provide some sort of solution. The more time is available, the more refined the solution
+will be. This is in contrast with offline methods, that need to run to completion or otherwise
+nothing is gained.
 
 In online planning computations go forward in time. From the current state possible futures are
 expanded in a tree of possibilities and rewards. In the end, the best action for the current state
 is picked, the environment is advanced one step, and the process repeats again.
 
-In this work we chose to use an online approach, given the flexibility and power provided over
-offline \ys{online - typo?} techniques, and because one of our goals was to scale to real-world scenarios, which are
-generally intractable with offline approaches. An additional advantage which we will explore later
-is that online planners are able to deal with non-PWLC value functions, which is a challenge when
-using negative entropy as a reward function.
+In this work we chose to use an online approach, given their high flexibility and power, and because
+one of our goals was to scale to real-world scenarios, which are generally intractable with offline
+approaches. An additional advantage which we will explore later is that online planners are able to
+deal with non-PWLC value functions, which is a challenge when using negative entropy as a reward
+function.
 
 \section{Monte Carlo Algorithms}
 
