@@ -406,7 +406,9 @@ is exponential in the number of targets.
 In order to avoid dealing with this problem, we setup a system where we run concurrently many
 $\rho$-POMCP instances. Each solver computes an individual policy for a single target only and
 receives individual observations. This allows each solver to work on a relatively small tree,
-without exploding the number of branches.
+without exploding the number of branches. In addition, this allows to work with a variable number of
+targets, since it possible to dynamically adjust the number of online planners running at any time,
+depending on the number of targets present in the environment.
 
 We then estimate the final action to be performed by merging the separate results of all the
 solvers.  From each solver we then obtain a value estimate for each available action; the final

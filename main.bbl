@@ -1,4 +1,4 @@
-\begin{thebibliography}{25}
+\begin{thebibliography}{27}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -80,15 +80,6 @@ Chris Kreucher, Keith Kastella, and Alfred~O. Hero, III.
 \newblock \doi{10.1016/j.sigpro.2004.11.004}.
 \newblock URL \url{http://dx.doi.org/10.1016/j.sigpro.2004.11.004}.
 
-\bibitem[Williams et~al.(2007)Williams, Fisher~III, and
-  Willsky]{cit:relworklagrange}
-Jason~L. Williams, John~W. Fisher~III, and Alan~S. Willsky.
-\newblock Approximate dynamic programming for communication-constrained sensor
-  network management.
-\newblock \emph{IEEE Transactions on Signal Processing}, 55\penalty0
-  (8):\penalty0 3995--4003, August 2007.
-\newblock URL \url{publications/papers/williams07a.pdf}.
-
 \bibitem[Wang et~al.(2004)Wang, Pottie, Yao, and Estrin]{cit:relworkentropy}
 Hanbiao Wang, G.~Pottie, K.~Yao, and D.~Estrin.
 \newblock Entropy-based sensor selection heuristic for target localization.
@@ -96,20 +87,20 @@ Hanbiao Wang, G.~Pottie, K.~Yao, and D.~Estrin.
   Third International Symposium on}, pages 36--45, April 2004.
 \newblock \doi{10.1109/IPSN.2004.1307321}.
 
-\bibitem[Joshi and Boyd(2009)]{cit:relworkconvex}
-Siddharth Joshi and Stephen Boyd.
-\newblock Sensor selection via convex optimization.
-\newblock \emph{IEEE Transactions on Signal Processing}, 57\penalty0
-  (2):\penalty0 451--462, 2009.
-\newblock URL
-  \url{http://dblp.uni-trier.de/db/journals/tsp/tsp57.html\#JoshiB09}.
-
 \bibitem[Spaan and Lima(2009)]{cit:relworkspaan}
 Matthijs T.~J. Spaan and Pedro~U. Lima.
 \newblock A decision-theoretic approach to dynamic sensor selection in camera
   networks.
 \newblock In \emph{Int.\ Conf.\ on Automated Planning and Scheduling}, pages
   279--304, 2009.
+
+\bibitem[Spaan and Vlassis(2005)]{cit:perseus}
+Matthijs T.~J. Spaan and Nikos Vlassis.
+\newblock Perseus: Randomized point-based value iteration for pomdps.
+\newblock \emph{J. Artif. Int. Res.}, 24\penalty0 (1):\penalty0 195--220,
+  August 2005.
+\newblock ISSN 1076-9757.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1622519.1622525}.
 
 \bibitem[Paquet et~al.(2005)Paquet, Tobin, and Chaib-draa]{cit:relworkonline1}
 Sébastien Paquet, Ludovic Tobin, and Brahim Chaib-draa.
@@ -138,14 +129,6 @@ Stéphane Ross and Brahim Chaib-draa.
   refinement in large pomdps.
 \newblock In \emph{In: Proceedings of the 20th International Joint Conference
   on Artificial Intelligence (IJCAI)}, pages 2592--2598, 2007.
-
-\bibitem[Bonet and Geffner(2009)]{cit:relworkonlineq}
-Blai Bonet and H{\'e}ctor Geffner.
-\newblock Solving pomdps: Rtdp-bel vs. point-based algorithms.
-\newblock In \emph{Proceedings of the 21st International Jont Conference on
-  Artifical Intelligence}, IJCAI'09, pages 1641--1646, San Francisco, CA, USA,
-  2009. Morgan Kaufmann Publishers Inc.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1661445.1661709}.
 
 \bibitem[Ross et~al.(2008)Ross, Pineau, Paquet, and
   Chaib-draa]{cit:relworkonlineall}
@@ -199,5 +182,34 @@ G.~J. Pottie and W.~J. Kaiser.
 \newblock ISSN 0001-0782.
 \newblock \doi{10.1145/332833.332838}.
 \newblock URL \url{http://doi.acm.org/10.1145/332833.332838}.
+
+\bibitem[Williams et~al.(2007)Williams, Fisher~III, and
+  Willsky]{cit:relworklagrange}
+Jason~L. Williams, John~W. Fisher~III, and Alan~S. Willsky.
+\newblock Approximate dynamic programming for communication-constrained sensor
+  network management.
+\newblock \emph{IEEE Transactions on Signal Processing}, 55\penalty0
+  (8):\penalty0 3995--4003, August 2007.
+\newblock URL \url{publications/papers/williams07a.pdf}.
+
+\bibitem[Bonet and Geffner(2009)]{cit:relworkonlineq}
+Blai Bonet and H{\'e}ctor Geffner.
+\newblock Solving pomdps: Rtdp-bel vs. point-based algorithms.
+\newblock In \emph{Proceedings of the 21st International Jont Conference on
+  Artifical Intelligence}, IJCAI'09, pages 1641--1646, San Francisco, CA, USA,
+  2009. Morgan Kaufmann Publishers Inc.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1661445.1661709}.
+
+\bibitem[Joshi and Boyd(2009)]{cit:relworkconvex}
+Siddharth Joshi and Stephen Boyd.
+\newblock Sensor selection via convex optimization.
+\newblock \emph{IEEE Transactions on Signal Processing}, 57\penalty0
+  (2):\penalty0 451--462, 2009.
+\newblock URL
+  \url{http://dblp.uni-trier.de/db/journals/tsp/tsp57.html\#JoshiB09}.
+
+\bibitem[Shibata et~al.()Shibata, Nishino, and Okabe]{cit:relworkneuralnet}
+Katsunari Shibata, Tetsuo Nishino, and Yoichi Okabe.
+\newblock Active perception based on reinforcement learning.
 
 \end{thebibliography}

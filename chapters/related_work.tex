@@ -1,47 +1,55 @@
 \section{Active Perception}
+
 The Active perception task has been approached in numerous ways.
 
-\cite{cit:relworklagrange} tackle multi-sensor system management, considering dynamic programming
-and linear solvers in order to balance the trade-offs between gathering information and energy costs
-due to communication.
+% \cite{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
+% a neural network. The neural network has the task of recognizing a particular visual pattern, which
+% is observed through a visual sensor, which can only read portions of the pattern at any single time.
+% The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
+% the pattern from different point of views. Their approach requires training for every recognized
+% pattern
+%
+% PROBLEM: It is RL, we do planning
 
-\cite{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
-a neural network. The neural network has the task of recognizing a particular visual pattern, which
-is observed through a visual sensor, which can only read portions of the pattern at any single time.
-The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
-the pattern from different point of views.
+% \cite{cit:relworkconvex} tackle the problem of selecting $k$ sensors out of a pool of $n$ sensors.
+% They approximate the information function defined from the usage of any $k$ sensors with a convex
+% function, that can be then solved efficiently with linear solvers. Once this is done, the found
+% solution is checked for improvement by testing possible swaps with the sensors that were not selected.
+%
+% PROBLEM: In the end I don't really tackle multi-sensor here..
+
+% \cite{cit:relworklagrange} tackle multi-sensor system management, considering dynamic programming
+% and linear solvers in order to balance the trade-offs between gathering information and energy costs
+% due to communication.
+%
+% PROBLEM: I don't really get the paper, it's way too complex..
 
 \cite{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
 of each target position they use weighted Monte-Carlo particles which are updated using a model of
 the environment. Action selection tries to maximize the expected Rényi information divergence to
 reduce entropy with respect to the posterior distribution of targets. They extend their approach to
-non-myopic solutions by direct enumeration of all possible outcomes, which is computationally
-expensive and non-scalable.
+non-myopic solutions by direct enumeration of all possible outcomes. A key difference is that we
+track each target separately, thus reducing the complexity of the overall posterior distribution of
+targets. In addition, our usage of POMDPs to model the environment allows computations of non-myopic
+strategies in a much more natural way than direct enumeration.
 
 \cite{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
 analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
 that on average the heuristic is able to select the sensor which maximizes the mutual information
-between target location and sensor observation.
-
-\cite{cit:relworkconvex} tackle the problem of selecting $k$ sensors out of a pool of $n$ sensors.
-They approximate the information function defined from the usage of any $k$ sensors with a convex
-function, that can be then solved efficiently with linear solvers. Once this is done, the found
-solution is checked for improvement by testing possible swaps with the sensors that were not selected.
+between target location and sensor observation. Their approach does not approximate heuristic
+calculations, requiring $O(S^2)$ time to evaluate a single sensor, which becomes prohibitive when
+the space to observe is very large. We avoid this cost by using Monte Carlo simulations to
+approximate entropy estimations.
 
 \cite{cit:relworkspaan} uses POMDPs to approach the multi-sensor system management problem, where
 only a subset of $k$ sensors out of a pool of $n$ sensors can be selected. Their approach is based
 on state-based reward functions, where the agent is rewarded for activating cameras with a target in
 the field of view. Their approach focused on approximate offline planning for the model using
-the SYMBOLIC PERSEUS algorithm, a variant of PERSEUS \cite{cit:perseus}.
+the SYMBOLIC PERSEUS algorithm, a variant of PERSEUS \cite{cit:perseus}. A crucial difference
+is that our work does not rely on an offline planner, and thus does not have to recompute a solution
+in case of a change, and can be more easily applied to much bigger models.
 
-\section{POMDP}
-
-Our work in particular is based upon POMCP, an online solver that takes its strengths from
-Monte-Carlo simulations \cite{cit:pomcp}. In particular, POMCP follows the approach of Monte Carlo
-Tree Search, which progressively builds a tree of outcomes by using a generative model to generate
-sample outcomes. This tree is then used to approximate the values of all states. POMCP uses particle
-approximations of beliefs throughout this tree, in order to avoid the expensive cost of computing
-belief updates at every action-observation step.
+\section{Online POMDP Solvers}
 
 One of the earliest explorations into online POMDP solvers has been been done by
 \cite{cit:relworkonline1}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
@@ -55,9 +63,24 @@ Other algorithms, such as BI-POMDP \cite{cit:relworkonlinebi} and AEMS \cite{cit
 function similarly to the RTBSS algorithm, but rely on internal heuristics, rather than a branch and
 bound strategy, to determine how to prune the tree to explore.
 
-An alternative to tree exploration approaches is the RTDP-BEL algorithm \cite{cit:relworkonlineq}.
-This algorithm learns progressively values for a discretized set of beliefs from direct interaction
-with the environment, using a Q-Learning type of approach.
+These algorithms differs importantly in that they try to solve the current belief perfectly. This
+results in problems scaling when the number of possible actions and observations is high. By using
+a Monte Carlo approach we avoid that problem by sampling, which allow our algorhtm to focus on
+probable branches of the tree.
+
+% An alternative to tree exploration approaches is the RTDP-BEL algorithm \cite{cit:relworkonlineq}.
+% This algorithm learns progressively values for a discretized set of beliefs from direct interaction
+% with the environment, using a Q-Learning type of approach.
+%
+% PROBLEM: RL
+
+Our work in particular is based upon POMCP, an online solver that takes its strengths from
+Monte-Carlo simulations \cite{cit:pomcp} which we discussed in Section \ref{ref:pomcp}. In
+particular, POMCP follows the approach of Monte Carlo Tree Search, which progressively builds a tree
+of outcomes by using a generative model to generate sample outcomes. This tree is then used to
+approximate the values of all states. POMCP uses particle approximations of beliefs throughout this
+tree, in order to avoid the expensive cost of computing belief updates at every action-observation
+step. The difference with our approach is that POMCP cannot deal with belief dependent rewards, and
+thus cannot evaluate policies which are tasked with increasing knowledge.
 
 A good overview of existing POMDP online approaches can be found in \cite{cit:relworkonlineall}.
-

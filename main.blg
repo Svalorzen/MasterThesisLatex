@@ -4,46 +4,46 @@ The top-level auxiliary file: main.aux
 A level-1 auxiliary file: chapters/related_work.aux
 The style file: unsrtnat.bst
 Database file #1: references.bib
-Warning--I didn't find a database entry for "cit:rhopomdp"
-You've used 25 entries,
+Warning--empty year in cit:relworkneuralnet
+You've used 27 entries,
             2481 wiz_defined-function locations,
-            757 strings with 10307 characters,
-and the built_in function-call counts, 11766 in all, are:
-= -- 1124
-> -- 480
-< -- 26
-+ -- 185
-- -- 135
-* -- 871
-:= -- 1759
-add.period$ -- 116
-call.type$ -- 25
-change.case$ -- 49
-chr.to.int$ -- 25
-cite$ -- 25
-duplicate$ -- 626
-empty$ -- 1059
-format.name$ -- 178
-if$ -- 2649
+            765 strings with 10585 characters,
+and the built_in function-call counts, 12490 in all, are:
+= -- 1187
+> -- 516
+< -- 27
++ -- 199
+- -- 145
+* -- 928
+:= -- 1871
+add.period$ -- 123
+call.type$ -- 27
+change.case$ -- 53
+chr.to.int$ -- 27
+cite$ -- 28
+duplicate$ -- 659
+empty$ -- 1127
+format.name$ -- 192
+if$ -- 2803
 int.to.chr$ -- 1
-int.to.str$ -- 26
-missing$ -- 27
-newline$ -- 167
-num.names$ -- 81
-pop$ -- 195
+int.to.str$ -- 28
+missing$ -- 28
+newline$ -- 178
+num.names$ -- 87
+pop$ -- 213
 preamble$ -- 1
-purify$ -- 25
+purify$ -- 27
 quote$ -- 0
-skip$ -- 424
+skip$ -- 447
 stack$ -- 0
-substring$ -- 611
-swap$ -- 180
+substring$ -- 640
+swap$ -- 185
 text.length$ -- 14
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 169
-warning$ -- 0
-while$ -- 96
+type$ -- 183
+warning$ -- 1
+while$ -- 102
 width$ -- 0
-write$ -- 417
+write$ -- 443
 (There was 1 warning)
