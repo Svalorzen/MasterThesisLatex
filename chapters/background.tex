@@ -3,7 +3,7 @@
 
 In order to optimally perform a task within an environment we need to jointly model the dynamics of
 the environment and the task objectives. The modeling framework we are going to use in this work
-stems from the \textit{Markov Decision Process} (MDP), named after Andrey Markov.
+stems from the \textit{Markov Decision Process} (MDP) \cite{cit:suttonbarto}.
 
 MDPs structure reasoning around a probabilistic automaton. The agent \textit{acts} upon the
 environment, which is in a particular \textit{state}. As a result, the environment
@@ -11,11 +11,11 @@ environment, which is in a particular \textit{state}. As a result, the environme
 the transition, the agent receives a certain \textit{reward} representing its achievements
 toward the task at hand.
 
-The \textit{Partially Observable MDP} (POMDP) is an extension of such a framework, where the agent
-cannot see the current state of the world. In POMDPs, the agent receives an \textit{observation}
-dependent on the underlying state during each transition, but which does not uniquely disambiguate
-it. These are used to keep a statistic over the states the environment could be in at any given
-timestep.
+The \textit{Partially Observable MDP} (POMDP) \cite{cit:pomdp} is an extension of such a framework,
+where the agent cannot see the current state of the world. In POMDPs, the agent receives an
+\textit{observation} dependent on the underlying state during each transition, but which does not
+uniquely disambiguate it. These are used to keep a statistic over the states the environment could
+be in at any given timestep.
 
 Non-myopic strategies can be naturally extracted from MDPs and POMDPs, which is one of their main
 advantages over competing approaches.
@@ -27,12 +27,6 @@ A POMDP can be defined formally as a tuple
 The elements of the tuple are called state space($S$), action space($A$), transition function($T$),
 reward function($R$), observation space($\Omega$), observation function($O$) and horizon($h$). We
 introduce these terms in the following Sections.
-
-\subsection{Agent}
-
-The agent is at the core of the decision process. Its objective is to maximize the reward obtained
-by acting in the environment while reasoning about the state uncertainties. In doing so it will
-accomplish the task that is encoded within the POMDP model.
 
 \subsection{Environment}
 
@@ -48,15 +42,6 @@ tuple.
 Note that we assume that all sets presented in this work to be finite, unless where specifically
 noted.
 
-In the environment, transitions between a state and another state are discrete and instantaneous.
-Each transition happens within a single \textit{timestep}, which represents the atomic unit of
-change within the environment.
-
-\subsection{State}
-
-As we said above, the environment is described through states, which all together form the
-\textit{state space} of the problem.
-
 An important property that each state needs to have is called the \textit{Markov} property. This
 property requires that the evolution of the environment depends solely on the information encoded in
 its current state, and nothing else. This can also be seen as saying that the environment has no
@@ -68,36 +53,12 @@ While it can happen that a particular environment can evolve in a time-sensitive
 easily shown that all such environments can be modeled in a Markovian way by simply adding more
 features into the state-space definition \cite{cit:boutilier}.
 
+In the environment transitions between a state and another state are discrete and instantaneous.
+Each transition happens within a single \textit{timestep}, which represents the atomic unit of
+change within the environment.
 
-\subsection{Action}
-
-The agent interacts with the environment through actions. In the POMDP framework, each action
-simultaneously fulfills two purposes: to influence the evolution of the environment, and to gather
-information regarding the state of the environment.
-
-The full set of actions available to the agent is called the \textit{action space}, or otherwise
-referred to as $A$. This is the second element of the POMDP tuple. It is usually assumed that all
-actions are available to the agent at any timestep.
-
-\[ A = \{ a_0, a_1, a_2, ..., a_{|A|} \} \]
-
-\subsection{Observation}
-
-In a POMDP the agent does not have direct access to the current state of the environment. The agent
-instead receives, at each timestep, an \textit{observation}, which depends on the action that the
-agent performed and on the state reached by the environment after the action. Observations generally
-do not allow unambiguous distinction between states, but they restrict the amount of possibilities.
-
-All observations are, as are states and actions, grouped in a set, $\Omega$:
-
-\[ \Omega = \{ o_0, o_1, o_2, ..., o_{|\Omega|} \} \]
-
-\subsection{Transition Function}
-
-In a POMDP, the evolution dynamics of the environment are encoded in a \textit{transition function}.
-This function encodes the consequences of actions with respect to the environment states.
-
-In particular the transition function is a function
+The \textit{transition function} encodes the consequences of actions with respect to the environment
+states. In particular the transition function is a function
 
 \[ T: S\times A \times S \rightarrow [0,1] \]
 
@@ -116,23 +77,32 @@ about. This property holds when
 
 where here $t$ denotes the timestep where a particular state was reached.
 
-\subsection{Reward Function}
+\subsection{Agent}
 
-In a POMDP we encode the goals that we wish the agent to achieve as a \textit{reward function}.
-This function is defined upon states and actions, and can take values within the real domain:
+The agent is at the core of the decision process. Its objective is to maximize the reward obtained
+by acting in the environment while reasoning about the state uncertainties. In doing so it will
+accomplish the task that is encoded within the POMDP model.
 
-\[ R: S\times A\times S \rightarrow \mathbb{R} \]
-\[ R(s, a, s') \in \mathbb{R} \]
+The agent interacts with the environment through actions. In the POMDP framework, each action
+simultaneously fulfills two purposes: to influence the evolution of the environment, and to gather
+information regarding the state of the environment.
 
-The reward function represents the level of appeal that a particular situation or outcome represents
-in the modeled task. For example, one could allocate a certain reward for attempting to walk, and an
-even greater reward for successful efforts. On the other hand, one could allocate a negative reward
-for failed attempts. All these would influence the final behavior of the agent.
+The full set of actions available to the agent is called the \textit{action space}, or otherwise
+referred to as $A$. This is the second element of the POMDP tuple. It is usually assumed that all
+actions are available to the agent at any timestep.
 
-\subsection{Observation Function}
+\[ A = \{ a_0, a_1, a_2, ..., a_{|A|} \} \]
 
-In the POMDP framework the agent receives information from observations through an
-\textit{observation function}. It is a function
+In a POMDP the agent does not have direct access to the current state of the environment. The agent
+instead receives, at each timestep, an \textit{observation}, which depends on the action that the
+agent performed and on the state reached by the environment after the action. Observations generally
+do not allow unambiguous distinction between states, but they restrict the amount of possibilities.
+
+All observations are, as are states and actions, grouped in a set, $\Omega$:
+
+\[ \Omega = \{ o_0, o_1, o_2, ..., o_{|\Omega|} \} \]
+
+The agent receives information from observations through an \textit{observation function}:
 
 \[ O : S' \times A \times O \rightarrow [0,1] \]
 
@@ -143,19 +113,16 @@ after taking action $a$.
 
 Note that the state is the one of \textit{arrival}, not the one where the action is performed.
 
-\subsection{Horizon}
+The agent goals are encoded within the \textit{reward function}.  This function is defined upon
+states and actions, and can take values within the real domain:
 
-In the POMDP framework the agent tries to maximize its \textit{expected return} within an
-\textit{episode}: the expected sum of all rewards obtained within a single try at the task.
+\[ R: S\times A\times S \rightarrow \mathbb{R} \]
+\[ R(s, a, s') \in \mathbb{R} \]
 
-The length of a specific episode is determined by a parameter called \textit{horizon}. An horizon of
-1 timestep generates what is generally known as a \textit{myopic policy}. Such a policy acts in a
-locally optimal way, hoping that in doing so it will act in an optimal way globally. As the horizon
-increases the final policy takes into account more and more possible outcomes, becoming more complex
-but, depending on the task, more performant overall. We can describe the goal function of a POMDP
-with finite horizon $h$ as:
-
-\[ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ] \]
+The reward function represents the level of appeal that a particular situation or outcome represents
+in the modeled task. For example, one could allocate a certain reward for attempting to walk, and an
+even greater reward for successful efforts. On the other hand, one could allocate a negative reward
+for failed attempts. All these would influence the final behavior of the agent.
 
 \subsection{History and Belief}
 
@@ -187,8 +154,6 @@ agent. The belief can be updated with the following formula:
 The denominator can be treated as a normalizing factor that makes $b'$ correctly sum up to 1, since
 it is a probability vector.
 
-\subsection{Belief MDP}
-
 The belief allows for a reinterpretation of the POMDP framework. The belief can in fact be used in
 lieu of a state, since it is possible to compute new transition and reward functions that depend on
 beliefs rather than states. This transforms automatically the POMDP into a \textit{belief MDP}
@@ -219,6 +184,18 @@ very hard to solve generally, the belief MDP can be approached due to its specif
 
 \subsection{Policy}
 
+In the POMDP framework the agent tries to maximize its \textit{expected return} within an
+\textit{episode}: the expected sum of all rewards obtained within a single try at the task.
+
+The length of a specific episode is determined by a parameter called \textit{horizon}. An horizon of
+1 timestep generates what is generally known as a \textit{myopic policy}. Such a policy acts in a
+locally optimal way, hoping that in doing so it will act in an optimal way globally. As the horizon
+increases the final policy takes into account more and more possible outcomes, becoming more complex
+but, depending on the task, more performant overall. We can describe the goal function of a POMDP
+with finite horizon $h$ as:
+
+\[ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ] \]
+
 A solution for a POMDP is called a \textit{policy}. We can define a policy $\pi$ as a function, that
 given an horizon, a belief and action returns the probability of the action being chosen:
 
@@ -230,12 +207,10 @@ actions:
 
 \[ a \sim \pi(h, b) \]
 
-\subsection{Value Function}
-
-The value function maps a policy with its performance in terms of expected return from every
-possible belief the agent may face and a particular horizon. Thus, every belief has a certain
-\textit{value} under a certain policy and horizon. Formally then we can define the value of a belief
-as:
+A policy performance can be evaluated through a \textit{value function}. The value function maps a
+policy with its performance in terms of expected return from every possible belief the agent may
+face and a particular horizon. Thus, every belief has a certain \textit{value} under a certain
+policy and horizon. Formally then we can define the value of a belief as:
 
 \[ V^\pi_{h}(b) = \mathbb{E}^\pi_h \left [\text{return} \mid b_0 = b \right ] \]
 \[ = \mathbb{E} \left [\sum_{t=0}^{h} \rho(b_{t}, a_t, b_{t+1}) \right ]
@@ -255,7 +230,7 @@ V^{\pi}_{h-1}(b') \right ] \]
 Since the value function of a POMDP is a function dependent on beliefs, it is defined on a simplex
 space of $|S|-1$ dimensions, which is continuous. The property that makes a belief MDP tractable is
 that its value function is \textit{piecewise linear and convex} (PWLC). This means that it is
-``determined by a set of hyperplanes, the value at given belief point being that of the highest
+``determined by a set of hyperplanes, the value at a given belief point being that of the highest
 hyperplane'' \cite{cit:rpomdp}. This makes it possible to solve a belief MDP exactly
 \cite{cit:pomdp}.
 

@@ -230,7 +230,7 @@ Such an approach is in any case guaranteed to converge to the true entropy in th
 number of samples tends to infinite. This maintains the POMCP property that leads to an optimal
 solution in the limit.
 
-\subsection{Value Backpropagation}
+\subsection{Value Backup}
 
 A second problem is dependent on how returns are approximated in POMCP. The value for a
 belief-action pair $b,a$ is computed as the sum of two different factors: the immediate reward
@@ -249,11 +249,10 @@ extracted from the all beliefs and actions encountered during sample episodes.
 
 Where $N$ is the number of times that action $a$ has been taken in belief $b$, $n_s$ the number of
 times state $s$ has been sampled from $b$ when taking action $a$, $n_o$ is the number of times that
-observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all values backpropagated
-from lower in the tree after observation $o$. In POMCP a backpropagated value is simply the
-discounted sum of all sampled rewards down in the episode. As with MCTS, as long as the better
-actions are chosen more often than the others, this procedure will converge to the true expected
-return.
+observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all values backed up from
+lower in the tree after observation $o$. In POMCP a backed up value is simply the discounted sum of
+all sampled rewards down in the episode. As with MCTS, as long as the better actions are chosen more
+often than the others, this procedure will converge to the true expected return.
 
 However, in our case, the reward function is structured in the following way:
 
@@ -300,8 +299,8 @@ r_{\tilde{o}}) + r'_{\tilde{o}} +
 \[ \rho(b,a) \approx \frac{ ( n_{\tilde{o}}+1) r'_{\tilde{o}} +
 \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
 
-Which is what we wanted. Similarly, we can create fake reward points to backpropagate in the tree so
-that any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backpropagated would be:
+Which is what we wanted. Similarly, we can create fake reward points to backup in the tree so that
+any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backed up would be:
 
 \[ N ( V'(b) - V(b) ) + V'(b) \]
 
@@ -314,7 +313,7 @@ procedure needs to sample many more times to make up for the fact that, at first
 suboptimal actions are averaged into estimates too.
 
 POMCP inherits this behaviour from the original MCTS algorithm. However, in the original paper from
-2006 a number of different approaches to merge together backpropagated values were tried
+2006 a number of different approaches to merge together backed up values were tried
 \cite{cit:mcts}. The authors decided to stick with using the mean operator to backup values since,
 with the computational power available at the time, it gave better and more consistent results.
 However, the authors also demonstrated that if enough samples are available, using a max operator
@@ -323,7 +322,7 @@ over actions actually improves performance.
 We implemented both backup methods for $\rho$-POMCP in order to determine which one would perform
 best under different conditions.
 
-\subsection{Algorithm}
+\subsection{Pseudocode}
 
 Here we describe the full $\rho$-POMCP algorithm in more detail.
 
@@ -384,8 +383,8 @@ process using $s'$ as its $s$. This repeats until the algorithm is unable to des
 the tree, at which point the future reward is approximated as simply the reward of the last
 selected child's belief.
 
-The algorithm then updates the value of all actions taken during the descent, while backpropagating
-fake datapoints to update all old reward estimates up in the tree.
+The algorithm then updates the value of all actions taken during the descent, while backing up fake
+datapoints to update all old reward estimates up in the tree.
 
 Notice that $\rho$-POMCP lacks a rollout procedure. This is because $\rho$-POMCP has no way to
 approximate rewards when outside the tree, and so skips random policy rollouts altogether.

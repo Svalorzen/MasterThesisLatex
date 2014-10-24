@@ -1,38 +1,52 @@
 \section{Active Perception}
 
-In this work we approach a general class of problems which is referred to as the Active
-Perception task. In this task a decision making entity called \textit{agent}, subject to resource
-constraints, needs to take actions in order to reduce some form of uncertainty about a particular
-target environment. The agent's role in this task is purely observational: it will not influence the
-overall evolution of the environment over time, but it can only selectively gather data to maximally
-improve its knowledge.
+Machines see the world only through data gathered by sensors such as cameras, radars, motion
+sensors, thermometers, and many others. Unfortunately, the quantity of information that can be
+collected is limited. Any part of the environment outside sensors' range cannot be perceived.
+Hardware costs bound the number of available sensors. Energy and bandwidth limits constrain the
+usage of available sensors. Such limits prevent the collection of all available information; only
+some can be recorded. In tasks such as robotic perception, camera surveillance, military
+reconnaissance and data collection in social networks any lacking information severely impacts the
+final outcome of the task.
+
+In order to perform optimally within real world limits sensors need to be actively directed towards
+interesting regions. Sensors like cameras and radars should be actively oriented towards the most
+interesting locations. When multiple sensors are available but their usage is costly, only the most
+informative subset of sensors should be enabled.
+
+Operating sensors optimally belongs to a class of problems referred to as the \textit{Active
+Perception} task.  Active Perception can be formalized as a task where a decision making entity
+called \textit{agent}, subject to resource constraints, needs to take actions in order to reduce
+some form of uncertainty about a particular target environment. The agent's role in this task is
+purely observational: it will not influence the overall evolution of the environment over time, but
+it can only selectively gather data to maximally improve its knowledge.
 
 Active Perception covers essentially every possible use of sensors, both in physical and virtual
-environments - in case of abstract data collection. Robotic perception, camera surveillance,
-military reconnaissance, data collection in social networks and online retailer websites are all
-examples of practical instances of the Active Perception task.
-
-The fact that the agent is constrained is what makes the Active Perception task an interesting and
-non-trivial problem to solve. The task thus focuses on maximizing performance within the limits
-imposed on the agent: using available resources in the best possible way. The resource constraints
-are most often found as instances of one or more of the following factors:
+environments - in case of abstract data collection. The fact that the agent is constrained is what
+makes the Active Perception task an interesting and non-trivial problem to solve. The task thus
+focuses on maximizing performance within the limits imposed on the agent: using available resources
+in the best possible way. The resource constraints are most often found as instances of one or more
+of the following factors:
 
 \begin{description}
-\item[Sensor number and capabilities:] These prevent the agent from gathering data from specific
-    locations or with particular features.
-\item[Energy, bandwidth and communication:] These limit the amount of information the agent can
-    gather at once and/or overall. Not only these resources have a direct cost for usage, but in
-    many applications there are hard limits on how much a system is allowed to consume.
-\item[Storage:] It is important to reduce the amount of non-informative data that is gathered by the
-    sensors. Not everything is equally important. Being able to decide whether to gather data or not
-    helps in the long run maintaining reasonable sized data logs requiring less storage space and
+\item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
+    whole environment in which they are set. This can result from a limited number of available sensors
+    and/or from sensors having physical limits in what they can record.
+\item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
+    resources. Not only energy and bandwidth are expensive, but in many applications there are hard
+    limits on their availability, both for what can be used at any given time and for the overall
+    resource usage.
+\item[Storage Limits:] It is important to reduce the amount of non-informative data that is gathered
+    by the sensors. Not everything is equally important. Being able to decide whether to gather data or
+    not helps in the long run maintaining reasonable sized data logs requiring less storage space and
     easing possible future data searches.
 \end{description}
 
-Additionally, the agent needs to act while facing direct uncertainty about the environment it is
-trying to observe. Reasoning with uncertainty is not a trivial task, given that the agent cannot
-know in advance what knowledge will be obtained by a specific actions. The agent needs to select the
-best action given only a certain belief on the current state of the environment.
+Another source of complexity derives from the fact that the agent needs to act while facing direct
+uncertainty about the environment it is trying to observe. Reasoning with uncertainty is not a
+trivial task, given that the agent cannot know in advance what knowledge will be obtained by a
+specific actions. The agent needs to select the best action given only a certain \textit{belief} on
+the current state of the environment.
 
 In this work we present an autonomous system that tackles some of the challenges that characterize
 the Active Perception task:
@@ -45,10 +59,10 @@ the Active Perception task:
 \item[Reward Measure:] While knowledge representation is a problem in itself, the system also needs
     to be able to tell which knowledge is actually important, and what measure of uncertainty it
     should try to minimize. A popular target function to maximize, for example, is negative entropy.
-\item[Scalability:] Real world Active Perception systems often have to deal with very sizable
-    environments. It is important that deployable solutions can deal with such complexity.
-    Additionally, they should able to adapt to possible changes in the environment - for example new
-    sensor deployments - as painlessly as possible.
+\item[Size Scalability:] Real world Active Perception systems often have to deal with very
+sizable environments. It is important that deployable solutions can deal with their complexity.
+\item[Non-Stationarity:] The system should able to adapt to possible changes in the environment -
+for example new sensor deployments - as painlessly as possible.
 \item[Non-Myopicity:] We argue that an optimal Active Perception solution may need to take into
     account the way that the environment will evolve in the future. This requires the ability to
     forecast possible outcomes from the observation process in order to determine optimal sequences
@@ -59,9 +73,9 @@ the Active Perception task:
 
 The Active Perception task is a general abstraction that can be applied to multiple real world
 problems. At the same time, focusing attention on a specific subproblem produces more realistic
-tests where solutions can be evaluated and may also produce real world value. While keeping
-generality of approach, in this work we focused our attention onto a particular set of Active
-Perception tasks: multi-camera systems, which are themselves a sub-class of multi-sensor systems.
+tests where solutions can be evaluated and may also produce real world value. In this work we focus
+our attention onto a particular set of Active Perception tasks: multi-camera systems, which are
+themselves a sub-class of multi-sensor systems.
 
 With the advent of cheap hardware, these last few years have brought an incredible widespread
 adoption of multi-camera systems. These systems are used for surveillance, real-time tracking and
@@ -71,12 +85,11 @@ cost for operating the cameras and storing/analyzing the incredible amount of da
 been increasing ever since, also due to their increasing numbers.
 
 Although automatic mechanisms that try to record only useful footage do already exist the cameras
-have still the need to be turned on at all times. An example of this are motion detectors. A motion
-triggered camera would write its data to disk only when motion appeared on the screen, even though
-the camera would still be on when nothing was happening in front of it, to keep the motion detector
-on.
+still need to be turned on at all times. An example of this are motion detectors. A motion triggered
+camera would write its data to disk only when motion appeared on the screen, even though the camera
+would still be on when nothing was happening in front of it, to keep the motion detector on.
 
-In addition to the "always on" problem, new video processing techniques can now be applied to
+In addition to the ``always on'' problem, new video processing techniques can now be applied to
 captured footage, such as face recognition and person tracking, which require non-trivial amount of
 computation and bandwidth to be run together with the cameras themselves. This incurs in significant
 energy and hardware costs, since they have to be applied to all cameras. Communicating all camera
@@ -117,6 +130,11 @@ this framework in Section \ref{ref:background}. POMDPs allow to model the intera
 agent and a partially observable, stochastic environment.  In this framework, the agent's objective
 is to maximize reward collection according to a predefined reward function.
 
+To achieve its objective, the agent needs to consider future outcomes in order to determine how to
+act in its environment. A \textit{myopic} agent will try to greedily maximize gains over the short
+term, while a \textit{non-myopic} agent will consider possible future events more comprehensively to
+ avoid getting stuck in a local minima.
+
 The main reason why we use POMDPs is that they naturally allow for the computation of non-myopic
 strategies for using the sensors. In fact, POMDPs are specifically structured as to allow this type
 of planning. This means that the system will try to gather information in order to improve its
@@ -130,9 +148,9 @@ to achieve optimality.
 %is updated depending on the observation that the system receives from the sensors, taking into
 %account possible ambiguity (perceptual aliasing) that could result from imperfect knowledge.
 
-POMDPs are a widely explored topic in the decision theoretic literature, with known properties
-and already available solution methods, which allows us to stand on the shoulders of giants. We
-discuss some POMDPs solution methods in Chapter \ref{ref:solutions}.
+POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
+already available solution methods. We discuss some POMDPs solution methods in Chapter
+\ref{ref:solutions}.
 
 % One of the active topics of research in decision theory regards the efficient computation of POMDP
 % policies. When dealing with non-trivial models, the time needed to compute an optimal policy and the
@@ -159,37 +177,39 @@ world using particles, improving performance when the maintaining a complete bel
 of the world can become too computationally expensive. This allows the method to scale onto problems
 that other online approaches cannot handle.
 
-The limitation of POMCP with respect to the Active Perception task is that rewards are computed
-directly from the state of the world, rather than the current knowledge that the planner possesses.
-POMDPs where rewards are based on knowledge, rather than state, have been examined in
-\cite{cit:rpomdp}. Since POMCP is a sampling based method which does not perform true belief
-updates, we cannot feed the real beliefs into the reward function.
+The limitation of POMCP with respect to the Active Perception task is that the algorithm evaluates
+actions with respect to rewards sampled from a generative model of the environment. This approach
+breaks down in Active Perception, where rewards depend on the current knowledge that the agent
+possesses and do not depend on the state of the environment. POMDPs where rewards are based on
+knowledge, rather than state, have been examined in \cite{cit:rpomdp}.
 
-In this work we present a modification of the POMCP algorithm, which we named $\rho$-POMCP, with the
-following characteristics:
+In this work we present a modification of the POMCP algorithm, which we named $\rho$-POMCP, which is
+able to deal with a reward function based on knowledge rather than state. Our solution is able to
+refine estimates of action rewards from the imperfect particle beliefs of POMCP. This allows to
+apply a fast online planner on Active Perception tasks. In addition, $\rho$-POMCP is applicable to
+any POMDP where the reward function is based on knowledge rather than states, for example in cases
+where an agent can influence the state of the environment directly. This increases the utility of
+our work, as it can be used in multiple classes of problems.
 
-\begin{description}
-    \item[Belief based reward function:] We modify the POMCP algorithm in order to evaluate actions
-        based on a belief dependent reward function, rather than a state based reward function. This
-        allows to approach the Active Perception problem by having a reward function taking into
-        consideration knowledge rather than world state.
-    \item[Estimate based rewards:] We modify the POMCP algorithm in order to backpropagate reward
-        estimations. Normally sample rewards are progressively averaged into a final estimate, which
-        only requires backpropagation of the rewards obtained during a sample trajectory. In
-        $\rho$-POMCP an updated reward estimate does not average with previous estimations but
-        completely overrides them, given that the uncertainty in a belief is deterministic.
-        This requires a different backpropagation procedure.
-    \item[Mean vs Max:] We test against two different functions used for value back-propagation within
-        the lookup tree used by POMCP. The original algorithm computes the value of a particular
-        belief as the weighted average over tried actions, instead that over the best available
-        action. This was shown to be a good approach when the number of samples was low in
-        \cite{cit:mcts}, but we argue that the processing power available to modern computers allows
-        for the max function to be used more effectively.
-\end{description}
 
-In addition, $\rho$-POMCP is applicable to any POMDP where the reward function is based on knowledge
-rather than states, and not only on the Active Perception task. This increases its utility, as it
-can also be used in other classes of problems.
+% \begin{description}
+%     \item[Belief based reward function:] We modify the POMCP algorithm in order to evaluate actions
+%         based on a belief dependent reward function, rather than a state based reward function. This
+%         allows to approach the Active Perception problem by having a reward function taking into
+%         consideration knowledge rather than world state.
+%     \item[Estimate based rewards:] We modify the POMCP algorithm in order to backup reward
+%         estimations. Normally sample rewards are progressively averaged into a final estimate, which
+%         only requires backup of the rewards obtained during a sample trajectory. In
+%         $\rho$-POMCP an updated reward estimate does not average with previous estimations but
+%         completely overrides them, given that the uncertainty in a belief is deterministic.
+%         This requires a different backup procedure.
+%     \item[Mean vs Max:] We test against two different functions used for value back-propagation within
+%         the lookup tree used by POMCP. The original algorithm computes the value of a particular
+%         belief as the weighted average over tried actions, instead that over the best available
+%         action. This was shown to be a good approach when the number of samples was low in
+%         \cite{cit:mcts}, but we argue that the processing power available to modern computers allows
+%         for the max function to be used more effectively.
+% \end{description}
 
 % This may go into experiments.. is our approach completely independent of application?
 %

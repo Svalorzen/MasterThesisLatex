@@ -57,7 +57,7 @@ approaches. An additional advantage which we will explore later is that online p
 deal with non-PWLC value functions, which is a challenge when using negative entropy as a reward
 function.
 
-\section{Monte Carlo Algorithms}
+\section{Monte Carlo Tree Search}
 
 At the time of writing, one of the most promising ways of planning online is by using \textit{Monte
 Carlo algorithms}. Monte Carlo algorithms are a class of randomized algorithms which use random
@@ -75,8 +75,6 @@ respecting the model probabilities:
 An advantage of using such a model is that it many cases it is possible to obtain samples without
 having the whole transition function for the model in an explicit form. The samples obtained can
 then be used to approximate average returns, which in turns can be used to obtain an optimal policy.
-
-\section{Monte Carlo Tree Search}
 
 The most widely known algorithm using Monte Carlo techniques is called \textit{Monte Carlo Tree
 Search} (MCTS) \cite{cit:mcts}. This algorithm is an MDP online planner which has received high
@@ -165,8 +163,8 @@ tree anymore. Actions are selected using a \textit{rollout policy}, which is gen
 random. This continues until a terminal state or the selected horizon is reached. This concludes the
 sample episode.
 
-Once a sample episode ends, all the reward collected during both phases is backpropagated up to the
-tree root. This is used to update the values of all the actions taken during the first phase of the
+Once a sample episode ends, all the reward collected during both phases is backed up to the tree
+root. This is used to update the values of all the actions taken during the first phase of the
 algorithm.
 
 At this point, a new sample episode is started from the root of the tree. This process is repeated
@@ -199,7 +197,7 @@ around the maximum return that can be obtained by the agent.
 
 Actions are then selected greedily with respect to the UCT value.
 
-\section[]{Partially Observable Monte-Carlo Planning%
+\section[Partially Observable Monte-Carlo Planning]{Partially Observable Monte-Carlo Planning%
 \sectionmark{POMCP}}
 \sectionmark{POMCP}
 \label{ref:pomcp}
@@ -305,8 +303,8 @@ tree anymore. Actions are selected using a \textit{rollout policy}, and observat
 completely discarded. This continues until a terminal state or the selected horizon is reached. This
 concludes the sample episode.
 
-Once a sample episode ends, all the reward collected during both phases is backpropagated up to the
-tree root. This is used to update the values of all the actions taken during the first phase of the
+Once a sample episode ends, all the reward collected during both phases is backed up to the tree
+root. This is used to update the values of all the actions taken during the first phase of the
 algorithm.
 
 At this point, a new sample episode is started from the root of the tree. This process is repeated
