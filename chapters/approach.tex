@@ -5,10 +5,15 @@ particular task. However, in order to justify the usage of POMDPs, we have to de
 Active Perception task requires the usage of non-myopic solutions in the first place.  This is
 because not all problems necessarily require non-myopic solutions.
 
+\ys{reword this statement, we dont have to justify usage of POMDPs, its should be more along the lines of, we believe pomdp provides a natural framework for modelling this kind of task ( which we have already conveyed to user in introduction and background) }
+
 We propose two different POMDP models of Active Perception problems. For one of the models we will
 prove that a non-myopic solution is required in order to obtain an optimal solution. For the second
 we will prove that a non-myopic solution is not required. The results we show are for both max of
 belief and negative entropy reward functions.
+
+\ys{Again, rather write this para as we have tried myopic and non-myopic approaches in different settings. In some settings, myopic policy proved to be as optimal as nonmyopic, where as in some settings non myopic policy has a clear advantage over myopic. We discuss the nature of this phenomenon in detail later.}
+\ys{why are models still in approach?}
 
 While we were not able to demonstrate a general way to show whether any particular problem will need
 non-myopicity in the solution, the fact that Active Perception tasks exist which require
@@ -91,6 +96,8 @@ properties apply. This could be done for example by adding a certain number of r
 needs to go through before ending up in the model presented, and so on. Thus a non-myopic solution
 is required for uncountably many Active Perception tasks.
 
+\ys{I feel this whole section about models and consequences should be in experiements and the consequence or explanation about what is happening should be in discussion or experiments.}
+
 \subsection{Myopic World}
 
 A different instance of the previous problem is one where there are only 4 rooms, and the person
@@ -137,6 +144,9 @@ can be applied to problems where the agent can influence the state of the world,
 minor modifications to reintroduce state dependent rewards) when the reward function is both
 dependent on states and belief.
 
+\ys{you should explain here why POMCP cannot be applied to $\rho$ POMDP or any POMDP with belief dependent reward directly.}
+
+
 \subsection{Non-PWLC Value Function}
 
 Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
@@ -151,6 +161,9 @@ is because online planning directly approximates rewards for the possible future
 situation, without the need to solve a POMDP completely for any possible beliefs. Thus, witness
 points do not need to be discovered, and we can ignore the PWLC property.
 
+
+\ys{this is a potential source of confusion. $\rho$ POMDP has a PWLC value function and thus can be solved offline. This leads back to discussion we had about what is $\rho$POMDP and what is not. I know that the paper quotes that any POMPD with belief dependent reward is $\rho$ POMDP. However, the main distinctive property about $\rho$ POMDP is not that they were the first to define the reward in terms of $\rho$, but they were the first to take a $\rho$ defined reward and find a way to approximate it with PWLC function. This para sounds like it is not possible to solve $\rho$POMDP offline, and that is why we need your method, which is not true. You should use term 'POMDP with belief-dependent reward'}
+
 \subsection{Reward Estimation}
 
 The main challenge when applying POMCP to a $\rho$-POMDP is that the algorithm can only extract
@@ -158,6 +171,8 @@ reward information from a generative model. This cannot be done for a belief-dep
 function, since the belief is an abstraction created by the agent, which does not actually exist in
 the environment.  Thus, a generative model is unable to sample from a belief-dependent reward
 function.
+
+\ys{Previous comments apply here too. $\rho$POMDP has a way of defining a belief dependent reward in terms of state.(which is what POMDP IR also does). However, in online planning, for any method that is not sampling based, it should be possible to compute future rewards directly from belief. In our case, since POMCP is a sampling based algorithm, we have to find a way of keeping estimates of belief-based rewards depending on the samples. Again this para sounds like POMCP cannot be applied to $\rho$POMDP, which is not true.}
 
 To avoid this, we estimate the immediate reward for a specific action-observation transition by
 using maximum-likelihood estimates of the belief extracted from the particle beliefs POMCP
@@ -171,6 +186,8 @@ most common. At each particle insertion the number of particles for that type is
 the number of the old most common particle. Whichever is higher becomes the new most common
 particle, and the new max of belief is computed as the ratio between the most common particle count
 and the total number of particles in the belief.
+
+\ys{is there a better way to differentiate particles and 'type of particle'. I can understand what you are trying to say, but the word particle causes too much confusion here.}
 
 \begin{algorithm}[H]
     \caption{Max of Belief Reward Estimation}
@@ -230,13 +247,17 @@ Such an approach is in any case guaranteed to converge to the true entropy in th
 number of samples tends to infinite. This maintains the POMCP property that leads to an optimal
 solution in the limit.
 
+\ys{explanation of computation of entropy estimates can be structure this way. 1.) We follow the following procudeure to compute entropy estimates. 2). However, this procedure causes bias and other problems. 3) Earlier results show that bias is difficult to get rid of and other problems. 4) In practice, bias does not matter as long as we have a lot of samples. Right now these points seems a bit mixed with each other. }
+
 \subsection{Value Backup}
 
-A second problem is dependent on how returns are approximated in POMCP. The value for a
-belief-action pair $b,a$ is computed as the sum of two different factors: the immediate reward
+A second problem is dependent on how returns are approximated \ys{computed or approximated?} in POMCP. The value for a
+belief-action pair $b,a$ \ys{isnt this just $Q(b,a)$} is computed as the sum of two different factors: the immediate reward
 $\rho(b,a)$ plus a discounted term representing the expected return from then on.
 
 \[ V(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V(b') \]
+
+\ys{should be Q}
 
 Recall that in a belief MDP the reward function is defined as:
 
@@ -253,6 +274,8 @@ observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all v
 lower in the tree after observation $o$. In POMCP a backed up value is simply the discounted sum of
 all sampled rewards down in the episode. As with MCTS, as long as the better actions are chosen more
 often than the others, this procedure will converge to the true expected return.
+
+\ys{this parts needs to be written a bit more formally and using a conventional notation. ex: V(b,a) is Q(b,a). It is very difficult to understand what $f_{o}$ is ??}
 
 However, in our case, the reward function is structured in the following way:
 
