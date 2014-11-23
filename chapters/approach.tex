@@ -138,56 +138,53 @@ Perception tasks.
 \section{$\rho$-POMCP}
 
 In this Section we present a modification of the algorithm POMCP which is able to deal with a
-belief-based reward function in POMDPs. An important fact to note that this algorithm is able to
-deal with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm
-can be applied to problems where the agent can influence the state of the world, and also (with
-minor modifications to reintroduce state dependent rewards) when the reward function is both
-dependent on states and belief.
+belief-based reward function in POMDPs. We discuss in more details why POMCP cannot be applied
+directly to $\rho$-POMDPs in Section \ref{ref:rewestimation}.
 
-\ys{you should explain here why POMCP cannot be applied to $\rho$ POMDP or any POMDP with belief dependent reward directly.}
-
+We call our POMCP variant $\rho$-POMCP. An important fact to note that $\rho$-POMCP is able to deal
+with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm can be
+applied to problems where the agent can influence the state of the world, and also (with minor
+modifications to reintroduce state dependent rewards) when the reward function is both dependent on
+states and belief.
 
 \subsection{Non-PWLC Value Function}
 
 Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
-uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for offline
-planning since usual solving techniques rely on the PWLC property in order to detect beliefs where
-the currently computed optimal policy is not actually optimal. Once such a belief point is
+uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for exact
+offline planning since usual solving techniques rely on the PWLC property in order to detect beliefs
+where the currently computed optimal policy is not actually optimal. Once such a belief point is
 discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
 belief too.
 
-This problem is solved in our approach since online planning does not suffer from that problem. This
-is because online planning directly approximates rewards for the possible futures of any given
+This problem is solved generally in two ways: by approximating the offline solution, or solving the
+$\rho$-POMDP in an online manner. With $\rho$-POMCP, we take the latter approach. Online methods
+work because online planning directly approximates rewards for the possible futures of any given
 situation, without the need to solve a POMDP completely for any possible beliefs. Thus, witness
 points do not need to be discovered, and we can ignore the PWLC property.
 
-
-\ys{this is a potential source of confusion. $\rho$ POMDP has a PWLC value function and thus can be solved offline. This leads back to discussion we had about what is $\rho$POMDP and what is not. I know that the paper quotes that any POMPD with belief dependent reward is $\rho$ POMDP. However, the main distinctive property about $\rho$ POMDP is not that they were the first to define the reward in terms of $\rho$, but they were the first to take a $\rho$ defined reward and find a way to approximate it with PWLC function. This para sounds like it is not possible to solve $\rho$POMDP offline, and that is why we need your method, which is not true. You should use term 'POMDP with belief-dependent reward'}
-
-\subsection{Reward Estimation}
+\subsection{Reward Estimation}\label{ref:rewestimation}
 
 The main challenge when applying POMCP to a $\rho$-POMDP is that the algorithm can only extract
-reward information from a generative model. This cannot be done for a belief-dependent reward
-function, since the belief is an abstraction created by the agent, which does not actually exist in
-the environment.  Thus, a generative model is unable to sample from a belief-dependent reward
-function.
+reward information from a generative model of the environment. Since a belief is an abstraction
+created by the agent, a generative model containing a belief-dependent reward function cannot exist.
 
-\ys{Previous comments apply here too. $\rho$POMDP has a way of defining a belief dependent reward in terms of state.(which is what POMDP IR also does). However, in online planning, for any method that is not sampling based, it should be possible to compute future rewards directly from belief. In our case, since POMCP is a sampling based algorithm, we have to find a way of keeping estimates of belief-based rewards depending on the samples. Again this para sounds like POMCP cannot be applied to $\rho$POMDP, which is not true.}
+A possible approximate solution involves converting the belief-dependent reward function into a
+state-based reward function; prediction actions can then be used to allow the agent to express
+directly its uncertainty with respect to this new reward function. The main drawback is that this
+results in an exponentially increasing number of actions the more accuracy is required, with
+consequent increase in the space of search that needs to be considered by the solution process.
 
-To avoid this, we estimate the immediate reward for a specific action-observation transition by
-using maximum-likelihood estimates of the belief extracted from the particle beliefs POMCP
-generates. However, since particle beliefs are updated constantly, computing a direct estimate of
-every belief reached during each sample episode would excessively hamper performance. We solved this
-problem differently for estimating max of belief rewards and negative entropy rewards.
+Instead, in our approach we estimate the immediate reward for a specific action-observation
+transition by using maximum-likelihood estimates of the belief extracted from the particle beliefs
+POMCP generates. However, since particle beliefs are updated constantly, computing a direct estimate
+of every belief reached during each sample episode would excessively hamper performance. We solved
+this problem differently for estimating max of belief rewards and negative entropy rewards.
 
-For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in each
-particle belief, the number of particles for each type of particle and which type of particle is the
-most common. At each particle insertion the number of particles for that type is compared against
-the number of the old most common particle. Whichever is higher becomes the new most common
-particle, and the new max of belief is computed as the ratio between the most common particle count
-and the total number of particles in the belief.
-
-\ys{is there a better way to differentiate particles and 'type of particle'. I can understand what you are trying to say, but the word particle causes too much confusion here.}
+For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in the
+particle belief $N(b)$, the number of particles for each particle type $N(s)$ and the most common
+type $max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
+determines the new most common particle, either $k$ or the old $max_s$. Finally, the new max of
+belief is computed using maximum likelihood as $N(max_s)/N(b)$.
 
 \begin{algorithm}[H]
     \caption{Max of Belief Reward Estimation}
@@ -208,22 +205,21 @@ For estimation of entropy, the situation is not quite so straightforward. Entrop
 discrete samples is bound to be biased, and there is no way to remove this bias completely
 \cite{cit:badentropy}. On the other hand, techniques to decrease bias are computationally heavy and
 rely on usage of additional complex distributions to account for bias \cite{cit:entropyfixes}.
-Since $\rho$-POMCP needed to be as fast as possible, we decided to try a more direct approach in the
-hope that any inaccuracies would not hamper significantly the search process.
 
-Negative entropy is computed as a summation of terms, one for each type of particle:
+In practice bias becomes small as long as the number of samples is high. Thus, we kept our
+estimation algorithm as simple as possible in order to maximize the number of samples that can be
+done in any given time. We compute negative entropy as a summation of terms, one for each type of
+particle:
 
 \[ -H(b) = \sum_s p(s) \log p(s) \]
 \[ -H(b) \approx \sum_s \frac{n_s}{N} \log \frac{n_s}{N} \]
 
 $\rho$-POMCP stores internally both the latest negative entropy estimate $-H(b)$, and each of the
-separate terms that compose it. At each new particle insertion in a particle belief, we simply
-remove from our previous full estimate the relevant term for the particle state, recompute the term
-and add it again. This approach is not mathematically correct as, in theory, all terms would need to
-be updated at each insertion. This is because each entropy term depends on the probability of such
-term, which in turn depends on the total number of particles in the belief, which has just been
-increased by one. In essence, we are overestimating negative entropy. Again, we would have bias
-anyway no matter the strategy we used.
+separate terms that compose it. At each particle $k$ insertion in a particle belief, we simply
+remove from our previous full estimate the relevant term for $k$, recompute the term and add it
+again. This approach is not mathematically correct as, in theory, all terms would need to be updated
+at each insertion, but in practice it turns out not to be a problem as long as each type of particle
+$s$ is added with relative frequency.
 
 \begin{algorithm}[H]
     \caption{Negative Entropy Reward Estimation}
@@ -241,23 +237,17 @@ anyway no matter the strategy we used.
 
 \end{algorithm}
 
-In practice, this bias turns out not to be a problem as long as each type of particle is added with
-relative frequency, so as to keep all terms that compose the overall negative entropy ``fresh''.
-Such an approach is in any case guaranteed to converge to the true entropy in the limit, when the
-number of samples tends to infinite. This maintains the POMCP property that leads to an optimal
-solution in the limit.
-
-\ys{explanation of computation of entropy estimates can be structure this way. 1.) We follow the following procudeure to compute entropy estimates. 2). However, this procedure causes bias and other problems. 3) Earlier results show that bias is difficult to get rid of and other problems. 4) In practice, bias does not matter as long as we have a lot of samples. Right now these points seems a bit mixed with each other. }
+Such an approach is guaranteed to converge to the true entropy in the limit, when the number of
+samples tends to infinite. This maintains the POMCP property that leads to an optimal solution in
+the limit.
 
 \subsection{Value Backup}
 
-A second problem is dependent on how returns are approximated \ys{computed or approximated?} in POMCP. The value for a
-belief-action pair $b,a$ \ys{isnt this just $Q(b,a)$} is computed as the sum of two different factors: the immediate reward
+A second problem is dependent on how returns are approximated \ys{computed or approximated?} in
+POMCP. $Q(b,a)$ is computed as the sum of two different factors: the immediate reward
 $\rho(b,a)$ plus a discounted term representing the expected return from then on.
 
-\[ V(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V(b') \]
-
-\ys{should be Q}
+\[ Q(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V(b') \]
 
 Recall that in a belief MDP the reward function is defined as:
 
@@ -266,16 +256,13 @@ Recall that in a belief MDP the reward function is defined as:
 To approximate this value POMCP simply averages all results from $R(s,a)$ done using particles
 extracted from the all beliefs and actions encountered during sample episodes.
 
-\[ V(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
+\[ Q(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
 
 Where $N$ is the number of times that action $a$ has been taken in belief $b$, $n_s$ the number of
 times state $s$ has been sampled from $b$ when taking action $a$, $n_o$ is the number of times that
-observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all values backed up from
-lower in the tree after observation $o$. In POMCP a backed up value is simply the discounted sum of
-all sampled rewards down in the episode. As with MCTS, as long as the better actions are chosen more
-often than the others, this procedure will converge to the true expected return.
-
-\ys{this parts needs to be written a bit more formally and using a conventional notation. ex: V(b,a) is Q(b,a). It is very difficult to understand what $f_{o}$ is ??}
+observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all returns sampled after
+observation $o$. As with MCTS, as long as the better actions are chosen more often than the others,
+this procedure will converge to the true expected return.
 
 However, in our case, the reward function is structured in the following way:
 
@@ -284,7 +271,7 @@ However, in our case, the reward function is structured in the following way:
 This is because both max of belief and negative entropy rewards can be only extracted from a belief,
 and do not depend on actions. Thus, the value for a belief-action pair becomes:
 
-\[ V(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V(b') \]
+\[ Q(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V(b') \]
 
 The problem is that we estimate $\rho(b')$ directly, rather than by averaging samples. At the same
 time, $V(b')$ depends on reward estimates of future beliefs, which again are estimated directly.

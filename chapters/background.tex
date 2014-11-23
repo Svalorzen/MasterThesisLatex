@@ -239,6 +239,11 @@ In general, when we are looking for a solution for a POMDP we are looking for a 
 
 \[ V^{\pi^*}_h = \max_\pi V^{\pi}_h \]
 
+Another useful function that can be defined from $V$ is the value of a given action $a$ in a
+particular belief, given that the specified policy is strictly followed after taking $a$:
+
+\[ Q^{\pi}_h(b, a) = \sum_{b'} \tau(b,a,b') \left[ \rho(b,a,b') + V^{pi}_{h-1}(b') \right ] \]
+
 \section{$\rho$POMDP}
 
 As we have already mentioned, in a belief MDP the reward is defined in terms of the belief, called
