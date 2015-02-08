@@ -1,7 +1,7 @@
 \section{Active Perception}
 
 Machines see the world only through data gathered by sensors such as cameras, radars, motion
-sensors, thermometers, and many others. Unfortunately, the quantity of information that can be
+sensors, thermometers, and many others. Unfortunately, the amount of information that can be
 collected is limited. Any part of the environment outside sensors' range cannot be perceived.
 Hardware costs bound the number of available sensors. Energy and bandwidth limits constrain the
 usage of available sensors. Such limits prevent the collection of all available information; only
@@ -109,19 +109,6 @@ Perceptions. In particular, we focus on the following:
     which significantly complicates modeling the resulting environment.
 \end{description}
 
-%\section{Research Questions}
-%
-%Active Perception is an active field of research, and so many approaches to the problem have been
-%experimented with. In particular, this work tries to give an answer to the following questions,
-%which to our knowledge have not been answered yet:
-%
-%\begin{itemize}
-%\item To what extent is a non-myopic solution necessary in order to achieve an optimal solution
-%within the Active Perception problem?
-%\item What are the trade-offs for using online Monte Carlo approximations in Active Perception with
-%respect to other approaches?
-%\end{itemize}
-
 \section{Approach}
 
 In this work we approach Active Perception by leveraging a powerful and flexible decision-theoretic
@@ -140,22 +127,11 @@ strategies for using the sensors. In fact, POMDPs are specifically structured as
 of planning. This means that the system will try to gather information in order to improve its
 expected knowledge of the environment, while reasoning about all future possibilities. We argue that
 while myopic strategies can sometimes suffice, many Active Perception problems require non-myopicity
-to achieve optimality.
-
-%In POMDPs, the agent tracks is current status via a \textit{belief}, which is a probability
-%distribution over the possible states of the underlying world. This belief is used to compute
-%possible outcomes for actions undertaken by the system, and to predict future rewards. This belief
-%is updated depending on the observation that the system receives from the sensors, taking into
-%account possible ambiguity (perceptual aliasing) that could result from imperfect knowledge.
+to achieve optimality, and provide a proof in Appendix \ref{ref:appendix_proof}.
 
 POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
 already available solution methods. We discuss some POMDPs solution methods in Chapter
 \ref{ref:solutions}.
-
-% One of the active topics of research in decision theory regards the efficient computation of POMDP
-% policies. When dealing with non-trivial models, the time needed to compute an optimal policy and the
-% space needed to store it increase exponentially with the complexity of the problem \cite{cit:pomdp}.
-% This has led to the development of methods that allow for approximate solutions.
 
 In particular, our approach is based on online planning. This type of approach is based on
 determining an optimal course of action applicable only to the situation that is currently faced by
@@ -191,50 +167,8 @@ any POMDP where the reward function is based on knowledge rather than states, fo
 where an agent can influence the state of the environment directly. This increases the utility of
 our work, as it can be used in multiple classes of problems.
 
-
-% \begin{description}
-%     \item[Belief based reward function:] We modify the POMCP algorithm in order to evaluate actions
-%         based on a belief dependent reward function, rather than a state based reward function. This
-%         allows to approach the Active Perception problem by having a reward function taking into
-%         consideration knowledge rather than world state.
-%     \item[Estimate based rewards:] We modify the POMCP algorithm in order to backup reward
-%         estimations. Normally sample rewards are progressively averaged into a final estimate, which
-%         only requires backup of the rewards obtained during a sample trajectory. In
-%         $\rho$-POMCP an updated reward estimate does not average with previous estimations but
-%         completely overrides them, given that the uncertainty in a belief is deterministic.
-%         This requires a different backup procedure.
-%     \item[Mean vs Max:] We test against two different functions used for value back-propagation within
-%         the lookup tree used by POMCP. The original algorithm computes the value of a particular
-%         belief as the weighted average over tried actions, instead that over the best available
-%         action. This was shown to be a good approach when the number of samples was low in
-%         \cite{cit:mcts}, but we argue that the processing power available to modern computers allows
-%         for the max function to be used more effectively.
-% \end{description}
-
-% This may go into experiments.. is our approach completely independent of application?
-%
-%In this work we consider the problem of tracking a person moving throughout an environment which is
-%covered by a multi-camera system. We try to devise a centralized, intelligent method to
-%automatically activate cameras by predicting the movement of the target within range of the cameras,
-%and reducing as much as possible the uncertainty of their positions with limited resources. The idea
-%is to select the cameras which will provide the maximum amount of information within the available
-%resource limits. In a real world setting, such limits are generally defined as computational costs,
-%energy requirements and communication costs.
-%
-%The camera selection problem is defined on already deployed systems, where camera positions and
-%orientations are known, and not modifiable. The goal is to be able to select a subset $k$ of the $n$
-%total cameras deployed, so as to maximize our knowledge of the state of the world; this is
-%equivalent of minimizing the entropy of our knowledge. In our particular approach, we consider the
-%case of tracking a single target using multiple sensors.
-%
-%In this work we are going to use passive sensors in the form of fixed cameras. These cameras can be
-%seen as passive sensors since they only collect video information in a limited, non-interactive way.
-%The idea is to actively utilize these sensors by using only a subset of them at any time, in order
-%to reduce at the same time computational, energy and communication costs. We reduce energy by using
-%less cameras at any one time, and we can reduce computational and communication costs by reducing
-%the amount of data that needs to be processed concurrently.
-
 \subsection{Chapter Overview}
+
 Throughout Chapter \ref{ref:background} we introduce the background theory and models that support
 our approach, and define the terms we use within this work. In addition, we introduce the already
 existing techniques that led to our particular approach on the problem. In Chapter

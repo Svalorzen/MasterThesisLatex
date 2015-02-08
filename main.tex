@@ -25,6 +25,9 @@
 \usepackage{etoolbox}
 \apptocmd{\sloppy}{\hbadness 10000\relax}{}{}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 \newcommand{\ys}[1]{{\color{red} \bf[YS: #1 ]}}
 
 \title{
@@ -60,18 +63,15 @@
 \input{chapters/related_work}
 
 \chapter{Experiments}\label{ref:experiments}
-    \section{Cell World}
-        \subsection{Max vs Mean}
-        \subsection{Non-Myopic World}
-        \subsection{Square-Grid World}
-    \section{Real Data}
+\input{chapters/experiments}
 
 \chapter{Conclusion}\label{ref:conclusion}
 
 \nocite{*}
-% \appendix
+\appendix
 
-% \chapter{Appendix?}
+\chapter{Myopicity of Active Perception}\label{ref:appendix_proof}
+\input{chapters/appendix}
 
 \bibliographystyle{unsrtnat}
 \bibliography{references}

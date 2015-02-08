@@ -1,0 +1,123 @@
+POMDPs can be used naturally to compute non-myopic policies to solve a particular task. We show here
+that some Active Perception tasks require the usage of non-myopic solutions to achieve optimality,
+and thus we can use POMDPs to model efficiently such tasks.
+
+We propose two different POMDP models of Active Perception problems. For one of the models we will
+prove that a non-myopic solution is required in order to obtain an optimal solution. For the second
+we will prove that a non-myopic solution is not required. The results we show are for both max of
+belief and negative entropy reward functions.
+
+\section{Non-Myopic World}
+
+Let's consider a world where the agent is tasked with tracking a single person that is walking. The
+person can, at any moment, be in one of a series of rooms, and can transition between them. In each
+room there is a camera which can observe the room itself and nothing else. If the agent activates
+the camera situated in a room the person just entered there is a $0.8$ probability that the agent will
+obtain a ``found'' observation, and a $0.2$ probability that it will obtain a ``null'' observation.
+On the other hand, if the agent activates any other camera, it will obtain a ``null'' observation
+with $0.8$ probability and a ``found'' observation with $0.2$ probability. Each time a camera is
+activated, the person will move to another accessible room. The agent's goal is to guess correctly
+where the person has moved for two times in a row, knowing only that at the start the person could
+be in any room.
+
+We will now create an instance of the problem we have just finished describing. Let's now suppose
+that in our world there are 6 rooms, and we know that the person will transition from one to another
+with the following probabilities:
+
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (s1) at (0,0) [state] {S1};
+\node (s2) at (2,3) [state] {S2};
+\node (s3) at (4,0) [state] {S3};
+\node (s4) at (6,0) [state] {S4};
+\node (s5) at (8,3) [state] {S5};
+\node (s6) at (10,0) [state] {S6};
+
+\path
+    (s1) edge [loop below] node {0.333} (s1)
+         edge [bend left] node {0.333} (s2)
+         edge [bend left=10] node[below] {0.333} (s3)
+    (s2) edge [loop above] node {0.333} (s2)
+         edge [bend left=10] node[above,rotate=60] {0.333} (s1)
+         edge [bend left] node {0.333} (s3)
+    (s3) edge [loop below] node {0.333} (s3)
+         edge [bend left=10] node[above,rotate=-60] {0.333} (s2)
+         edge [bend left] node {0.333} (s1)
+    (s4) edge [bend left] node {1.0} (s5)
+    (s5) edge [bend left] node {1.0} (s6)
+    (s6) edge [bend left] node {1.0} (s4);
+
+\end{tikzpicture}
+\end{center}
+
+As we said, at first the agent does not know where the person is at all. The myopic expected return
+for the first step only is:
+
+\[ E[\text{return}| a_1 ] = \sum_{o\in \Omega} p(o | b, a_1) \cdot \rho(b') \]
+
+Where $b'$ is the result of the belief update of $b$ with $o$ and $a_1$. The non-myopic expected return over
+both steps is:
+
+\[ E[\text{return}| a_1, a_2] = \sum_{o \in \Omega} p(o | b, a_1) \left ( \rho(b') + \sum_{o' \in
+\Omega} p(o'| b', a_2) \cdot \rho(b'') \right ) \]
+
+Where $b''$ updates from $b'$, $o'$ and $a_2$. It is easy to show that, both for max of belief and
+negative entropy as $\rho$, all actions in the presented problem have the same myopic one-step
+expected return from a uniform belief. This is done by simply computing the previously described
+summatory over every term and performing the appropriate belief updates.
+
+However, expected non-myopic returns are not the same for all choices of $a_1$ and $a_2$. For
+example selecting $a_1 = S1$ always results in a certain expected return $v$, independently from
+$a_2$. On the other hand, if $a_1 = S4$, all expected returns are greater than $v$ for all but one
+choice of $a_2$. In other words, selecting $a_1 = S1$ leads necessarily to a lower two-step expected
+return, since the agent can select $a_2$ to only pick the best cases.
+
+Selecting $a_1$ to avoid the worst cases can only be done when there is a way to distinguish between
+two different $a_1$.  Since myopic expected returns are the same for all $a_1$, this is impossible
+to do with a myopic solution.
+
+Note that the problem considered can be extended into uncountably many models where the same
+properties apply. This could be done for example by adding a certain number of rooms that the person
+needs to go through before ending up in the model presented, and so on. Thus a non-myopic solution
+is required for uncountably many Active Perception tasks.
+
+\section{Myopic World}
+
+A different instance of the previous problem is one where there are only 4 rooms, and the person
+will transition from state to state with the following probabilities:
+
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (s1) at (0,0) [state] {S1};
+\node (s2) at (0,4) [state] {S2};
+\node (s3) at (4,4) [state] {S3};
+\node (s4) at (4,0) [state] {S4};
+
+\path
+    (s1) edge [bend right] node {0.5} (s4)
+         edge [bend left] node {0.5} (s2)
+    (s2) edge [bend left] node {0.5} (s1)
+         edge [bend right] node {0.5} (s3)
+    (s3) edge [bend right] node {0.5} (s2)
+         edge [bend left] node {0.5} (s4)
+    (s4) edge [bend left] node {0.5} (s3)
+         edge [bend right] node {0.5} (s1);
+
+\end{tikzpicture}
+\end{center}
+
+Once again, we can compute both myopic and non-myopic expected returns. This time, no matter the
+choice of actions, there is no particular incentive for an agent to select a pair over another. If
+$\rho$ is negative entropy, certain pair of actions have a higher expected return than others. But
+for each $a_1$ there is a $a_2$ which obtains the maximum expected return possible.
+
+Thus, non-myopic in this particular model has no particular advantage over a more simple myopic
+solution. Once again this problem can be extended into uncountably infinite examples of Active
+Perception tasks.
+
