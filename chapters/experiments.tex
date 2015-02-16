@@ -16,6 +16,8 @@ actions, plus an addictional \textit{prediction action}, which is used by the ag
 predict the state the environment is in at any given time. The new action space is thus the result
 of a cross-product between the set of old actions and the new prediction actions, which are $|S|$.
 
+\ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction actions} 
+
 The reward function is then defined in terms of the prediction actions: if the agent predicts the
 state of the environment correctly, it receives a reward of 1. Otherwise, it receives no reward. It
 follows that the expected returns with the new reward function are the same than that of a
@@ -27,9 +29,9 @@ more states are available, which significantly impairs both POMCP and RTBSS.
 
 RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards.
 
-\section{Non-Myopic World}
+\section{Non-Myopic World} \ys{please change the title of this subsection} 
 
-In this Section we apply the proposed algorithms to the following model: a single target walking
+In this \ys{(s)}Section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them
 as showed in \ref{ref:nonmyo1}. The agent can observe, at each timestep, whether the target is in a
 given room. The information gathered by the agent will be correct with probability $p=0.8$. In each
@@ -73,10 +75,10 @@ approach can be preferred over a myopic one.
 Figure \ref{ref:myoentropyfig} and Figure \ref{ref:myombfig} show performance in terms of cumulative
 obtained reward for the different methods proposed. We also compare performances of POMCP/rPOMCP
 using different number of samples. In addition, we test rPOMCP with different $k$ parameters, tuning
-the mean-max backup operation towards one or the other. A $k$ of 1 results in a max backup
+the mean-max backup operation towards one or the other. A $k$ of 1 \ys{k of 1 , are your trying to say k=1?} results in a max backup
 operation, while a $k$ of 10000 results in an essentially mean backup operation of values.
 
-The $h$ parameter determines the horizon of the particular solver. A $h$ of 1 resulted in a greedy
+The $h$ parameter determines the horizon of the particular solver. A $h$ of 1 \ys{h of 1?} resulted in a greedy
 solver. It is important to note that for POMCP and rPOMCP $h$ is merely an upper bound on the depth
 of the decision tree they are allowed to explore. This is because they build their decision tree
 incrementally, so that they may not reach its true bottom of their decision tree if the number of
@@ -107,6 +109,11 @@ samples is not sufficient.
         \label{ref:myoentropyfig}
 \end{figure}
 
+\ys{x and y axis??}
+
+\ys{I think there are too many lines in this figures. For showing the performance with increasing number of samples, you can fix k = 1 or 1000, fix a horizon to 5 or 2 and then you can increase number of samples to show variations.}
+
+
 \begin{figure}[ht!]
         \centering
         \begin{subfigure}[t]{0.3\textwidth}
@@ -132,6 +139,8 @@ samples is not sufficient.
         \label{ref:myombfig}
 \end{figure}
 
+\ys{there is no need probably to show how max of belief/entropy differs with number of sample, unless the behaviour is extremely different. Instead you can compare the performance between max of belief and entropy by fixing number of sample, k and h and then show how max of belief/entropy matters}.
+
 We can see how a small horizon always results in a lower return over the 10 timesteps. This is
 because with a greedy approach the agent cannot leverage the fact that half of the environment is
 deterministic, and thus more useful to explore beforehand. This is most visible in the max-of-belief
@@ -151,6 +160,8 @@ after that each action will yield no additional information. The agent can, at e
 whether to use one of its observations, or save them for a future timestep. The idea is that
 the agent should use up an observation only if has low knowledge about the world; otherwise it
 should keep its observation actions for later.
+
+\ys{motivate finite budget setting by saying that sometimes, there is a fixed budget because of energy constraints, so we test it here}
 
 --- INSERT IMAGE OF THE MODEL HERE ---
 
@@ -258,6 +269,8 @@ changed with respect to a differently predictable target.
         \caption{Results in the Finite Budget World with a transition factor of 0.75, using max-of-belief, averaged over 3000 episodes.}
         \label{ref:fbmbfig75}
 \end{figure}
+
+\ys{I think it applied for most of the figures here, there is no need to have so many parameters change in each graph. Fix everything else and just change one parameter and tell what is the take away message from changing that parameter}.
 
 
 \clearpage
@@ -524,3 +537,6 @@ takes too much time to complete.
         \end{subfigure}
         \caption{Results in the Camera World 2 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cpb10}
 \end{figure}
+
+
+\ys{I dont think there is any need to repeat every graph for different number of samples. Fix the sample and then change other variables. That will definitely reduce the number of graphs you have to manageable number.}
