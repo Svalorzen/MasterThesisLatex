@@ -5,16 +5,21 @@ In order to optimally perform a task within an environment we need to jointly mo
 the environment and the task objectives. The modeling framework we are going to use in this work
 stems from the \textit{Markov Decision Process} (MDP) \cite{cit:suttonbarto}.
 
+\ys{no need to motivate POMDP or MDP in this section. Also no need to write about MDPs here. Start directly from POMDP}
+
+
 MDPs structure reasoning around a probabilistic automaton. The agent \textit{acts} upon the
 environment, which is in a particular \textit{state}. As a result, the environment
 \textit{transitions} stochastically to another state, as defined by a transition function. During
 the transition, the agent receives a certain \textit{reward} representing its achievements
 toward the task at hand.
 
+
+
 The \textit{Partially Observable MDP} (POMDP) \cite{cit:pomdp} is an extension of such a framework,
 where the agent cannot see the current state of the world. In POMDPs, the agent receives an
 \textit{observation} dependent on the underlying state during each transition, but which does not
-uniquely disambiguate it. These are used to keep a statistic over the states the environment could
+uniquely disambiguate it. \ys{what if for some states there are observations which can help agent disambiguate state, but for some there are no observations like this? } These are used to keep a statistic over the states the environment could
 be in at any given timestep.
 
 Non-myopic strategies can be naturally extracted from MDPs and POMDPs, which is one of their main
@@ -30,21 +35,24 @@ introduce these terms in the following Sections.
 
 \subsection{Environment}
 
+\ys{Why is environment part of POMDP section. You can describe agent and environment as separate subsection and then POMDP can be described.}
+
+
 The environment represents all that is not the agent. The environment is described in terms of its
 possible configurations.  Each configuration, called \textit{state}, represents a unique
 arrangement of the world at any one time. For example, in chess, the environment can be completely
-described by the positions of all pieces on the game board. The full set of states is denoted
+described by the positions of all pieces on the game board. \ys{there is an advantage to describing resource allocation problem in the introduction. You dont have it now. the problem works as a running example and you dont have to cite example from outside to explain something.} The full set of states is denoted
 \textit{state space}, and is usually referred to as $S$. This is the first element of the POMDP
 tuple.
 
 \[ S = \{s_0, s_1, s_2, ..., s_{|S|}\} \]
 
 Note that we assume that all sets presented in this work to be finite, unless where specifically
-noted.
+noted. \ys{do we ever do that?}
 
 An important property that each state needs to have is called the \textit{Markov} property. This
 property requires that the evolution of the environment depends solely on the information encoded in
-its current state, and nothing else. This can also be seen as saying that the environment has no
+its current state, and nothing else. This can also be seen as saying that the environment \ys{the word environment is really confusing here}has no
 memory, since keeping track of previous states has no use for its future evolution. The Markov
 property is required in order to allow the agent to reason only about the current state, without the
 need to know its history.
@@ -56,6 +64,8 @@ features into the state-space definition \cite{cit:boutilier}.
 In the environment transitions between a state and another state are discrete and instantaneous.
 Each transition happens within a single \textit{timestep}, which represents the atomic unit of
 change within the environment.
+
+\ys{transition function can be subsubsection ?? and so can be other bullets. }
 
 The \textit{transition function} encodes the consequences of actions with respect to the environment
 states. In particular the transition function is a function
@@ -76,6 +86,8 @@ about. This property holds when
 \[ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S \]
 
 where here $t$ denotes the timestep where a particular state was reached.
+
+\ys{what happened to other elements in the tuple? You should definitely structure such that you explain environment and agent separately and then POMDP and all its tuple in one segment.}
 
 \subsection{Agent}
 
@@ -130,7 +142,7 @@ The observation function does not allow the agent to disambiguate between states
 the problem would convert directly to an MDP. Instead, what happens is called \textit{perceptual
 aliasing}: each obtained observation is compatible with a subset of $S$. For example, in a room
 where half the walls are white, a robot seeing white would not know for certain where it is looking.
-At the same time, it would still be better off than not knowing anything at all.
+At the same time, it would still be better off than not knowing anything at all. \ys{here the running example can be used}
 
 The agent must reason about which of the possible underlying states of the environment are
 compatible with all previously obtained observations in order to plan its moves.
@@ -234,6 +246,8 @@ that its value function is \textit{piecewise linear and convex} (PWLC). This mea
 hyperplane'' \cite{cit:rpomdp}. This makes it possible to solve a belief MDP exactly
 \cite{cit:pomdp}.
 
+\ys{you have almost no figure in the thesis. I would rather prefer explaining these concepts through figures. PWLC property is a very good place to explain with figure. }
+
 In general, when we are looking for a solution for a POMDP we are looking for a policy $\pi^*$, called
 \textit{optimal policy}, that maximizes the value over all beliefs:
 
@@ -243,6 +257,8 @@ Another useful function that can be defined from $V$ is the value of a given act
 particular belief, given that the specified policy is strictly followed after taking $a$:
 
 \[ Q^{\pi}_h(b, a) = \sum_{b'} \tau(b,a,b') \left[ \rho(b,a,b') + V^{pi}_{h-1}(b') \right ] \]
+
+\ys{$V^{\pi}$, explain about $Q$ a bit more}
 
 \section{$\rho$POMDP}
 
@@ -260,8 +276,11 @@ environment is in a state rather than another. Instead, the agent actions should
 knowledge that the agent has of the world.
 
 In such cases the $\rho$ function is defined independently, and is not tied to states anymore.
-Unfortunately, this means giving up on the PWLC property of the value function, which was the only
+Unfortunately, this means giving up on the PWLC property of the value function, which was the only \ys{only makes it sound like a way bigger claim}
 way in which it was possible to solve a POMDP in the first place. While it has been proved in
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function
 will be PWLC as well, functions such as entropy are not PWLC in the first place. We discuss how we
 overcame this problem in Section \ref{ref:approach}.
+
+\ys{you should explain $\rho$POMDP here. What you have written here, does not even talk about what $\rho$POMDP is. It only outlines the problem which $\rho$POMDP solves.}
+
