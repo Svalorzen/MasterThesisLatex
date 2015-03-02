@@ -1,214 +1,109 @@
-\section{Active Perception} \ys{is there a need for this heading?} 
-
-\ys{going over the introduction overall, I find it bit unconvincing. I think you main introduction starts from '1.2 Application'. The part '1.1 Active perception' is way too confusing and informal.} 
-
-\ys{I think we have discussed this many times before, the general flow of the introduction should have been 
-\begin{itemize}
-\item multi-sensor systems are everywhere. ex .... 
-\item they have resource constraints sometimes , ex .... 
-\item in such cases, the goal of the agent is to reason about the constraint and minimize uncertainty about future,
-\item since these systems observe highly dynamic scenes (ex ... multi-camera systems), it is critical to reason about long term consequences 
-\item pomdp provide a natural framework to model such problems. 
-\item generally collecting information is not an means to an end , but in the example we gave above the aim of the agent is only to perceive the information. these type of tasks are called active perception task, define active prception. .....
-\end{itemize}
-}
-
-\ys{I think a majority of this points are covered in the introduction you have written, but they are not in the right order which makes it confusing and not convincing. However, there are also some points which are not covered. Please try to cover all this points, as they make a strong case for your research. }
-
-Machines see the world only through data gathered by sensors such as cameras, radars, motion
-sensors, thermometers, and many others. Unfortunately, the amount of information that can be
-collected is limited. Any part of the environment outside sensors' range cannot be perceived.
-Hardware costs bound the number of available sensors. Energy and bandwidth limits constrain the
-usage of available sensors. Such limits prevent the collection of all available information; only
-some can be recorded. In tasks such as robotic perception, camera surveillance, military
-reconnaissance and data collection in social networks any lacking information severely impacts the
-final outcome of the task.
-\ys{this paragraph does not serve a good purpose as an opening paragraph. Most of the statements are informal and does not make sense.} 
-
-
-In order to perform optimally within real world limits sensors need to be actively directed towards
-interesting regions. Sensors like cameras and radars should be actively oriented towards the most
-interesting locations. When multiple sensors are available but their usage is costly, only the most
-informative subset of sensors should be enabled.
-
-Operating sensors optimally belongs to a class of problems referred to as the \textit{Active
-Perception} task. \ys{remove the first sentence, it does not sound right.} Active Perception can be formalized as a task where a decision making entity
-called \textit{agent}, subject to resource constraints, needs to take actions in order to reduce
-some form of uncertainty about a particular target environment. The agent's role in this task is
-purely observational: it will not influence the overall evolution of the environment over time, but
-it can only selectively gather data to maximally improve its knowledge.
-
-Active Perception covers essentially every possible use of sensors, both in physical and virtual
-environments - in case of abstract data collection. The fact that the agent is constrained is what
-makes the Active Perception task an interesting and non-trivial problem to solve. The task thus
-focuses on maximizing performance within the limits imposed on the agent: using available resources
-in the best possible way. The resource constraints are most often found as instances of one or more
-of the following factors: \ys{again unnecessary and confusing para}
-
-\begin{description}
-\item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
-    whole environment in which they are set. This can result from a limited number of available sensors
-    and/or from sensors having physical limits in what they can record. 
-    \ys{limited sensor range, how is it a resource constraint which can be manipulated?}
-\item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
-    resources. Not only energy and bandwidth are expensive, but in many applications there are hard
-    limits on their availability, both for what can be used at any given time and for the overall
-    resource usage.
-\item[Storage Limits:] It is important to reduce the amount of non-informative data that is gathered
-    by the sensors. Not everything is equally important. Being able to decide whether to gather data or
-    not helps in the long run maintaining reasonable sized data logs requiring less storage space and
-    easing possible future data searches.
-\end{description}
-
-
-
-Another source of complexity derives from the fact that the agent needs to act while facing direct
-uncertainty about the environment it is trying to observe. Reasoning with uncertainty is not a
-trivial task, given that the agent cannot know in advance what knowledge will be obtained by a
-specific actions. The agent needs to select the best action given only a certain \textit{belief} on
-the current state of the environment.
-\ys{this actually is a very important point that the agent has to tackly uncertainty and should definitely come before the definition of active perception. This point is basically the backbone of motivation of your problem, so use it well} 
-
-In this work we present an autonomous system that tackles some \ys{why some, if we are tackling only some challenges, then mention only those} of the challenges that characterize
-the Active Perception task:
-
-\begin{description}
-\item[Knowledge Representation:] The system managing the sensors needs to be able to correctly
-    maintain a representation of its currently available knowledge, as well as possibly missing
-    information. This can get quite expensive computationally when the size of the environment is
-    non-trivial.
-\item[Reward Measure:] While knowledge representation is a problem in itself, the system also needs
-    to be able to tell which knowledge is actually important, and what measure of uncertainty it
-    should try to minimize. A popular target function to maximize, for example, is negative entropy.
-\item[Size Scalability:] Real world Active Perception systems often have to deal with very
-sizable environments. It is important that deployable solutions can deal with their complexity.
-\item[Non-Stationarity:] The system should able to adapt to possible changes in the environment -
-for example new sensor deployments - as painlessly as possible.
-\item[Non-Myopicity:] We argue that an optimal Active Perception solution may need to take into
-    account the way that the environment will evolve in the future. This requires the ability to
-    forecast possible outcomes from the observation process in order to determine optimal sequences
-    of actions over continued periods of time.
-\end{description}
-
-\section{Application}
-
-The Active Perception task is a general abstraction that can be applied to multiple real world
-problems. At the same time, focusing attention on a specific subproblem produces more realistic
-tests where solutions can be evaluated and may also produce real world value. \ys{this sounds like we were interested in solving some active perception task and hence we chose this multi-camera system as a testbed problem. That is not really the case. The original problem is that multi-camera systems suffer from resource constraints and this problem falls is interesting in itself, we handle it by modelling it as a pomdp. such type of problems where agent wants to perceive information are called active perception probelms. .... .} In this work we focus
-our attention onto a particular set of Active Perception tasks: multi-camera systems, which are
-themselves a sub-class of multi-sensor systems.
+%\item multi-sensor systems are everywhere. ex ....
 
 With the advent of cheap hardware, these last few years have brought an incredible widespread
 adoption of multi-camera systems. These systems are used for surveillance, real-time tracking and
 many other purposes. Deployment expenses of such systems have progressively decreased with the
 advent of digital multiplexing, the Internet and new manufacturing techniques. At the same time the
 cost for operating the cameras and storing/analyzing the incredible amount of data they provide has
-been increasing ever since, also due to their increasing numbers.
-\ys{this actually, with some modification, can form a really good first paragraph for introduction. }
+been increasing ever since. This often results in a need to operate multi-camera systems within
+tight constraints, both for budget and technological limitations. Some such constraints can be:
 
-
-Although automatic mechanisms that try to record only useful footage do already exist the cameras
-still need to be turned on at all times. An example of this are motion detectors. A motion triggered
-camera would write its data to disk only when motion appeared on the screen, even though the camera
-would still be on when nothing was happening in front of it, to keep the motion detector on.
-
-In addition to the ``always on'' problem, new video processing techniques can now be applied to
-captured footage, such as face recognition and person tracking, which require non-trivial amount of
-computation and bandwidth to be run together with the cameras themselves. This incurs in significant
-energy and hardware costs, since they have to be applied to all cameras. Communicating all camera
-data and perform remote computations can be even \textit{more} expensive.
-
-The challenges found in multi-camera systems are instantiations of the challenges in Active
-Perceptions. In particular, we focus on the following:
+%\item they have resource constraints sometimes , ex ....
 
 \begin{description}
-\item[Energy, bandwidth and communication:] These are the most common constraints for multi-camera
-    systems. Such constraints can also be hard, meaning that there is really a maximum amount of
-    energy or bandwidth available, and the agent should be able to perform its task nonetheless.
-    \ys{talk about why exactly energy bandwidth are resource constraints, where is computational cost as scarce resource?}
-\item[Environment Size:] Environments tracked using cameras can be sizable, even ignoring the fact
-    that the real world is continuous.
-\item[Number of Targets:] Each tracked target contributes exponentially in increasing the complexity
-    of the environment. In addition the number of targets to look for could be unknown in advance,
-    which significantly complicates modeling the resulting environment.
+\item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
+    whole environment in which they are set. This can result from a limited number of available sensors
+    and/or from sensors having physical limits in what they can record.
+
+% \ys{limited sensor range, how is it a resource constraint which can be manipulated?}
+%
+% Eugenio: I don't understand. I never really said that these constraints are going to be
+% manipulated. Why would that be? It's just a constraint, which we need to overcome. We need to act
+% in order to compensate for the fact that we cannot see everything all at once - the reasoning with
+% uncertainty part. I also cannot see how the other constraints are manipulated.. It's not like we can
+% "manipulate" a bandwidth restraint. We can act so that we can work within its bounds, but the
+% constraint itself never changes. We don't really manipulate it.
+
+\item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
+    resources. Not only energy and bandwidth are expensive, but in many applications there are hard
+    limits on their availability, both for what can be used at any given time and for the overall
+    resource usage.
+\item[Environment Size:] Camera systems are often deployed in order to provide survelliance
+    facilities over large terrains or buildings. As the space that needs to be observed increases, the
+    data that needs to be processed increases too.
 \end{description}
 
-\section{Approach}
+%\item in such cases, the goal of the agent is to reason about the constraint and minimize uncertainty about future,
+%\item since these systems observe highly dynamic scenes (ex ... multi-camera systems), it is critical to reason about long term consequences
+In order for such a system to perform optimally within real world limits there is a need to operate
+its sensors in an intelligent way, so to extract the most information with the minimum cost. In
+particular, since multi-camera systems are often deployed in highly dynamic contexts where targets
+can move rapidly between tracked locations, there is a need to predict effectively the long-term
+evolution of the state of the environment. This can be done by implementing an agent which will
+reason about the system's constraints and employ available resources in the best way.
 
-\ys{this heading seems unnecessary}
+At the same time, the agent needs to act while facing direct uncertainty about the environment it is
+trying to observe. Reasoning with uncertainty is not a trivial task, given that the agent cannot
+know in advance what knowledge will be obtained by a specific actions. The agent needs to select the
+best action given only a certain \textit{belief} on the current state of the environment.
 
-In this work we approach Active Perception by leveraging a powerful and flexible decision-theoretic
+%\item generally collecting information is not an means to an end , but in the example we gave above
+% the aim of the agent is only to perceive the information. these type of tasks are called active
+% perception task, define active prception. .....
+
+The particular task the agent has to face has the final aim of simply gathering information without
+a direct interaction with the environment. This problem falls under the \textit{Active Perception}
+task. Active Perception can be formalized as a task where a decision making entity called
+\textit{agent}, subject to resource constraints, needs to take actions in order to reduce some form
+of uncertainty about a particular target environment. The agent's role in this task is purely
+observational: it will not influence the overall evolution of the environment over time, but it can
+only selectively gather data to maximally improve its knowledge.
+
+%\item pomdp provide a natural framework to model such problems.
+
+Active Perception can be conveniently modeled through a powerful and flexible decision-theoretic
 tool, called Partially Observable Markov Decision Process (POMDP) \cite{cit:pomdp}. We introduce
-this framework in Section \ref{ref:background}. POMDPs allow to model the interactions between the
-agent and a partially observable, stochastic environment.  In this framework, the agent's objective
-is to maximize reward collection according to a predefined reward function.
-
-\ys{should be more like 'this problems can be conveniently modelled using pomdps, rather than 'oh there are various methods to address active percerption problem and we choose pomdp.'}. 
-
-To achieve its objective, the agent needs to consider future outcomes in order to determine how to
-act in its environment. A \textit{myopic} agent will try to greedily maximize gains over the short
-term, while a \textit{non-myopic} agent will consider possible future events more comprehensively to
- avoid getting stuck in a local minima. 
+this framework in Section \ref{ref:background}. POMDPs provide a natural framework to model the
+interactions between the agent and a partially observable, stochastic environment.  In this
+framework, the agent's objective is to maximize reward collection according to a predefined reward
+function.
 
 The main reason why we use POMDPs is that they naturally allow for the computation of non-myopic
 strategies for using the sensors. In fact, POMDPs are specifically structured as to allow this type
 of planning. This means that the system will try to gather information in order to improve its
 expected knowledge of the environment, while reasoning about all future possibilities. We argue that
 while myopic strategies can sometimes suffice, many Active Perception problems require non-myopicity
-to achieve optimality, and provide a proof in Appendix \ref{ref:appendix_proof}. \ys{proof is a big word, generally they are associated with theorems, which we are not presenting. You can say a appendix provides convincing example case.}
+to achieve optimality, and provide a proof by example in Appendix \ref{ref:appendix_proof}.
+
+% \ys{proof is a big word, generally they are associated with theorems, which we are not presenting. You can say a appendix provides convincing example case.}
+%
+% Eugenio: It actually is a proof (by example). So I am correct in stating it to be a proof. I've
+% added the "by example" part.
 
 POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
 already available solution methods. We discuss some POMDPs solution methods in Chapter
 \ref{ref:solutions}.
 
-
 In particular, our approach is based on online planning. This type of approach is based on
 determining an optimal course of action applicable only to the situation that is currently faced by
-the agent. This is in contrast with offline planning, where the whole problem is tackled at once
-before deployment and the resulting policy stored for future usage. This usually requires a
-significant amount of time in advance, and computation of the policy must be performed every time
-the underlying model changes.
-
-On the other hand, online approaches can handle problems orders of magnitude bigger, since they do
-not allocate resources to situations which are not relevant to the agent's situation. This ability
-tackles one of the challenges we have mentioned: scalability. In addition, it is easier to
-experiment with different models, as online methods do not require any pre-computation. An example
-of the power of online methods are Monte Carlo methods, which have demonstrated incredible
-performance in the Go board game \cite{cit:mcts}.
+the agent. This requires constant computations, but allows tacking problems orders of magnitude
+bigger than other approaches.
 
 In this work we extend one of the fastest online Monte Carlo approaches for POMDPs, Partially
 Observable Monte Carlo Planning (POMCP) \cite{cit:pomcp}. This method approximates beliefs about the
 world using particles, improving performance when the maintaining a complete belief over the state
-of the world can become too computationally expensive. This allows the method to scale onto problems
-that other online approaches cannot handle.
+of the world can become too computationally expensive.
 
 The limitation of POMCP with respect to the Active Perception task is that the algorithm evaluates
-actions with respect to rewards sampled from a generative model of the environment. This approach
-breaks down in Active Perception, where rewards depend on the current knowledge that the agent
-possesses and do not depend on the state of the environment. POMDPs where rewards are based on
-knowledge, rather than state, have been examined in \cite{cit:rpomdp}.
+actions with respect to rewards sampled from a generative model of the environment. Such model
+cannot provide reward with respect to the current knowledge of the agent, and thus results useless
+to compute a good policy for the agent. POMDPs where rewards are based on knowledge, rather than
+state, have been examined in \cite{cit:rpomdp}.
 
-\ys{I think the above 4 para are ok, but has too much information for introduction. Try to get rid of information that you might not want in introduction}
-
-In this work we present a modification of the POMCP algorithm, which we named $\rho$-POMCP, which is
-able to deal with a reward function based on knowledge rather than state. Our solution is able to
-refine estimates of action rewards from the imperfect particle beliefs of POMCP. This allows to
-apply a fast online planner on Active Perception tasks. In addition, $\rho$-POMCP is applicable to
-any POMDP where the reward function is based on knowledge rather than states, for example in cases
-where an agent can influence the state of the environment directly. This increases the utility of
-our work, as it can be used in multiple classes of problems.
-
-\ys{summarize your contributions better. Say, we model the problem using pomdp, we solve the pomdp using mcts, we extend mcts to belief-dependent rewards, provide detailed empirical analysis on simulated and real data.}
-
-\subsection{Chapter Overview}
-
-\ys{better name is organization rather than chapter overview. I dont think you need it here, you already have a contents table at the start. }
-
-Throughout Chapter \ref{ref:background} we introduce the background theory and models that support
-our approach, and define the terms we use within this work. In addition, we introduce the already
-existing techniques that led to our particular approach on the problem. In Chapter
-\ref{ref:approach} we discuss the unique problems that we faced in this work, and our proposed
-solutions. In Chapter \ref{ref:relwork} we discuss work that has already been done in the literature
-and we relate it to our approach. In Chapter \ref{ref:experiments} we show our experiments and
-results. Finally, in Chapter \ref{ref:conclusion} we discuss our results and offer our insights.
-
+In this work approach a multi-camera tracking problem. The problem is modeled as a POMDP, and use
+POMCP, an online planner, to find a good policy while dealing with potentially large models. We
+extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a reward
+function based on knowledge rather than state. Our solution is able to refine estimates of action
+rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online planner on
+Active Perception tasks. We show empirical tests and performance of our method on a number of
+problems.
