@@ -31,7 +31,7 @@ RTBSSb can instead be applied directly on both max-of-belief and entropy based r
 
 \section{Non-Myopic World} \ys{please change the title of this subsection}
 
-In this \ys{(s)}Section we apply the proposed algorithms to the following model: a single target walking
+In this section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them
 as showed in \ref{ref:nonmyo1}. The agent can observe, at each timestep, whether the target is in a
 given room. The information gathered by the agent will be correct with probability $p=0.8$. In each
@@ -75,10 +75,10 @@ approach can be preferred over a myopic one.
 Figure \ref{ref:myoentropyfig} and Figure \ref{ref:myombfig} show performance in terms of cumulative
 obtained reward for the different methods proposed. We also compare performances of POMCP/rPOMCP
 using different number of samples. In addition, we test rPOMCP with different $k$ parameters, tuning
-the mean-max backup operation towards one or the other. A $k$ of 1 \ys{k of 1 , are your trying to say k=1?} results in a max backup
-operation, while a $k$ of 10000 results in an essentially mean backup operation of values.
+the mean-max backup operation towards one or the other. $k = 1$ results in a max backup
+operation, while $k = 10000$ results in an essentially mean backup operation of values.
 
-The $h$ parameter determines the horizon of the particular solver. A $h$ of 1 \ys{h of 1?} resulted in a greedy
+The $h$ parameter determines the horizon of the particular solver. $h = 1$ results in a greedy
 solver. It is important to note that for POMCP and rPOMCP $h$ is merely an upper bound on the depth
 of the decision tree they are allowed to explore. This is because they build their decision tree
 incrementally, so that they may not reach its true bottom of their decision tree if the number of
