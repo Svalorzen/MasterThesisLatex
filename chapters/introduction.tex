@@ -6,14 +6,16 @@ many other purposes. Deployment expenses of such systems have progressively decr
 advent of digital multiplexing, the Internet and new manufacturing techniques. At the same time the
 cost for operating the cameras and storing/analyzing the incredible amount of data they provide has
 been increasing ever since. This often results in a need to operate multi-camera systems within
-tight constraints, both for budget and technological limitations. Some such constraints can be:
+tight constraints, caused by both budget and technological limitations. Some such constraints can
+be:
 
 %\item they have resource constraints sometimes , ex ....
 
 \begin{description}
+
 \item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
-    whole environment in which they are set. This can result from a limited number of available sensors
-    and/or from sensors having physical limits in what they can record.
+    whole environment in which they are located. This can result from a limited number of available
+    sensors and/or from sensors having physical limits in what they can record.
 
 % \ys{limited sensor range, how is it a resource constraint which can be manipulated?}
 %
@@ -28,50 +30,56 @@ tight constraints, both for budget and technological limitations. Some such cons
     resources. Not only energy and bandwidth are expensive, but in many applications there are hard
     limits on their availability, both for what can be used at any given time and for the overall
     resource usage.
+
 \item[Environment Size:] Camera systems are often deployed in order to provide survelliance
     facilities over large terrains or buildings. As the space that needs to be observed increases, the
     data that needs to be processed increases too.
+
 \end{description}
 
 %\item in such cases, the goal of the agent is to reason about the constraint and minimize uncertainty about future,
 %\item since these systems observe highly dynamic scenes (ex ... multi-camera systems), it is critical to reason about long term consequences
-In order for such a system to perform optimally within real world limits there is a need to operate
-its sensors in an intelligent way, so to extract the most information with the minimum cost. In
-particular, since multi-camera systems are often deployed in highly dynamic contexts where targets
-can move rapidly between tracked locations, there is a need to predict effectively the long-term
-evolution of the state of the environment. This can be done by implementing an agent which will
-reason about the system's constraints and employ available resources in the best way.
+
+In order for such a multi-camera system to perform optimally within real world limits there is a
+need to operate its sensors in an intelligent way, so to extract the most information with the
+minimum cost while observing the aforementioned constraints. In particular, since multi-camera
+systems are often deployed in highly dynamic contexts where targets can move rapidly between tracked
+locations, there is a need to predict effectively the long-term evolution of the state of the
+environment. This can be done by implementing an agent which will reason about the system's
+dynamics and employ available resources in the best way.
 
 At the same time, the agent needs to act while facing direct uncertainty about the environment it is
 trying to observe. Reasoning with uncertainty is not a trivial task, given that the agent cannot
-know in advance what knowledge will be obtained by a specific actions. The agent needs to select the
-best action given only a certain \textit{belief} on the current state of the environment.
+know in advance what knowledge will be obtained by a specific actions. Given only a certain
+\textit{belief} on the current state of the environment and probabilistic expectations over the
+amounts of information that will be extracted by each available action, the agent needs to reason so
+to maximize the information gathered.
 
 %\item generally collecting information is not an means to an end , but in the example we gave above
 % the aim of the agent is only to perceive the information. these type of tasks are called active
 % perception task, define active prception. .....
 
-The particular task the agent has to face has the final aim of simply gathering information without
-a direct interaction with the environment. This problem falls under the \textit{Active Perception}
-task. Active Perception can be formalized as a task where a decision making entity called
-\textit{agent}, subject to resource constraints, needs to take actions in order to reduce some form
-of uncertainty about a particular target environment. The agent's role in this task is purely
-observational: it will not influence the overall evolution of the environment over time, but it can
-only selectively gather data to maximally improve its knowledge.
+The problem the agent faces falls under the \textit{Active Perception} task. Active Perception can
+be formalized as a task where a decision making entity called \textit{agent}, subject to resource
+constraints, needs to take actions in order to reduce some form of uncertainty about a particular
+target environment.  The agent's role in this task is purely observational: it will not influence
+the overall evolution of the environment over time, but it can only selectively gather data to
+maximally improve its knowledge.
 
 %\item pomdp provide a natural framework to model such problems.
 
 Active Perception can be conveniently modeled through a powerful and flexible decision-theoretic
 tool, called Partially Observable Markov Decision Process (POMDP) \cite{cit:pomdp}. We introduce
 this framework in Section \ref{ref:background}. POMDPs provide a natural framework to model the
-interactions between the agent and a partially observable, stochastic environment.  In this
-framework, the agent's objective is to maximize reward collection according to a predefined reward
-function.
+interactions between the agent and a partially observable, stochastic environment.  In the POMDP
+framework the agent's objective is to maximize reward collection over time according to a predefined
+reward function.
 
-The main reason why we use POMDPs is that they naturally allow for the computation of non-myopic
-strategies for using the sensors. In fact, POMDPs are specifically structured as to allow this type
-of planning. This means that the system will try to gather information in order to improve its
-expected knowledge of the environment, while reasoning about all future possibilities. We argue that
+In this work approach the multi-camera tracking problem through the POMDP framework.  The main
+reason why we use POMDPs is that they naturally allow for the computation of non-myopic strategies
+for using the sensors. In fact, POMDPs are specifically structured as to allow this type of
+planning. This means that the system will try to gather information in order to improve its expected
+knowledge of the environment in the future, while reasoning about all possibilities. We argue that
 while myopic strategies can sometimes suffice, many Active Perception problems require non-myopicity
 to achieve optimality, and provide a proof by example in Appendix \ref{ref:appendix_proof}.
 
@@ -100,7 +108,7 @@ cannot provide reward with respect to the current knowledge of the agent, and th
 to compute a good policy for the agent. POMDPs where rewards are based on knowledge, rather than
 state, have been examined in \cite{cit:rpomdp}.
 
-In this work approach a multi-camera tracking problem. The problem is modeled as a POMDP, and use
+In this work approach the multi-camera tracking problem. The problem is modeled as a POMDP, and use
 POMCP, an online planner, to find a good policy while dealing with potentially large models. We
 extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a reward
 function based on knowledge rather than state. Our solution is able to refine estimates of action

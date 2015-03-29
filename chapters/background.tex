@@ -1,157 +1,140 @@
 \section{Partially Observable Markov Decision Process}\label{ref:pomdp}
 \sectionmark{POMDP}
 
-In order to optimally perform a task within an environment we need to jointly model the dynamics of
-the environment and the task objectives. The modeling framework we are going to use in this work
-stems from the \textit{Markov Decision Process} (MDP) \cite{cit:suttonbarto}.
-
-\ys{no need to motivate POMDP or MDP in this section. Also no need to write about MDPs here. Start directly from POMDP}
-
-
-MDPs structure reasoning around a probabilistic automaton. The agent \textit{acts} upon the
-environment, which is in a particular \textit{state}. As a result, the environment
+The \textit{Partially Observable Markov Decision Process} (POMDP) \cite{cit:pomdp} is framework
+which allows to model the dynamics of an environment in order to produce a policy that fulfills a
+given task. POMDPs structure reasoning around a probabilistic automaton. An agent \textit{acts}
+upon the environment, which is in a particular \textit{state}. As a result, the environment
 \textit{transitions} stochastically to another state, as defined by a transition function. During
-the transition, the agent receives a certain \textit{reward} representing its achievements
-toward the task at hand.
+the transition, the agent receives a certain \textit{reward} representing its achievements toward
+the task at hand.
 
+In a POMDP the agent cannot see directly the current state of the world. Instead, the agent receives
+an \textit{observation} dependent on the underlying state during each transition, which may or may
+not uniquely disambiguate it. The observations are used to keep a statistic over the states the
+environment could be in at any given time.
 
+The objective of the agent is to maximize the reward obtained by acting in the environment while
+reasoning about the state uncertainties. In doing so it will accomplish the task that is encoded
+within the POMDP model.
 
-The \textit{Partially Observable MDP} (POMDP) \cite{cit:pomdp} is an extension of such a framework,
-where the agent cannot see the current state of the world. In POMDPs, the agent receives an
-\textit{observation} dependent on the underlying state during each transition, but which does not
-uniquely disambiguate it. \ys{what if for some states there are observations which can help agent disambiguate state, but for some there are no observations like this? } These are used to keep a statistic over the states the environment could
-be in at any given timestep.
+% \ys{transition function can be subsubsection ?? and so can be other bullets. }
+%
+% Eugenio: Shimon told me he didn't like too many subsections (before I had a subsection for each
+% component of the POMDP - T, R, O, and so on..). So I'm not sure what to do. I've removed the old
+% subsections, maybe I'll ask Shimon directly what subsections he would like so I can do it once and
+% for all.
 
-Non-myopic strategies can be naturally extracted from MDPs and POMDPs, which is one of their main
-advantages over competing approaches.
+We can define a POMDP as a tuple
 
-A POMDP can be defined formally as a tuple
+\begin{equation}
+ POMDP = <S,A,T,R,\Omega,O,h>
+\end{equation}
 
-\[ POMDP = <S,A,T,R,\Omega,O,h> \]
+The elements of the tuple are called \textit{state space}($S$), \textit{action space}($A$),
+\textit{transition function}($T$), \textit{reward function}($R$), \textit{observation
+space}($\Omega$), \textit{observation function}($O$) and \textit{horizon}($h$).
 
-The elements of the tuple are called state space($S$), action space($A$), transition function($T$),
-reward function($R$), observation space($\Omega$), observation function($O$) and horizon($h$). We
-introduce these terms in the following Sections.
+The state space contains all possible configurations the environment can take.  The environment
+transitions between states discretely and instantaneously at each \textit{timestep}, which
+represents the atomic unit of change within the environment.
 
-\subsection{Environment}
+\begin{equation}
+ S = \{s_0, s_1, s_2, ..., s_{|S|}\}
+\end{equation}
 
-\ys{Why is environment part of POMDP section. You can describe agent and environment as separate subsection and then POMDP can be described.}
+All states must have the \textit{Markov} property, which means that the evolution of the environment
+must depend solely on the information encoded in its current state, and nothing else. The Markov
+property is required in order to allow the agent to reason only about the current state, which makes
+POMDPs tractable.
 
+The action space contains all actions available to the agent. Each action simultaneously fulfills
+two purposes: to influence the evolution of the environment, and to gather information regarding the
+state of the environment.
 
-The environment represents all that is not the agent. The environment is described in terms of its
-possible configurations.  Each configuration, called \textit{state}, represents a unique
-arrangement of the world at any one time. For example, in chess, the environment can be completely
-described by the positions of all pieces on the game board. \ys{there is an advantage to describing resource allocation problem in the introduction. You dont have it now. the problem works as a running example and you dont have to cite example from outside to explain something.} The full set of states is denoted
-\textit{state space}, and is usually referred to as $S$. This is the first element of the POMDP
-tuple.
+\begin{equation}
+ A = \{ a_0, a_1, a_2, ..., a_{|A|} \}
+\end{equation}
 
-\[ S = \{s_0, s_1, s_2, ..., s_{|S|}\} \]
+The observation space contains all observations that the agent can receive from the environment; at
+each timestep the agent receives a single observation from the environment which is dependent from
+the action performed and the new state of the environment.
 
-Note that we assume that all sets presented in this work to be finite, unless where specifically
-noted. \ys{do we ever do that?}
+\begin{equation}
+ \Omega = \{ o_0, o_1, o_2, ..., o_{|\Omega|} \}
+\end{equation}
 
-An important property that each state needs to have is called the \textit{Markov} property. This
-property requires that the evolution of the environment depends solely on the information encoded in
-its current state, and nothing else. This can also be seen as saying that the environment \ys{the word environment is really confusing here}has no
-memory, since keeping track of previous states has no use for its future evolution. The Markov
-property is required in order to allow the agent to reason only about the current state, without the
-need to know its history.
+The transition function encodes the consequences of actions with respect to the environment states.
+It specifies the probability that by performing an action $a$ in a state $s$, the
+environment will transition to a new state $s'$.
 
-While it can happen that a particular environment can evolve in a time-sensitive manner, it can be
-easily shown that all such environments can be modeled in a Markovian way by simply adding more
-features into the state-space definition \cite{cit:boutilier}.
-
-In the environment transitions between a state and another state are discrete and instantaneous.
-Each transition happens within a single \textit{timestep}, which represents the atomic unit of
-change within the environment.
-
-\ys{transition function can be subsubsection ?? and so can be other bullets. }
-
-The \textit{transition function} encodes the consequences of actions with respect to the environment
-states. In particular the transition function is a function
-
-\[ T: S\times A \times S \rightarrow [0,1] \]
-
-that specifies the probability for any transition in the environment, depending on the actions that
-the agent can take. In other words, it specifies the probability that by applying a particular
-action in a particular state, we end up into a second state. Another way to see this
-function is to look at it as representing a conditional probability function:
-
-\[ T(s, a, s') = Pr(s' | s, a) \]
+\begin{equation}
+ T(s, a, s') = Pr(s' | s, a)
+\end{equation}
 
 Where $Pr(s'|s,a)$ is the probability of the environment transitioning to $s'$ from $s$ when the
 agent performs action $a$. By using this notation, we can show formally what the Markov property is
 about. This property holds when
 
-\[ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S \]
+\begin{equation}
+ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S
+\end{equation}
 
-where here $t$ denotes the timestep where a particular state was reached.
+where $t$ denotes the timestep where a particular state was reached.
 
-\ys{what happened to other elements in the tuple? You should definitely structure such that you explain environment and agent separately and then POMDP and all its tuple in one segment.}
+The observation function represents the probability of obtaining a certain observation upon reaching
+a given state $s'$ after taking action $a$.
 
-\subsection{Agent}
-
-The agent is at the core of the decision process. Its objective is to maximize the reward obtained
-by acting in the environment while reasoning about the state uncertainties. In doing so it will
-accomplish the task that is encoded within the POMDP model.
-
-The agent interacts with the environment through actions. In the POMDP framework, each action
-simultaneously fulfills two purposes: to influence the evolution of the environment, and to gather
-information regarding the state of the environment.
-
-The full set of actions available to the agent is called the \textit{action space}, or otherwise
-referred to as $A$. This is the second element of the POMDP tuple. It is usually assumed that all
-actions are available to the agent at any timestep.
-
-\[ A = \{ a_0, a_1, a_2, ..., a_{|A|} \} \]
-
-In a POMDP the agent does not have direct access to the current state of the environment. The agent
-instead receives, at each timestep, an \textit{observation}, which depends on the action that the
-agent performed and on the state reached by the environment after the action. Observations generally
-do not allow unambiguous distinction between states, but they restrict the amount of possibilities.
-
-All observations are, as are states and actions, grouped in a set, $\Omega$:
-
-\[ \Omega = \{ o_0, o_1, o_2, ..., o_{|\Omega|} \} \]
-
-The agent receives information from observations through an \textit{observation function}:
-
-\[ O : S' \times A \times O \rightarrow [0,1] \]
-
-representing the probability of receiving a certain observation upon reaching a given state $s'$
-after taking action $a$.
-
-\[ O(s', a, o) = Pr(o | s', a) \]
+\begin{equation}
+ O(s', a, o) = Pr(o | s', a)
+\end{equation}
 
 Note that the state is the one of \textit{arrival}, not the one where the action is performed.
 
-The agent goals are encoded within the \textit{reward function}.  This function is defined upon
-states and actions, and can take values within the real domain:
+The agent goals are encoded within the reward function. This function is defined upon states and
+actions, and can take values within the real domain:
 
-\[ R: S\times A\times S \rightarrow \mathbb{R} \]
-\[ R(s, a, s') \in \mathbb{R} \]
+\begin{equation}
+ R(s, a, s') \in \mathbb{R}
+\end{equation}
 
 The reward function represents the level of appeal that a particular situation or outcome represents
 in the modeled task. For example, one could allocate a certain reward for attempting to walk, and an
 even greater reward for successful efforts. On the other hand, one could allocate a negative reward
 for failed attempts. All these would influence the final behavior of the agent.
 
+Finally, the horizon specifies for how many timesteps the agent is allowed to act on the
+environment. The agent will then find the best strategy in order to maximize accrued reward within
+this time constraint.
+
+We can make a brief example of how the POMDP framework works within the context of multi-camera
+tracking of a single target. The state space would be represented by each possible state of the
+environment, thus each state would represent a possible location of the target. At each timestep,
+the agent would take a single action, to guess the current position of the target and to collect a
+noisy observation from one of the cameras available to it. At the same time, the target would move
+to a different location, as specified by the transition function. In this problem the transition
+function is independent of the action of the agent, since looking through a camera has no effect on
+the movement of the target.
+
+The observation would be collected with respect to the new position of the target and the camera
+chosen by the agent, as specified by the observation function. The agent would also collect a reward
+depending on its guess of the previous position of the target. The process would then repeat for
+each remaining timestep.
+
 \subsection{History and Belief}
 
-The observation function does not allow the agent to disambiguate between states unambiguously, or
-the problem would convert directly to an MDP. Instead, what happens is called \textit{perceptual
-aliasing}: each obtained observation is compatible with a subset of $S$. For example, in a room
-where half the walls are white, a robot seeing white would not know for certain where it is looking.
-At the same time, it would still be better off than not knowing anything at all. \ys{here the running example can be used}
+The observation function does not allow the agent to disambiguate between states unambiguously.
+Instead, what happens is called \textit{perceptual aliasing}: each obtained observation is
+compatible with a subset of $S$.
 
 The agent must reason about which of the possible underlying states of the environment are
 compatible with all previously obtained observations in order to plan its moves.
 
-Unfortunately, this implies that the agent is now unable to reason about the present. While the
+Unfortunately, this implies that the agent is unable to reason about the present. While the
 environment states maintain their Markov property, the agent cannot observe them. Instead it needs
 to store internally its whole history of actions and observations in order to keep track of which
-states are possible at any point in an episode. This long list of actions and observations is called
-\textit{history}.
+states are possible at any point during an episode. This long list of actions and observations is
+called \textit{history}.
 
 An alternative way of maintaining the history is keeping a \textit{belief} over the current state of
 the environment. Such a belief is simply a probability vector in $|S|$ dimensions, where each
@@ -161,7 +144,9 @@ element denotes the probability that the environment is in a particular state. T
 At each new timestep, the agent's belief needs to be updated with the new knowledge gained by the
 agent. The belief can be updated with the following formula:
 
-\[ b'(s') = \frac{O(s', a, o)\sum_{s\in S}T(s,a,s')b(s)}{Pr(o|a,b)} \]
+\begin{equation}
+ b'(s') = \frac{O(s', a, o)\sum_{s\in S}T(s,a,s')b(s)}{Pr(o|a,b)}
+\end{equation}
 
 The denominator can be treated as a normalizing factor that makes $b'$ correctly sum up to 1, since
 it is a probability vector.
@@ -169,26 +154,34 @@ it is a probability vector.
 The belief allows for a reinterpretation of the POMDP framework. The belief can in fact be used in
 lieu of a state, since it is possible to compute new transition and reward functions that depend on
 beliefs rather than states. This transforms automatically the POMDP into a \textit{belief MDP}
-\cite{cit:pomdp}, where the belief is now the state of the environment.
+\cite{cit:pomdp}, where the belief is now the state of the environment. An MDP
+\cite{cit:suttonbarto} is a subset of POMDPs, where the agent always knows the state of the
+environment.
 
-The belief MDP is created by generating a new transition function $\tau$ and reward function $\rho$
-as follows:
+The belief MDP is created by generating a new transition function $\tau$ and a \textit{belief
+dependent reward} function $\rho$ as follows:
 
-\[ \tau(b,a,b') = \sum_{o\in \Omega} Pr(b' | b, a, o) \sum_{s\in S} O(s,a,o) b(s) \]
+\begin{equation}
+ \tau(b,a,b') = \sum_{o\in \Omega} Pr(b' | b, a, o) \sum_{s\in S} O(s,a,o) b(s)
+\end{equation}
 
 Where
 
-\[Pr(b' | b, a, o) = \left\{
+\begin{equation}
+Pr(b' | b, a, o) = \left\{
   \begin{array}{lr}
     1 \hspace{.6cm}\text{if the belief update with arguments $b,a,o$ returns $b'$}\\
     0 \hspace{.6cm}\text{otherwise}
   \end{array}
 \right.
-\]
+\end{equation}
 
 Similarly:
 
-\[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
+\begin{equation}
+ \rho(b,a) = \sum_{s\in S} R(s,a) b(s)
+ \label{rhoeq}
+\end{equation}
 
 Although this transformation allows us to forget the partial observability, which is now embedded in
 $\tau$, we have now introduced a new problem: a continuous state space. Although continuous MDPs are
@@ -206,27 +199,39 @@ increases the final policy takes into account more and more possible outcomes, b
 but, depending on the task, more performant overall. We can describe the goal function of a POMDP
 with finite horizon $h$ as:
 
-\[ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ] \]
+\begin{equation}
+ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ]
+\end{equation}
 
 A solution for a POMDP is called a \textit{policy}. We can define a policy $\pi$ as a function, that
 given an horizon, a belief and action returns the probability of the action being chosen:
 
-\[ \pi : H \times B \times A \rightarrow [0,1] \]
-\[ \pi(h, b, a) \in [0,1] \]
+\begin{equation}
+ \pi : H \times B \times A \rightarrow [0,1]
+\end{equation}
+\begin{equation}
+ \pi(h, b, a) \in [0,1]
+\end{equation}
 
 We can also define it as a function, taking a belief and an horizon, returning a distribution over
 actions:
 
-\[ a \sim \pi(h, b) \]
+\begin{equation}
+ a \sim \pi(h, b)
+\end{equation}
 
 A policy performance can be evaluated through a \textit{value function}. The value function maps a
 policy with its performance in terms of expected return from every possible belief the agent may
 face and a particular horizon. Thus, every belief has a certain \textit{value} under a certain
 policy and horizon. Formally then we can define the value of a belief as:
 
-\[ V^\pi_{h}(b) = \mathbb{E}^\pi_h \left [\text{return} \mid b_0 = b \right ] \]
-\[ = \mathbb{E} \left [\sum_{t=0}^{h} \rho(b_{t}, a_t, b_{t+1}) \right ]
-    \hspace{0.5cm}\text{where }b_0 = b \text{ and }a_t \sim \pi(h-t, b_t) \]
+\begin{equation}
+ V^\pi_{h}(b) = \mathbb{E}^\pi_h \left [\text{return} \mid b_0 = b \right ]
+\end{equation}
+\begin{equation}
+ = \mathbb{E} \left [\sum_{t=0}^{h} \rho(b_{t}, a_t, b_{t+1}) \right ]
+    \hspace{0.5cm}\text{where }b_0 = b \text{ and }a_t \sim \pi(h-t, b_t)
+\end{equation}
 
 This value is very important because it lets us compare and evaluate policies. This is because a
 better policy does have a equal or higher value for every possible belief than an inferior policy
@@ -236,51 +241,87 @@ A value function can be expressed recursively with the \textit{Bellman equation}
 states that the value of a state can be computed as the expected reward that the agent can obtain in
 the next timestep, plus a value which represents what is going to happen in the future.
 
-\[ V^{\pi}_{h}(b) = \sum_a \pi(h, b, a) \sum_{b'} \tau(b, a, b') \left [ \rho(b, a, b') +
-V^{\pi}_{h-1}(b') \right ] \]
+\begin{equation}
+ V^{\pi}_{h}(b) = \sum_a \pi(h, b, a) \sum_{b'} \tau(b, a, b') \left [ \rho(b, a, b') +
+V^{\pi}_{h-1}(b') \right ]
+\end{equation}
 
 Since the value function of a POMDP is a function dependent on beliefs, it is defined on a simplex
 space of $|S|-1$ dimensions, which is continuous. The property that makes a belief MDP tractable is
 that its value function is \textit{piecewise linear and convex} (PWLC). This means that it is
 ``determined by a set of hyperplanes, the value at a given belief point being that of the highest
-hyperplane'' \cite{cit:rpomdp}. This makes it possible to solve a belief MDP exactly
-\cite{cit:pomdp}.
+hyperplane'' \cite{cit:rpomdp}. An example of this property is shown in Figure \ref{pwlcpic}. This
+makes it possible to solve a belief MDP exactly, since the optimal policy is finitely bounded in the
+number of components it is made of \cite{cit:pomdp}.
 
-\ys{you have almost no figure in the thesis. I would rather prefer explaining these concepts through figures. PWLC property is a very good place to explain with figure. }
+\begin{figure}[ht]
+\begin{center}
+\begin{tikzpicture}[>=stealth',auto,node distance=4cm,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+
+\node[] at (0,-0.3) {$s_1$};
+\node[] at (5,-0.3) {$s_2$};
+\draw[step=0.5cm,lightgray,ultra thin] (0,0) grid (5,4.5);
+\draw[thick, line cap=round] (0,0) -- (5,0) node[midway, anchor=north] {belief};
+\draw[thick,->, line cap=round] (0,0) -- (0,5) node[midway, anchor=south, rotate=90] {Value};
+\draw[thick,->, line cap=round] (5,0) -- (5,5) node[midway, anchor=north, rotate=90] {Value};
+\draw[green] (0,3.5) -- (5,1) node[near start, anchor=south, sloped] {$a_1$};
+\draw[blue] (0,1.5) -- (5,3.5) node[near start, anchor=south, sloped] {$a_2$};
+\draw[red] (0,0.5) -- (5,4) node[near start, anchor=south, sloped] {$a_3$};
+
+\end{tikzpicture}
+\end{center}
+\caption{An example of the PWLC property of the value function for a two state POMDP. Each line
+represents an \textit{alpha vector}, which represents the value of a possible sequence of action in
+any given possible belief. The value of the optimal policy is represented by the max of all possible
+alpha vectors at any belief point, and thus is composed of a finite amount of linear components,
+arranged in a convex shape.}
+\label{pwlcpic}
+\end{figure}
 
 In general, when we are looking for a solution for a POMDP we are looking for a policy $\pi^*$, called
 \textit{optimal policy}, that maximizes the value over all beliefs:
 
-\[ V^{\pi^*}_h = \max_\pi V^{\pi}_h \]
+\begin{equation}
+ V^{\pi^*}_h = \max_\pi V^{\pi}_h
+\end{equation}
 
 Another useful function that can be defined from $V$ is the value of a given action $a$ in a
 particular belief, given that the specified policy is strictly followed after taking $a$:
 
-\[ Q^{\pi}_h(b, a) = \sum_{b'} \tau(b,a,b') \left[ \rho(b,a,b') + V^{pi}_{h-1}(b') \right ] \]
+\begin{equation}
+ Q^{\pi}_h(b, a) = \sum_{b'} \tau(b,a,b') \left[ \rho(b,a,b') + V^{pi}_{h-1}(b') \right ]
+\end{equation}
 
-\ys{$V^{\pi}$, explain about $Q$ a bit more}
+The \textit{Q-Function} is extremely useful since the optimal policy can be easily extracted from
+it, simply by selecting at each belief the action that maximizes it. This work leverages this fact
+by approximating the Q-function and then extracting the optimal policy from it.
 
 \section{$\rho$POMDP}
 
-As we have already mentioned, in a belief MDP the reward is defined in terms of the belief, called
-\textit{belief dependent reward}. $\rho$ is then defined as a linear function over the original
-POMDP reward function and the belief space:
-
-\[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
+As we have already mentioned, in a belief MDP the reward is defined in terms of the belief and the
+normal reward function $R$, as shown in Equation \ref{rhoeq}.
 
 However, in some cases the reward function is solely dependent on the information the agent has on
 the current state of the world, rather than on the underlying state of the world itself. In such
-situations the original POMDP reward function becomes useless, and as such our definition of $\rho$.
-For example, in the case of surveillance, there is no inherent reward for the agent when the
-environment is in a state rather than another. Instead, the agent actions should maximize the
+situations the original POMDP reward function becomes useless, together with our definition of
+$\rho$.  For example, in the case of surveillance, there is no inherent reward for the agent when
+the environment is in a state rather than another. Instead, the agent actions should maximize the
 knowledge that the agent has of the world.
 
-In such cases the $\rho$ function is defined independently, and is not tied to states anymore.
-Unfortunately, this means giving up on the PWLC property of the value function, which was the only \ys{only makes it sound like a way bigger claim}
-way in which it was possible to solve a POMDP in the first place. While it has been proved in
+In such cases the $\rho$ function is defined independently, and is not tied to states anymore. The
+resulting framework is a variant of POMDP, called $\rho$POMDP, where $\rho$ substitutes $R$, while
+all other elements of the original POMDP stay the same.
+
+In the $\rho$POMDP framework unfortunately the PWLC property of the value function does not hold
+anymore, and so the solving methods which rely on it cannot be used. While it has been proved in
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function
 will be PWLC as well, functions such as entropy are not PWLC in the first place. We discuss how we
 overcame this problem in Section \ref{ref:approach}.
 
-\ys{you should explain $\rho$POMDP here. What you have written here, does not even talk about what $\rho$POMDP is. It only outlines the problem which $\rho$POMDP solves.}
+% \ys{you should explain $\rho$POMDP here. What you have written here, does not even talk about what $\rho$POMDP is. It only outlines the problem which $\rho$POMDP solves.}
+%
+% Eugenio: I'm not sure I understand. As we have already said multiple times, \rhoPOMDP is the
+% framework which replaces R with \rho. Thus I fell I have explained here adequately what it is
+% (since it is relatively easy to explain after all).
 

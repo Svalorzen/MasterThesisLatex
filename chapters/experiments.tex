@@ -16,7 +16,7 @@ actions, plus an addictional \textit{prediction action}, which is used by the ag
 predict the state the environment is in at any given time. The new action space is thus the result
 of a cross-product between the set of old actions and the new prediction actions, which are $|S|$.
 
-\ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction actions} 
+\ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction actions}
 
 The reward function is then defined in terms of the prediction actions: if the agent predicts the
 state of the environment correctly, it receives a reward of 1. Otherwise, it receives no reward. It
@@ -29,7 +29,7 @@ more states are available, which significantly impairs both POMCP and RTBSS.
 
 RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards.
 
-\section{Non-Myopic World} \ys{please change the title of this subsection} 
+\section{Non-Myopic World} \ys{please change the title of this subsection}
 
 In this \ys{(s)}Section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them

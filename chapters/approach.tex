@@ -1,8 +1,9 @@
 \section{$\rho$-POMCP}
 
-As discussed, the POMCP algorithm can't be applied directly to \ys{??} In this Section we present a modification of the algorithm POMCP which is able to deal with a
-belief-based reward function in POMDPs. We discuss in more details why POMCP cannot be applied
-directly to $\rho$-POMDPs in Section \ref{ref:rewestimation}.
+As discussed, the POMCP algorithm can't be applied directly to $\rho$-POMCP. In this Section we
+present a modification of the algorithm POMCP which is able to deal with a belief-based reward
+function in POMDPs. We discuss in more details why POMCP cannot be applied directly to $\rho$-POMDPs
+in Section \ref{ref:rewestimation}.
 
 We call our POMCP variant $\rho$-POMCP. An important fact to note is that $\rho$-POMCP is able to deal
 with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm can be
@@ -32,10 +33,9 @@ reward information from a generative model of the environment. Since a belief is
 created by the agent, a generative model containing a belief-dependent reward function cannot exist.
 
 A possible approximate solution involves converting the belief-dependent reward function into a
-state-based reward function; prediction actions can then be used to allow the agent to express
-directly its uncertainty with respect to this new reward function. The main drawback is that this
-results in an exponentially increasing number of actions the more accuracy is required, with
-consequent increase in the space of search that needs to be considered by the solution process. \ys{prediction actions?, you have not talked about POMDP-IR since in the entire thesis, why is prediction actions mentioned here. Stick to $\rho$POMDP rather than going to POMDP-IR. Just say that entropy can be approximated by drawing tangents as in $\rho$POMDP.}
+state-based reward function. The main drawback is that this results in an exponentially increasing
+number of actions the more accuracy is required, with consequent increase in the space of search
+that needs to be considered by the solution process.
 
 Instead, in our approach we estimate the immediate reward for a specific action-observation
 transition by using maximum-likelihood estimates of the belief extracted from the particle beliefs
@@ -72,19 +72,20 @@ rely on usage of additional complex distributions to account for bias \cite{cit:
 In practice bias becomes small as long as the number of samples is high. Thus, we kept our
 estimation algorithm as simple as possible in order to maximize the number of samples that can be
 done in any given time. We compute negative entropy as a summation of terms, one for each type of
-particle:
+particle. We thus approximate the entropy, whose formula is:
 
 \[ -H(b) = \sum_s p(s) \log p(s) \]
-\[ -H(b) \approx \sum_s \frac{n_s}{N} \log \frac{n_s}{N} \]
 
-\ys{I might have missed it in earlier sections, make sure you define what $n_{s}, N and p(s)$}
+With the following computation:
 
-$\rho$-POMCP stores internally both the latest negative entropy estimate $-H(b)$, and each of the
-separate terms that compose it. At each particle $k$ insertion in a particle belief, we simply
-remove from our previous full estimate the relevant term for $k$, recompute the term and add it
-again. This approach is not mathematically correct as, in theory, all terms would need to be updated
-at each insertion, but in practice it turns out not to be a problem as long as each type of particle
-$s$ is added with relative frequency.
+\[ -H(b) \approx \sum_s \frac{N(s)}{N} \log \frac{N(s)}{N} \]
+
+Where $N$ is the total count for all states encountered. $\rho$-POMCP stores internally both the
+latest negative entropy estimate $-H(b)$, and each of the separate terms that compose it. At each
+particle $k$ insertion in a particle belief, we simply remove from our previous full estimate the
+relevant term for $k$, recompute the term and add it again. This approach is not mathematically
+correct as, in theory, all terms would need to be updated at each insertion, but in practice it
+turns out not to be a problem as long as each type of particle $s$ is added with relative frequency.
 
 \begin{algorithm}[H]
     \caption{Negative Entropy Reward Estimation}
@@ -103,8 +104,15 @@ $s$ is added with relative frequency.
 \end{algorithm}
 
 Such an approach is guaranteed to converge to the true entropy in the limit, when the number of
-samples tends to infinite. \ys{can you cite something to support this?} This maintains the POMCP property that leads to an optimal solution in
+samples tends to infinite. This maintains the POMCP property that leads to an optimal solution in
 the limit.
+
+% \ys{can you cite something to support this?}
+%
+% Eugenio: Not directly, aside from the law of large numbers.. since in the limit each state will be
+% visited an infinite number of times, the approximation for each \rho(s) will converge to its true
+% value, thus making \rho(b) converge too.. but I don't have anything specific to write this yet. If
+% you want I can just remove the claim I guess..
 
 \subsection{Value Backup}
 
@@ -112,18 +120,13 @@ A second problem is dependent on how returns are calculated in POMCP. $Q(b,a)$ i
 sum of two different factors: the immediate reward $\rho(b,a)$ plus a discounted term representing
 the expected return from then on.
 
-\[ Q(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V(b') \]
+\[ Q_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V_{h-1}(b') \]
 
-\ys{Why is there no time indices on $Q$ and $V$, are you planning for infinite horizon? }
+POMCP tries to approximate the value of $\rho(b,a)$ as computed in Equation \ref{rhoeq} by averaging
+sall re ults from $R(s,a)$ done using particles extracted from the all beliefs and actions
+encountered during sample episodes.
 
-\ys{\{}Recall that in a belief MDP the reward function is defined as:
-
-\[ \rho(b,a) = \sum_{s\in S} R(s,a) b(s) \]
-\ys{really no need for this. just refer to the equation of $rho$ you had earlier. \}}
-To approximate this value POMCP simply averages all results from $R(s,a)$ done using particles
-extracted from the all beliefs and actions encountered during sample episodes.
-
-\[ Q(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
+\[ Q_h(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
 
 Where $N$ is the number of times that action $a$ has been taken in belief $b$, $n_s$ the number of
 times state $s$ has been sampled from $b$ when taking action $a$, $n_o$ is the number of times that
@@ -135,17 +138,16 @@ However, in our case, the reward function is structured in the following way:
 
 \[ \rho(b,a) = \sum_{o\in \Omega} O(o | b, a) \rho(b') \]
 
-This is because both max of belief and negative entropy rewards can be only extracted from a belief,
-and do not depend on actions. Thus, the value for a belief-action pair becomes:
+This is because both max of belief and negative entropy rewards (represented by $\rho(b')$) can be
+only extracted from a belief, and do not depend on actions. Thus, the value for a belief-action pair
+becomes:
 
-\[ Q(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V(b') \]
+\[ Q_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V_{h-1}(b') \]
 
-\ys{time indices, why is $\rho(b')$ already not part of $V(b')$}
-
-The problem is that we estimate $\rho(b')$ directly, rather than by averaging samples. At the same
-time, $V(b')$ depends on reward estimates of future beliefs, which again are estimated directly.
-This means that whenever a new estimate for any given $\rho(b)$ is computed, the new value needs to
-substitute the previous one all the way up the chain, and cannot be simply averaged in as it
+The problem is that our method of estimation for $\rho(b')$ does not allow a direct backpropagation
+of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. This
+means that whenever a new estimate for any given $\rho(b)$ is computed, the $\rho$-POMCP needs to
+substitute the previous estimate all the way up the chain, and cannot be simply averaged in as it
 happened in POMCP.
 
 We solved this problem by keeping the average mechanism present in POMCP, with the difference that
