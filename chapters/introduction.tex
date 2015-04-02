@@ -26,6 +26,8 @@ be:
 % "manipulate" a bandwidth restraint. We can act so that we can work within its bounds, but the
 % constraint itself never changes. We don't really manipulate it.
 
+\ys{Yes you are right that we are trying to work within the bounds presented by the constraints. But my point there was that the thesis is addressing an issue which deals with enery, bandwidth or communication constraints. I dont particular mind if you want to give examples of other constraints. But I think other people might point that why was a certain resource constraint even discussed, when it was not relevant to thesis's address. This becomes more prominent when you present it a big bullet point. I would rather elaborate more on how bandwidth, enery of comunication can be a resource constraint.}
+
 \item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
     resources. Not only energy and bandwidth are expensive, but in many applications there are hard
     limits on their availability, both for what can be used at any given time and for the overall
@@ -34,6 +36,8 @@ be:
 \item[Environment Size:] Camera systems are often deployed in order to provide survelliance
     facilities over large terrains or buildings. As the space that needs to be observed increases, the
     data that needs to be processed increases too.
+\ys{actually bullet 2 and 3 can be merged into one point, emphasizing that increasing environment size leads to constraints on shared resources}
+
 
 \end{description}
 
@@ -59,23 +63,25 @@ to maximize the information gathered.
 % the aim of the agent is only to perceive the information. these type of tasks are called active
 % perception task, define active prception. .....
 
-The problem the agent faces falls under the \textit{Active Perception} task. Active Perception can
+The problem the agent faces falls under the \textit{Active Perception} \ys{cite} task. Active Perception can
 be formalized as a task where a decision making entity called \textit{agent}, subject to resource
 constraints, needs to take actions in order to reduce some form of uncertainty about a particular
 target environment.  The agent's role in this task is purely observational: it will not influence
 the overall evolution of the environment over time, but it can only selectively gather data to
 maximally improve its knowledge.
 
+\ys{this would be a good place to introduce the running example - surveillance task}
+
 %\item pomdp provide a natural framework to model such problems.
 
 Active Perception can be conveniently modeled through a powerful and flexible decision-theoretic
 tool, called Partially Observable Markov Decision Process (POMDP) \cite{cit:pomdp}. We introduce
-this framework in Section \ref{ref:background}. POMDPs provide a natural framework to model the
+this framework in Section \ys{chapter} \ref{ref:background}. POMDPs provide a natural framework to model the
 interactions between the agent and a partially observable, stochastic environment.  In the POMDP
 framework the agent's objective is to maximize reward collection over time according to a predefined
 reward function.
 
-In this work approach the multi-camera tracking problem through the POMDP framework.  The main
+In this work \ys{we} approach the multi-camera tracking problem through the POMDP framework.  The main
 reason why we use POMDPs is that they naturally allow for the computation of non-myopic strategies
 for using the sensors. In fact, POMDPs are specifically structured as to allow this type of
 planning. This means that the system will try to gather information in order to improve its expected
@@ -91,8 +97,8 @@ to achieve optimality, and provide a proof by example in Appendix \ref{ref:appen
 POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
 already available solution methods. We discuss some POMDPs solution methods in Chapter
 \ref{ref:solutions}.
-
-In particular, our approach is based on online planning. This type of approach is based on
+\ys{another option you have of mentioning where you are discuss what topic is at the end of the introduction, put a small paragraph, describing how the thesis is orgainized.}
+In particular, our approach is based on online planning \ys{cite}. \ys{you can motivate online planning a little better by saying that we want to scale our solution to large system, hence we use online planning}. This type of approach is based on 
 determining an optimal course of action applicable only to the situation that is currently faced by
 the agent. This requires constant computations, but allows tacking problems orders of magnitude
 bigger than other approaches.
@@ -106,7 +112,8 @@ The limitation of POMCP with respect to the Active Perception task is that the a
 actions with respect to rewards sampled from a generative model of the environment. Such model
 cannot provide reward with respect to the current knowledge of the agent, and thus results useless
 to compute a good policy for the agent. POMDPs where rewards are based on knowledge, rather than
-state, have been examined in \cite{cit:rpomdp}.
+state, have been examined in \cite{cit:rpomdp}. 
+\ys{I dont understand this paragraph at all}
 
 In this work approach the multi-camera tracking problem. The problem is modeled as a POMDP, and use
 POMCP, an online planner, to find a good policy while dealing with potentially large models. We
