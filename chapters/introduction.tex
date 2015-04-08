@@ -57,7 +57,7 @@ trying to observe. Reasoning with uncertainty is not a trivial task, given that 
 know in advance what knowledge will be obtained by a specific actions. Given only a certain
 \textit{belief} on the current state of the environment and probabilistic expectations over the
 amounts of information that will be extracted by each available action, the agent needs to reason so
-to maximize the information gathered.
+to maximize the information gathered. \ys{in future}
 
 %\item generally collecting information is not an means to an end , but in the example we gave above
 % the aim of the agent is only to perceive the information. these type of tasks are called active
@@ -97,11 +97,13 @@ to achieve optimality, and provide a proof by example in Appendix \ref{ref:appen
 POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
 already available solution methods. We discuss some POMDPs solution methods in Chapter
 \ref{ref:solutions}.
-\ys{another option you have of mentioning where you are discuss what topic is at the end of the introduction, put a small paragraph, describing how the thesis is orgainized.}
-In particular, our approach is based on online planning \ys{cite}. \ys{you can motivate online planning a little better by saying that we want to scale our solution to large system, hence we use online planning}. This type of approach is based on 
+In particular, our approach is based on online planning \ys{cite}. This type of approach is based on 
 determining an optimal course of action applicable only to the situation that is currently faced by
 the agent. This requires constant computations, but allows tacking problems orders of magnitude
 bigger than other approaches.
+
+\ys{I think you should put a paragraph discussing the organization of thesis at the end of introduction. In the above two paragraph, it appears that you are mixing the motivation for online planning and organization. It does not seem coherent. I think you should motivate online planning here on the idea that as the size of the system increases, it is difficult to use offline methods ... we use MCTS because of better performance ... and so on and the organization comes in a separate para. }
+
 
 In this work we extend one of the fastest online Monte Carlo approaches for POMDPs, Partially
 Observable Monte Carlo Planning (POMCP) \cite{cit:pomcp}. This method approximates beliefs about the
