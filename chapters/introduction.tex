@@ -33,7 +33,7 @@ be:
     limits on their availability, both for what can be used at any given time and for the overall
     resource usage.
 
-\item[Environment Size:] Camera systems are often deployed in order to provide survelliance
+\item[Environment Size:] Camera systems are often deployed in order to provide surveillance
     facilities over large terrains or buildings. As the space that needs to be observed increases, the
     data that needs to be processed increases too.
 \ys{actually bullet 2 and 3 can be merged into one point, emphasizing that increasing environment size leads to constraints on shared resources}
@@ -57,72 +57,86 @@ trying to observe. Reasoning with uncertainty is not a trivial task, given that 
 know in advance what knowledge will be obtained by a specific actions. Given only a certain
 \textit{belief} on the current state of the environment and probabilistic expectations over the
 amounts of information that will be extracted by each available action, the agent needs to reason so
-to maximize the information gathered. \ys{in future}
+to maximize the information gathered in the future.
 
 %\item generally collecting information is not an means to an end , but in the example we gave above
 % the aim of the agent is only to perceive the information. these type of tasks are called active
-% perception task, define active prception. .....
+% perception task, define active perception. .....
 
-The problem the agent faces falls under the \textit{Active Perception} \ys{cite} task. Active Perception can
-be formalized as a task where a decision making entity called \textit{agent}, subject to resource
-constraints, needs to take actions in order to reduce some form of uncertainty about a particular
-target environment.  The agent's role in this task is purely observational: it will not influence
-the overall evolution of the environment over time, but it can only selectively gather data to
-maximally improve its knowledge.
+The problem the agent faces falls under the \textit{Active Perception} \cite{cit:relworkspaan}
+\cite{cit:relworkspaancoop} \cite{cit:relworksatsangi} task.  Active Perception can be formalized as
+a task where a decision making entity called \textit{agent}, subject to resource constraints, needs
+to take actions in order to reduce some form of uncertainty about a particular target environment.
+The agent's role in this task is purely observational: it will not influence the overall evolution
+of the environment over time, but it can only selectively gather data to maximally improve its
+knowledge.
 
-\ys{this would be a good place to introduce the running example - surveillance task}
+% \ys{this would be a good place to introduce the running example - surveillance task}
+
+In this work we approach a surveillance task as an Active Perception problem: our goal is to produce
+an agent system which will be able to track as best as possible a target moving through a partially
+observable environment. The agent will need to exploit its available resources to determine the
+target position over time. The agent will need to reason about the movements of the target even when
+not observed, and use available cameras to observe the environment to refine as much as possible its
+estimates over time.
 
 %\item pomdp provide a natural framework to model such problems.
 
-Active Perception can be conveniently modeled through a powerful and flexible decision-theoretic
-tool, called Partially Observable Markov Decision Process (POMDP) \cite{cit:pomdp}. We introduce
-this framework in Section \ys{chapter} \ref{ref:background}. POMDPs provide a natural framework to model the
-interactions between the agent and a partially observable, stochastic environment.  In the POMDP
-framework the agent's objective is to maximize reward collection over time according to a predefined
-reward function.
+Active Perception tasks can be conveniently modeled through a powerful and flexible
+decision-theoretic tool, called Partially Observable Markov Decision Process (POMDP)
+\cite{cit:pomdp}. POMDPs provide a natural framework to model the interactions between the agent and
+a partially observable, stochastic environment.  In the POMDP framework the agent's objective is to
+maximize reward collection over time according to a predefined reward function.
 
-In this work \ys{we} approach the multi-camera tracking problem through the POMDP framework.  The main
-reason why we use POMDPs is that they naturally allow for the computation of non-myopic strategies
-for using the sensors. In fact, POMDPs are specifically structured as to allow this type of
-planning. This means that the system will try to gather information in order to improve its expected
-knowledge of the environment in the future, while reasoning about all possibilities. We argue that
-while myopic strategies can sometimes suffice, many Active Perception problems require non-myopicity
-to achieve optimality, and provide a proof by example in Appendix \ref{ref:appendix_proof}.
+POMDPs naturally allow for the computation of non-myopic strategies when reasoning over time is
+required, as they are specifically structured as to allow this type of planning. This allows the
+agent to gather information in order to improve its expected knowledge of the environment in the
+future, while reasoning about all possibilities. We argue that while myopic strategies can sometimes
+suffice, many Active Perception problems require non-myopicity to achieve optimality, and provide a
+proof by example in Appendix \ref{ref:appendix_proof}.
 
 % \ys{proof is a big word, generally they are associated with theorems, which we are not presenting. You can say a appendix provides convincing example case.}
 %
 % Eugenio: It actually is a proof (by example). So I am correct in stating it to be a proof. I've
 % added the "by example" part.
 
+% I think you should start by saying that you solve the surveillance problem (hopefully you introduce
+% the surveillance problem somewhere in introduction) using online planning.
+% ----------------
+% I think you should motivate online planning
+% here on the idea that as the size of the system increases, it is difficult to use offline methods
+
 POMDPs are a widely explored topic in the decision theoretic literature, with known properties and
-already available solution methods. We discuss some POMDPs solution methods in Chapter
-\ref{ref:solutions}.
-In particular, our approach is based on online planning \ys{cite}. This type of approach is based on 
-determining an optimal course of action applicable only to the situation that is currently faced by
-the agent. This requires constant computations, but allows tacking problems orders of magnitude
-bigger than other approaches.
+already available solution methods. In particular, our approach is based on online planning
+\cite{cit:relworkonlineall}. This type of approach is based on determining an optimal course of
+action applicable only to the situation that is currently faced by the agent, ignoring the others.
+Online planning requires reasoning continuously over time, but it is simpler to perform as the size
+of a problem increases than offline methods, which tackle the whole problem at once beforehand.
 
-\ys{I think you should put a paragraph discussing the organization of thesis at the end of introduction. In the above two paragraph, it appears that you are mixing the motivation for online planning and organization. It does not seem coherent. I think you should motivate online planning here on the idea that as the size of the system increases, it is difficult to use offline methods ... we use MCTS because of better performance ... and so on and the organization comes in a separate para. }
+% You use MCTS to solve the problem. ... we use MCTS because of better performance
 
-
-In this work we extend one of the fastest online Monte Carlo approaches for POMDPs, Partially
-Observable Monte Carlo Planning (POMCP) \cite{cit:pomcp}. This method approximates beliefs about the
-world using particles, improving performance when the maintaining a complete belief over the state
-of the world can become too computationally expensive.
+In this work we approach the surveillance problem by extending one of the fastest online Monte Carlo
+planners for POMDPs, Partially Observable Monte Carlo Planning (POMCP) \cite{cit:pomcp}. This
+method approximates beliefs about the world using particles, improving performance when the
+maintaining a complete belief over the state of the world can become too computationally expensive.
 
 The limitation of POMCP with respect to the Active Perception task is that the algorithm evaluates
-actions with respect to rewards sampled from a generative model of the environment. Such model
-cannot provide reward with respect to the current knowledge of the agent, and thus results useless
-to compute a good policy for the agent. POMDPs where rewards are based on knowledge, rather than
-state, have been examined in \cite{cit:rpomdp}. 
-\ys{I dont understand this paragraph at all}
+actions using rewards which depend on the state of the environment. Unfortunately, such evaluation
+cannot take into account the knowledge of the agent, and thus results useless to compute a good
+policy for the agent when it needs to maximize its knowledge. POMDPs where rewards are based on
+knowledge, rather than state, have been examined in \cite{cit:rpomdp}.
 
-In this work approach the multi-camera tracking problem. The problem is modeled as a POMDP, and use
-POMCP, an online planner, to find a good policy while dealing with potentially large models. We
-extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a reward
-function based on knowledge rather than state. Our solution is able to refine estimates of action
-rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online planner on
-Active Perception tasks. We show empirical tests and performance of our method on a number of
-problems.
+% You propose a new variant of MCTS, suitable for belief-dependent rewards leading to better
+% estimates/performance.
 
-\ys{I think the final three paragraphs which are summarizing your contributions are bit mixed up. I think you should start by saying that you solve the surveillance problem (hopefully you introduce the surveillance problem somewhere in introduction) using online planning. You use MCTS to solve the problem. You propose a new variant of MCTS, suitable for belief-dependent rewards leading to better estimates/performance. Finally we illustrate empirical success of our method.}
+We extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a
+reward function based on knowledge rather than state. Our solution is able to refine estimates of
+action rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online
+planner on Active Perception tasks.
+
+% Finally we illustrate empirical success of our method.
+
+We show empirical tests and performance of our method on a number of problems which show the
+effectiveness of our method with limited resources and its ability to scale with the size of the
+problem with respect to already available methods.
+
