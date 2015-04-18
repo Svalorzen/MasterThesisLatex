@@ -29,7 +29,7 @@ more states are available, which significantly impairs both POMCP and RTBSS.
 
 RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards.
 
-\section{Non-Myopic World} \ys{please change the title of this subsection}
+\section{First Model - Simple Environment}
 
 In this section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them
@@ -68,7 +68,7 @@ approach can be preferred over a myopic one.
     (s6) edge [bend left] node {1.0} (s4);
 
 \end{tikzpicture}
-\caption{The Non-Myopic World model}
+\caption{The graphical representation of our first model.}
 \label{ref:nonmyo1}
 \end{figure}
 
@@ -105,7 +105,7 @@ samples is not sufficient.
                 \caption{Results using 1e6 samples.}
                 \label{fig:m6e}
         \end{subfigure}
-        \caption{Results in the Non-Myopic World using entropy, averaged over 3000 episodes.}
+        \caption{Results in our first model using entropy, averaged over 3000 episodes.}
         \label{ref:myoentropyfig}
 \end{figure}
 
@@ -135,7 +135,7 @@ samples is not sufficient.
                 \caption{Results using 1e6 samples.}
                 \label{fig:m6m}
         \end{subfigure}
-        \caption{Results in the Non-Myopic World using max-of-belief, averaged over 3000 episodes.}
+        \caption{Results in our first model using max-of-belief, averaged over 3000 episodes.}
         \label{ref:myombfig}
 \end{figure}
 
@@ -147,23 +147,44 @@ deterministic, and thus more useful to explore beforehand. This is most visible 
 setting, while the entropy reward function does not suffer from a significant loss of performance.
 
 \clearpage
-\section{Finite Budget}
+\section{Second Model - Finite Budget}
 
-In this Section we apply the proposed algorithms to the following model: a toroidal, 4-room world
-where a target can transition, at each timestep, from a room to any of the two rooms adjacent. The
-observation and reward function follow the logic of the Non-Myopic World: the agent can observe a
-single room at a time, and needs to keep track of the target for 15 timesteps. The target here
-always starts from a given room, known to the agent.
+In this Section we apply the proposed algorithms to the following model: a 4-room world where a
+target can transition, at each timestep, from a room to any of the two rooms adjacent. The
+observation and reward function follow the logic of our first model: the agent can observe a single
+room at a time, and needs to keep track of the target for 15 timesteps. The target here always
+starts from a given room, known to the agent.
 
 In this model there is an additional rule: the agent is only allowed to look at the world 4 times;
 after that each action will yield no additional information. The agent can, at each timestep, decide
-whether to use one of its observations, or save them for a future timestep. The idea is that
-the agent should use up an observation only if has low knowledge about the world; otherwise it
-should keep its observation actions for later.
+whether to use one of its observations, or save them for a future timestep. This last constraint is
+used to simulate real-life resource constraints; for example when energy and/or processing
+constraints limit the number of times a multi-camera system is allowed to observe the environment.
 
-\ys{motivate finite budget setting by saying that sometimes, there is a fixed budget because of energy constraints, so we test it here}
+The idea is that the agent should use up an observation only if has low knowledge about the world;
+otherwise it should keep its observation actions for later.
 
---- INSERT IMAGE OF THE MODEL HERE ---
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,<->,>=stealth]
+
+\node (s1) at (0,3) [state] {S1};
+\node (s2) at (3,3) [state] {S2};
+\node (s3) at (0,0) [state] {S3};
+\node (s4) at (3,0) [state] {S4};
+
+\path
+    (s1) edge [arrow] node {0.5} (s2)
+    (s2) edge [arrow] node {0.5} (s4)
+    (s3) edge [arrow] node {0.5} (s1)
+    (s4) edge [arrow] node {0.5} (s3);
+
+\end{tikzpicture}
+\caption{The graphical representation of our second model.}
+\label{ref:finbudget1}
+\end{figure}
 
 We tested this model in two configurations: one where the target transitions randomly between the
 two rooms available, increasing maximally the entropy at each timestep, and one where the target
@@ -191,7 +212,7 @@ changed with respect to a differently predictable target.
                 \caption{Results using 1e6 samples.}
                 \label{fig:fb6e5}
         \end{subfigure}
-        \caption{Results in the Finite Budget World with a transition factor of 0.5, using entropy, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.5, using entropy, averaged over 3000 episodes.}
         \label{ref:fbentropyfig5}
 \end{figure}
 
@@ -216,7 +237,7 @@ changed with respect to a differently predictable target.
                 \caption{Results using 1e6 samples.}
                 \label{fig:fb6m5}
         \end{subfigure}
-        \caption{Results in the Finite Budget World with a transition factor of 0.5, using max-of-belief, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.5, using max-of-belief, averaged over 3000 episodes.}
         \label{ref:fbmbfig5}
 \end{figure}
 
@@ -241,7 +262,7 @@ changed with respect to a differently predictable target.
                 \caption{Results using 1e6 samples.}
                 \label{fig:fb6e75}
         \end{subfigure}
-        \caption{Results in the Finite Budget World with a transition factor of 0.75, using entropy, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.75, using entropy, averaged over 3000 episodes.}
         \label{ref:fbentropyfig75}
 \end{figure}
 
@@ -266,7 +287,7 @@ changed with respect to a differently predictable target.
                 \caption{Results using 1e4 samples.}
                 \label{fig:fb6m75}
         \end{subfigure}
-        \caption{Results in the Finite Budget World with a transition factor of 0.75, using max-of-belief, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.75, using max-of-belief, averaged over 3000 episodes.}
         \label{ref:fbmbfig75}
 \end{figure}
 
@@ -274,7 +295,7 @@ changed with respect to a differently predictable target.
 
 
 \clearpage
-\section{Camera World}
+\section{Third Model - Realistic Scenario}
 
 In this Section we test rPOMCP on yet another model. Here the target can walk in a grid world, in a
 north-south-east-west fashion. To produce a somewhat realistic environment, the target selects a
@@ -317,7 +338,7 @@ barely used with a greedy horizon for the small environment.
                 \caption{Results using 1e6 samples.}
                 \label{fig:cws6e}
         \end{subfigure}
-        \caption{Results in the Camera World 20x20, using entropy, averaged over 3000 episodes.}\label{fig:cwse}
+        \caption{Results in our realistic model using a 20x20 grid, using entropy, averaged over 3000 episodes.}\label{fig:cwse}
 \end{figure}
 
 \begin{figure}[ht]
@@ -341,7 +362,7 @@ barely used with a greedy horizon for the small environment.
                 \caption{Results using 1e6 samples.}
                 \label{fig:cws6mb}
         \end{subfigure}
-        \caption{Results in the Camera World 20x20, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwsmb}
+        \caption{Results in our realistic model using a 20x20 grid, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwsmb}
 \end{figure}
 
 \begin{figure}[ht]
@@ -365,7 +386,7 @@ barely used with a greedy horizon for the small environment.
                 \caption{Results using 1e6 samples.}
                 \label{fig:cwb6e}
         \end{subfigure}
-        \caption{Results in the Camera World 50x50, using entropy, averaged over 3000 episodes.}\label{fig:cwbe}
+        \caption{Results in our realistic model using a 50x50 grid, using entropy, averaged over 3000 episodes.}\label{fig:cwbe}
 \end{figure}
 
 \begin{figure}[ht]
@@ -389,7 +410,7 @@ barely used with a greedy horizon for the small environment.
                 \caption{Results using 1e6 samples.}
                 \label{fig:cwb6mb}
         \end{subfigure}
-        \caption{Results in the Camera World 50x50, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwbmb}
+        \caption{Results in our realistic model using a 50x50 grid, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwbmb}
 \end{figure}
 
 In Figure \ref{fig:cwb10} we show the results of applying rPOMCP to a multi-tracking scenario, where
@@ -412,7 +433,7 @@ maximizes overall value over all rPOMCP instances is chosen.
                 \caption{Results using 1e4 samples and max-of-belief.}
                 \label{fig:cwb5mb10}
         \end{subfigure}
-        \caption{Results in the Camera World 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cwb10}
+        \caption{Results in our realistic model 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cwb10}
 \end{figure}
 
 In addition to the previous experiments, we also created a separate model where the agent's model of
