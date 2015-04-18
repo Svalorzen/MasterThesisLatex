@@ -1,9 +1,30 @@
-\begin{thebibliography}{27}
+\begin{thebibliography}{30}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Spaan and Lima(2009)]{cit:relworkspaan}
+Matthijs T.~J. Spaan and Pedro~U. Lima.
+\newblock A decision-theoretic approach to dynamic sensor selection in camera
+  networks.
+\newblock In \emph{Int.\ Conf.\ on Automated Planning and Scheduling}, pages
+  279--304, 2009.
+
+\bibitem[Spaan(2008)]{cit:relworkspaancoop}
+Matthijs T.~J. Spaan.
+\newblock Cooperative active perception using {POMDPs}.
+\newblock In \emph{AAAI 2008 Workshop on Advancements in POMDP Solvers}, July
+  2008.
+
+\bibitem[Satsangi et~al.(2015)Satsangi, Whiteson, and
+  Oliehoek]{cit:relworksatsangi}
+Yash Satsangi, Shimon Whiteson, and Frans Oliehoek.
+\newblock Exploiting submodular value functions for faster dynamic sensor
+  selection.
+\newblock In \emph{AAAI 2015: Proceedings of the Twenty-Ninth AAAI Conference
+  on Artificial Intelligence}, pages 3356--3363, January 2015.
 
 \bibitem[Kaelbling et~al.(1998)Kaelbling, Littman, and Cassandra]{cit:pomdp}
 Leslie~Pack Kaelbling, Michael~L. Littman, and Anthony~R. Cassandra.
@@ -11,14 +32,14 @@ Leslie~Pack Kaelbling, Michael~L. Littman, and Anthony~R. Cassandra.
 \newblock \emph{Artificial Intelligence}, 101, 1998.
 \newblock URL \url{http://people.csail.mit.edu/lpk/papers/aij98-pomdp.pdf}.
 
-\bibitem[Coulom(2007)]{cit:mcts}
-R{\'e}mi Coulom.
-\newblock Efficient selectivity and backup operators in monte-carlo tree
-  search.
-\newblock In \emph{Proceedings of the 5th International Conference on Computers
-  and Games}, CG'06, pages 72--83, Berlin, Heidelberg, 2007. Springer-Verlag.
-\newblock ISBN 3-540-75537-3, 978-3-540-75537-1.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1777826.1777833}.
+\bibitem[Ross et~al.(2008)Ross, Pineau, Paquet, and
+  Chaib-draa]{cit:relworkonlineall}
+St{\'e}phane Ross, Joelle Pineau, S{\'e}bastien Paquet, and Brahim Chaib-draa.
+\newblock Online planning algorithms for pomdps.
+\newblock \emph{J. Artif. Int. Res.}, 32\penalty0 (1):\penalty0 663--704, July
+  2008.
+\newblock ISSN 1076-9757.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1622673.1622690}.
 
 \bibitem[Silver and Veness(2010)]{cit:pomcp}
 David Silver and Joel Veness.
@@ -35,17 +56,28 @@ Mauricio Araya, Olivier Buffet, Vincent Thomas, and Fran\c{c}cois Charpillet.
 \newblock URL
   \url{http://papers.nips.cc/paper/3971-a-pomdp-extension-with-belief-dependent-rewards.pdf}.
 
-\bibitem[Boutilier et~al.(2011)Boutilier, Dean, and Hanks]{cit:boutilier}
-Craig Boutilier, Thomas~L. Dean, and Steve Hanks.
-\newblock Decision-theoretic planning: Structural assumptions and computational
-  leverage.
-\newblock \emph{CoRR}, abs/1105.5460, 2011.
+\bibitem[Rabin(1963)]{cit:probautomata}
+Michael~O. Rabin.
+\newblock Probabilistic automata.
+\newblock \emph{Information and Control}, 6\penalty0 (3):\penalty0 230--245,
+  1963.
+\newblock \doi{10.1016/S0019-9958(63)90290-0}.
+\newblock URL \url{http://dx.doi.org/10.1016/S0019-9958(63)90290-0}.
 
 \bibitem[Sutton and Barto(1998)]{cit:suttonbarto}
 Richard~S. Sutton and Andrew~G. Barto.
 \newblock \emph{Introduction to Reinforcement Learning}.
 \newblock MIT Press, Cambridge, MA, USA, 1st edition, 1998.
 \newblock ISBN 0262193981.
+
+\bibitem[Coulom(2007)]{cit:mcts}
+R{\'e}mi Coulom.
+\newblock Efficient selectivity and backup operators in monte-carlo tree
+  search.
+\newblock In \emph{Proceedings of the 5th International Conference on Computers
+  and Games}, CG'06, pages 72--83, Berlin, Heidelberg, 2007. Springer-Verlag.
+\newblock ISBN 3-540-75537-3, 978-3-540-75537-1.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1777826.1777833}.
 
 \bibitem[Kocsis and Szepesv\'{a}ri(2006)]{cit:uct}
 Levente Kocsis and Csaba Szepesv\'{a}ri.
@@ -87,13 +119,6 @@ Hanbiao Wang, G.~Pottie, K.~Yao, and D.~Estrin.
   Third International Symposium on}, pages 36--45, April 2004.
 \newblock \doi{10.1109/IPSN.2004.1307321}.
 
-\bibitem[Spaan and Lima(2009)]{cit:relworkspaan}
-Matthijs T.~J. Spaan and Pedro~U. Lima.
-\newblock A decision-theoretic approach to dynamic sensor selection in camera
-  networks.
-\newblock In \emph{Int.\ Conf.\ on Automated Planning and Scheduling}, pages
-  279--304, 2009.
-
 \bibitem[Spaan and Vlassis(2005)]{cit:perseus}
 Matthijs T.~J. Spaan and Nikos Vlassis.
 \newblock Perseus: Randomized point-based value iteration for pomdps.
@@ -130,14 +155,11 @@ Stéphane Ross and Brahim Chaib-draa.
 \newblock In \emph{In: Proceedings of the 20th International Joint Conference
   on Artificial Intelligence (IJCAI)}, pages 2592--2598, 2007.
 
-\bibitem[Ross et~al.(2008)Ross, Pineau, Paquet, and
-  Chaib-draa]{cit:relworkonlineall}
-St{\'e}phane Ross, Joelle Pineau, S{\'e}bastien Paquet, and Brahim Chaib-draa.
-\newblock Online planning algorithms for pomdps.
-\newblock \emph{J. Artif. Int. Res.}, 32\penalty0 (1):\penalty0 663--704, July
-  2008.
-\newblock ISSN 1076-9757.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1622673.1622690}.
+\bibitem[Boutilier et~al.(2011)Boutilier, Dean, and Hanks]{cit:boutilier}
+Craig Boutilier, Thomas~L. Dean, and Steve Hanks.
+\newblock Decision-theoretic planning: Structural assumptions and computational
+  leverage.
+\newblock \emph{CoRR}, abs/1105.5460, 2011.
 
 \bibitem[Cassandra et~al.(2013)Cassandra, Littman, and Zhang]{cit:incpruning}
 Anthony~R. Cassandra, Michael~L. Littman, and Nevin~Lianwen Zhang.
