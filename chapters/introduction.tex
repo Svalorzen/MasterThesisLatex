@@ -15,29 +15,19 @@ be:
 
 \item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
     whole environment in which they are located. This can result from a limited number of available
-    sensors and/or from sensors having physical limits in what they can record.
-
-% \ys{limited sensor range, how is it a resource constraint which can be manipulated?}
-%
-% Eugenio: I don't understand. I never really said that these constraints are going to be
-% manipulated. Why would that be? It's just a constraint, which we need to overcome. We need to act
-% in order to compensate for the fact that we cannot see everything all at once - the reasoning with
-% uncertainty part. I also cannot see how the other constraints are manipulated.. It's not like we can
-% "manipulate" a bandwidth restraint. We can act so that we can work within its bounds, but the
-% constraint itself never changes. We don't really manipulate it.
-
-\ys{Yes you are right that we are trying to work within the bounds presented by the constraints. But my point there was that the thesis is addressing an issue which deals with enery, bandwidth or communication constraints. I dont particular mind if you want to give examples of other constraints. But I think other people might point that why was a certain resource constraint even discussed, when it was not relevant to thesis's address. This becomes more prominent when you present it a big bullet point. I would rather elaborate more on how bandwidth, enery of comunication can be a resource constraint.}
+    sensors and/or from sensors having physical limits in what they can record. This constraint
+    makes environments partially observable.
 
 \item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
     resources. Not only energy and bandwidth are expensive, but in many applications there are hard
     limits on their availability, both for what can be used at any given time and for the overall
-    resource usage.
+    resource usage. This constraint forces information gathering from a subset of available sensors.
 
 \item[Environment Size:] Camera systems are often deployed in order to provide surveillance
     facilities over large terrains or buildings. As the space that needs to be observed increases, the
-    data that needs to be processed increases too.
-\ys{actually bullet 2 and 3 can be merged into one point, emphasizing that increasing environment size leads to constraints on shared resources}
-
+    data that needs to be processed increases too. This constraint also limits the number of sensors
+    that can be used at any one time, although the dependency here is more on the type and precision
+    of the analysis performed on the data rather than a tight limit.
 
 \end{description}
 
