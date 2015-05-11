@@ -103,7 +103,7 @@ actions, and can take values within the real domain:
 The reward function represents the level of appeal that a particular situation or outcome represents
 in the modeled task. For example, one could allocate a certain reward for attempting to walk, and an
 even greater reward for successful efforts. On the other hand, one could allocate a negative reward
-for failed attempts. All these would influence the final behavior of the agent.
+for failed attempts. All these would influence the final behavior of the agent. \ys{The last three statement of this para are bit vague.}
 
 Finally, the horizon specifies for how many timesteps the agent is allowed to act on the
 environment. The agent will then find the best strategy in order to maximize accrued reward within
@@ -122,6 +122,8 @@ The observation would be collected with respect to the new position of the targe
 chosen by the agent, as specified by the observation function. The agent would also collect a reward
 depending on its guess of the previous position of the target. The process would then repeat for
 each remaining timestep.
+
+\ys{Why is this model in background? when explaining the model, explain why only one camera can be chosen at each time step?}
 
 \subsection{History and Belief}
 
@@ -295,6 +297,8 @@ particular belief, given that the specified policy is strictly followed after ta
  Q^{\pi}_h(b, a) = \sum_{b'} \tau(b,a,b') \left[ \rho(b,a,b') + V^{pi}_{h-1}(b') \right ]
 \end{equation}
 
+\ys{pi}
+
 The \textit{Q-Function} is extremely useful since the optimal policy can be easily extracted from
 it, simply by selecting at each belief the action that maximizes it. This work leverages this fact
 by approximating the Q-function and then extracting the optimal policy from it.
@@ -310,6 +314,8 @@ situations the original POMDP reward function becomes useless, together with our
 $\rho$.  For example, in the case of surveillance, there is no inherent reward for the agent when
 the environment is in a state rather than another. Instead, the agent actions should maximize the
 knowledge that the agent has of the world.
+
+\ys{There is no need to motivate active perception in background. Describe $rho$POMDP here.}
 
 In such cases the $\rho$ function is defined independently, and is not tied to states anymore. The
 resulting framework is a variant of POMDP, called $\rho$POMDP, where $\rho$ substitutes $R$, while
