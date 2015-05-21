@@ -151,7 +151,7 @@ episode. This long list of actions and observations is called \textit{history}.
 An alternative way of maintaining the history is keeping a \textit{belief} over the current state of
 the environment. Such a belief is simply a probability vector in $|S|$ dimensions, where each
 element denotes the probability that the environment is in a particular state. The belief is a
-\textit{sufficient statistic} of the state of the environment \cite{pomdp}.
+\textit{sufficient statistic} of the state of the environment \cite{cit:pomdp}.
 
 At each new timestep, the agent's belief needs to be updated with the new knowledge gained by the
 agent. The belief can be updated with the following formula:
@@ -261,7 +261,7 @@ V^{\pi}_{h-1}(b') \right ]
 
 Since the value function of a POMDP is a function dependent on beliefs, it is defined on a simplex
 space of $|S|-1$ dimensions, which is continuous. The property that makes a belief MDP tractable is
-that its value function is \textit{piecewise linear and convex} (PWLC) \cite{pomdp}. This means that it is
+that its value function is \textit{piecewise linear and convex} (PWLC) \cite{cit:pomdp}. This means that it is
 ``determined by a set of hyperplanes, the value at a given belief point being that of the highest
 hyperplane'' \cite{cit:rpomdp}. An example of this property is shown in Figure \ref{pwlcpic}. This
 makes it possible to solve a belief MDP exactly, since the optimal policy is finitely bounded in the
