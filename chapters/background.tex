@@ -1,7 +1,7 @@
 \section{Partially Observable Markov Decision Process}\label{ref:pomdp}
 \sectionmark{POMDP}
 
-The \textit{Partially Observable Markov Decision Process} (POMDP) \cite{cit:pomdp} is framework
+The \textit{Partially Observable Markov Decision Process} (POMDP) \cite{cit:pomdp} is a framework
 which allows to model the dynamics of an environment in order to produce a policy that fulfills a
 given task. POMDPs structure reasoning around a probabilistic automaton \cite{cit:probautomata}. An
 agent \textit{acts} upon the environment, which is in a particular \textit{state}. As a result, the
@@ -24,10 +24,13 @@ within the POMDP model.
 % component of the POMDP - T, R, O, and so on..). So I'm not sure what to do. I've removed the old
 % subsections, maybe I'll ask Shimon directly what subsections he would like so I can do it once and
 % for all.
-
-\ys{bullets are fine. No need to change.}
-\ys{It is better to stick with one form of voice. I think the majority of earlier part was written in passive and next sentence is in active.}
-We can define a POMDP as a tuple
+%
+% \ys{bullets are fine. No need to change.}
+%
+% It's ok, but I guess I'd rather wait for Shimon to say how he prefers to structure this so we can
+% all be on the same page.
+%
+A POMDP is defined as a tuple
 
 \begin{equation}
  POMDP = <S,A,T,R,\Omega,O,h>
@@ -101,9 +104,10 @@ actions, and can take values within the real domain:
 \end{equation}
 
 The reward function represents the level of appeal that a particular situation or outcome represents
-in the modeled task. For example, one could allocate a certain reward for attempting to walk, and an
-even greater reward for successful efforts. On the other hand, one could allocate a negative reward
-for failed attempts. All these would influence the final behavior of the agent.
+in the modeled task. For example, one could allocate a certain reward for using a camera, and an
+even greater reward for successfully finding the current location of the target. This would result
+in the agent actively pursuing those goals. On the other hand, one could allocate a negative reward
+for failed tracking attempts, to prevent a mindless use of limited resources.
 
 Finally, the horizon specifies for how many timesteps the agent is allowed to act on the
 environment. The agent will then find the best strategy in order to maximize accrued reward within
@@ -119,9 +123,9 @@ function is independent of the action of the agent, since looking through a came
 the movement of the target.
 
 The observation would be collected with respect to the new position of the target and the camera
-chosen by the agent, as specified by the observation function. The agent would also collect a reward
-depending on its guess of the previous position of the target. The process would then repeat for
-each remaining timestep.
+chosen by the agent, as specified by the observation function, which would also model input noise.
+The agent would also collect a reward depending on its guess of the previous position of the target.
+The process would then repeat for each remaining timestep.
 
 \subsection{History and Belief}
 
@@ -132,11 +136,11 @@ compatible with a subset of $S$.
 The agent must reason about which of the possible underlying states of the environment are
 compatible with all previously obtained observations in order to plan its moves.
 
-Unfortunately, this implies that the agent is unable to reason about the present. While the
-environment states maintain their Markov property, the agent cannot observe them. Instead it needs
-to store internally its whole history of actions and observations in order to keep track of which
-states are possible at any point during an episode. This long list of actions and observations is
-called \textit{history}.
+Unfortunately, this requires the agent to remember the past to reason effectively. While the
+environment states maintain their Markov property, which would allow the agent to ignore previous
+events, the agent cannot observe them. Instead it needs to store internally its whole history of
+actions and observations in order to keep track of which states are possible at any point during an
+episode. This long list of actions and observations is called \textit{history}.
 
 An alternative way of maintaining the history is keeping a \textit{belief} over the current state of
 the environment. Such a belief is simply a probability vector in $|S|$ dimensions, where each
@@ -158,7 +162,7 @@ lieu of a state, since it is possible to compute new transition and reward funct
 beliefs rather than states. This transforms automatically the POMDP into a \textit{belief MDP}
 \cite{cit:pomdp}, where the belief is now the state of the environment. An MDP
 \cite{cit:suttonbarto} is a subset of POMDPs, where the agent always knows the state of the
-environment.
+environment and thus requires no observations.
 
 The belief MDP is created by generating a new transition function $\tau$ and a \textit{belief
 dependent reward} function $\rho$ as follows:
@@ -187,7 +191,8 @@ Similarly:
 
 Although this transformation allows us to forget the partial observability, which is now embedded in
 $\tau$, we have now introduced a new problem: a continuous state space. Although continuous MDPs are
-very hard to solve generally, the belief MDP can be approached due to its specific properties.
+very hard to solve generally, the belief MDP can be approached due to its specific properties, which
+will be discussed shortly.
 
 \subsection{Policy}
 

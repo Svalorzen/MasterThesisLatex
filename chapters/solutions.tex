@@ -26,7 +26,7 @@ behavior is constantly optimal. Computing such a solution in advance and using i
 it needs to store all possible policies to be applied to any reachable belief at any horizon. This
 is expensive not only in terms of space, but even more on computation, since any non-trivial POMDP
 has an exponential explosion in the number of possible histories that an agent can experience and
-each one of them has to be considered in order to evaluate the final policy \cite{cit:pomdp}. In
+all of them might have to be considered in order to evaluate the final policy \cite{cit:pomdp}. In
 addition, any small change in the original model requires a full recomputation of the optimal
 policy, which limits the amount of tuning that can be feasibly done on the model.
 
@@ -310,7 +310,7 @@ At this point, a new sample episode is started from the root of the tree. This p
 until there is time left.
 
 % YS : \textsc{I think the description of POMCP is nice, but it is not formal. It can be made for formal.}
-% 
+%
 % Eugenio: I'm not sure I understand what formal means in this case. In theory, the formal
 % description is represented by the pseudocode, and I'm just trying to make it more accessible in
 % writing.. Could you make an example?

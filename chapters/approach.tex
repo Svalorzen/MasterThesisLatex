@@ -1,6 +1,6 @@
 \section{$\rho$-POMCP}
 
-As discussed, the POMCP algorithm can't be applied directly to $\rho$-POMCP. In this Section we
+As discussed, the POMCP algorithm can't be applied directly to $\rho$-POMDPs. In this Section we
 present a modification of the algorithm POMCP which is able to deal with a belief-based reward
 function in POMDPs. We discuss in more details why POMCP cannot be applied directly to $\rho$-POMDPs
 in Section \ref{ref:rewestimation}.
@@ -20,11 +20,10 @@ where the currently computed optimal policy is not actually optimal. Once such a
 discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
 belief too.
 
-This problem is solved generally in two ways: by approximating the offline solution, or solving the
-$\rho$-POMDP in an online manner. With $\rho$-POMCP, we take the latter approach. Online methods
-work because online planning directly approximates rewards for the possible futures of any given
-situation, without the need to solve a POMDP completely for any possible beliefs. Thus, witness
-points do not need to be discovered, and we can ignore the PWLC property.
+This problem is approached generally via approximation. With $\rho$-POMCP, we directly approximate
+rewards for the possible futures of the current situation, without the need to solve a POMDP
+completely for any possible beliefs. Thus, witness points do not need to be discovered, and we can
+ignore the PWLC property.
 
 \subsection{Reward Estimation}\label{ref:rewestimation}
 
@@ -35,7 +34,7 @@ created by the agent, a generative model containing a belief-dependent reward fu
 A possible approximate solution involves converting the belief-dependent reward function into a
 state-based reward function. The main drawback is that this results in an exponentially increasing
 number of actions the more accuracy is required, with consequent increase in the space of search
-that needs to be considered by the solution process.
+that needs to be considered by the solution process \cite{rpomdp}.
 
 Instead, in our approach we estimate the immediate reward for a specific action-observation
 transition by using maximum-likelihood estimates of the belief extracted from the particle beliefs
@@ -123,7 +122,7 @@ the expected return from then on.
 \[ Q_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V_{h-1}(b') \]
 
 POMCP tries to approximate the value of $\rho(b,a)$ as computed in Equation \ref{rhoeq} by averaging
-sall re ults from $R(s,a)$ done using particles extracted from the all beliefs and actions
+all results from $R(s,a)$ done using particles extracted from the all beliefs and actions
 encountered during sample episodes.
 
 \[ Q_h(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
@@ -144,9 +143,9 @@ becomes:
 
 \[ Q_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V_{h-1}(b') \]
 
-The problem is that our method of estimation for $\rho(b')$ does not allow a direct backpropagation
+The problem is that our method of estimation for $\rho(b')$ does not allow a direct back-propagation
 of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. This
-means that whenever a new estimate for any given $\rho(b)$ is computed, the $\rho$-POMCP needs to
+means that whenever a new estimate for any given $\rho(b)$ is computed, $\rho$-POMCP needs to
 substitute the previous estimate all the way up the chain, and cannot be simply averaged in as it
 happened in POMCP.
 
@@ -188,12 +187,12 @@ any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backed
 \subsection{Max vs Mean}
 
 The POMCP algorithm averages together all sampled rewards, and depends on UCT to let the tree
-converge to the true optimum. This works since UTC samples the best actions infinitely more often in
+converge to the true optimum. This works since UCT samples the best actions infinitely more often in
 the limit, which lets the final estimated value for it converge to the true value. However, this
 procedure needs to sample many more times to make up for the fact that, at first, results for
 suboptimal actions are averaged into estimates too.
 
-POMCP inherits this behaviour from the original MCTS algorithm. However, in the original paper from
+POMCP inherits this behavior from the original MCTS algorithm. However, in the original paper from
 2006 a number of different approaches to merge together backed up values were tried
 \cite{cit:mcts}. The authors decided to stick with using the mean operator to backup values since,
 with the computational power available at the time, it gave better and more consistent results.

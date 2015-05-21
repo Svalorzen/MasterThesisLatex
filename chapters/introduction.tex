@@ -16,12 +16,13 @@ be:
 \item[Limited Sensor Range:] Generally it is impossible for sensors to perceive simultaneously the
     whole environment in which they are located. This can result from a limited number of available
     sensors and/or from sensors having physical limits in what they can record. This constraint
-    makes environments partially observable.
+    makes environments partially observable, which reduces the effectiveness of such systems.
 
 \item[Energy, Bandwidth and Communication Restraints:] Gathering and processing information consumes
     resources. Not only energy and bandwidth are expensive, but in many applications there are hard
     limits on their availability, both for what can be used at any given time and for the overall
-    resource usage. This constraint forces information gathering from a subset of available sensors.
+    resource usage. This constraint prevents information gathering from all of available sensors,
+    wasting potentially useful data.
 
 \item[Environment Size:] Camera systems are often deployed in order to provide surveillance
     facilities over large terrains or buildings. As the space that needs to be observed increases, the
@@ -34,13 +35,14 @@ be:
 %\item in such cases, the goal of the agent is to reason about the constraint and minimize uncertainty about future,
 %\item since these systems observe highly dynamic scenes (ex ... multi-camera systems), it is critical to reason about long term consequences
 
-In order for such a multi-camera system to perform optimally within real world limits there is a
-need to operate its sensors in an intelligent way, so to extract the most information with the
-minimum cost while observing the aforementioned constraints. In particular, since multi-camera
-systems are often deployed in highly dynamic contexts where targets can move rapidly between tracked
-locations, there is a need to predict effectively the long-term evolution of the state of the
-environment. This can be done by implementing an agent which will reason about the system's
-dynamics and employ available resources in the best way.
+In order for a multi-camera system to perform optimally within real world limits there is a need to
+operate its sensors in an intelligent way, so to extract the most information with the minimum cost
+while observing the aforementioned constraints. In particular, since multi-camera systems are often
+deployed in highly dynamic contexts where targets can move rapidly between tracked locations, there
+is a need to predict effectively the long-term evolution of the state of the environment in order to
+maximize the effectiveness of the system when its limitations do not allow for reliable tracking.
+This can be done by implementing an agent which will reason about the system's dynamics and employ
+available resources in the best way.
 
 At the same time, the agent needs to act while facing direct uncertainty about the environment it is
 trying to observe. Reasoning with uncertainty is not a trivial task, given that the agent cannot
@@ -64,11 +66,11 @@ knowledge.
 % \ys{this would be a good place to introduce the running example - surveillance task}
 
 In this work we approach a surveillance task as an Active Perception problem: our goal is to produce
-an agent system which will be able to track as best as possible a target moving through a partially
+an agent which will be able to track as best as possible a target moving through a partially
 observable environment. The agent will need to exploit its available resources to determine the
 target position over time. The agent will need to reason about the movements of the target even when
-not observed, and use available cameras to observe the environment to refine as much as possible its
-estimates over time.
+not observed, and use available cameras to observe the environment to continuously refine as much as
+possible its estimates over time.
 
 %\item pomdp provide a natural framework to model such problems.
 
@@ -100,7 +102,7 @@ POMDPs are a widely explored topic in the decision theoretic literature, with kn
 already available solution methods. In particular, our approach is based on online planning
 \cite{cit:relworkonlineall}. This type of approach is based on determining an optimal course of
 action applicable only to the situation that is currently faced by the agent, ignoring the others.
-Online planning requires reasoning continuously over time, but it is simpler to perform as the size
+Online planning requires reasoning continuously over time, but it is cheaper to perform as the size
 of a problem increases than offline methods, which tackle the whole problem at once beforehand.
 
 % You use MCTS to solve the problem. ... we use MCTS because of better performance
@@ -114,7 +116,7 @@ The limitation of POMCP with respect to the Active Perception task is that the a
 actions using rewards which depend on the state of the environment. Unfortunately, such evaluation
 cannot take into account the knowledge of the agent, and thus results useless to compute a good
 policy for the agent when it needs to maximize its knowledge. POMDPs where rewards are based on
-knowledge, rather than state, have been examined in \cite{cit:rpomdp}.
+knowledge rather than state, called $\rho$-POMDPs, have been examined in \cite{cit:rpomdp}.
 
 % You propose a new variant of MCTS, suitable for belief-dependent rewards leading to better
 % estimates/performance.
@@ -122,7 +124,7 @@ knowledge, rather than state, have been examined in \cite{cit:rpomdp}.
 We extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a
 reward function based on knowledge rather than state. Our solution is able to refine estimates of
 action rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online
-planner on Active Perception tasks.
+planner on Active Perception tasks and more generally on all $\rho$-POMDP problems.
 
 % Finally we illustrate empirical success of our method.
 
