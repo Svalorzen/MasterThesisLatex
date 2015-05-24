@@ -269,7 +269,7 @@ datapoints to update all old reward estimates up in the tree.
 Notice that $\rho$-POMCP lacks a rollout procedure. This is because $\rho$-POMCP has no way to
 approximate rewards when outside the tree, and so skips random policy rollouts altogether.
 
-\section{Multi Person}
+\section{Multiple Target Tracking}
 
 One of the main limiting factors for Monte-Carlo online methods is the branching factor of the
 tackled problem. While MCTS, POMCP and $\rho$-POMCP can deal with incredibly large state and
@@ -294,3 +294,22 @@ solvers.  From each solver we then obtain a value estimate for each available ac
 action is then the one that maximizes the sum of all values across solvers. In order to obtain
 consistent evaluations of all root actions so that we can compare them between solvers, we disable
 UCT for the first depth level in the tree, and instead sample equally from each action.
+
+\section{Multiple Camera Selection}
+
+In the same way that increasing the number of targets influences the branching factor of the
+tracking problem, allowing the agent to concurrently select a subset of available cameras at each
+timestep makes the problem increasingly harder for $\rho$-POMCP. This is because the algorithm needs
+to consider all possible subsets of the available cameras in order to determine the best one.
+
+As for the other problems we have discussed, the most common solution is approximation. A possible
+method to approach this problem is submodularity. Submodularity evaluates actions singularly in a
+multi step selection process; at each step the best action is added to the subset, and then all
+remaining actions are re-evaluated taking into account that previously added actions will now be
+performed. This avoids selecting overlapping cameras that, while by themselves would provide much
+information, would not be optimal if used together due to redundant information. This solution is
+explored by \cite{cit:relworksatsangi}.
+
+In order to focus more directly on the performance of the $\rho$-POMCP algorithm, in this work we
+force the agent to select a single camera at each timestep, avoiding the multiple camera selection
+problem.
