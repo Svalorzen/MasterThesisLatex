@@ -1,0 +1,43 @@
+In this thesis we tackle the Active Perception task applied over multi-camera systems. In
+particular, we try to track a single target over an extended period of time, while trying to make an
+optimal usage of available resources and overcome specific constraints, namely partial
+observability, environment size and limited access to cameras.
+
+In order to fullfill our goal we have modified an existing approach in order to fit our particular
+requisites. Starting from the POMCP algorithm, which uses online Monte Carlo techniques to
+approximately plan in POMDP models, we have extended it in order to be appliead to belief-based
+POMDPs, called $\rho$-POMDPs, using entropy or max-of-belief as reward functions. Our approach,
+called $\rho$-POMCP, can tackle problems orders of magnitude bigger than existing alternatives and
+can be applied to all $\rho$-POMDP problems, not only those proposed in this work.
+
+$\rho$-POMCP achieves these results by directly approximating the belief-based reward function,
+without the need to obtain direct estimates of future beliefs within the Monte Carlo Tree Search
+planning phase. In addition it is able to cheaply backpropagate any new reward estimate ensuring
+that the values in the tree are always up-to-date. These properties heavily reduce the amount of
+computations required in order to have an acceptable estimate of future rewards, allowing UTC to
+effectively direct the search towards the most promising possible futures.
+
+We have compared our approach to already existing methods, and shown the differences in performance
+between them. In particular, $\rho$-POMCP can scale successfully on problems orders of magnitude
+bigger than what was possible with previous approaches, and can be used to track multiple targets
+concurrently in a very effective and parallelizable manner. In particular, our approach can be
+easily distributed between separate computing nodes, and the amount of information and bandwidth
+that needs to be shared between any such nodes is very limited.
+
+At the same time, our results indicate that while theoretically non-myopic solutions are sometimes
+necessary for optimal solutions in Active Perception, in a multi-camera system setting the added
+overhead required by planning over more than a single timestep may not be justified by the
+additional gained rewards - if the model of the environment even allows for any. This seems to
+replicate results obtained by [], which show that planning for more than one timestep in a realistic
+setting does not seem to improve effectiveness much, while it is needed when the problem is
+artificially constrained so to require forethinking by the agent.
+
+\section{Future Work}
+
+Additional efforts may be useful in order to evaluate the effectiveness of our method on
+$\rho$-POMDPs where actions actually do influence the environment. In such cases the value in
+planning for the future and avoid myopicity is increased as the agent's actions need to be selected
+taking into consideration how the enviroment will change with respect to the agent's choice.
+
+Another improvement would be to extend our reward approximations with respect to reward functions
+other than entropy and max-of-belief.
