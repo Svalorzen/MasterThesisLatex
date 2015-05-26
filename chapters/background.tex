@@ -82,7 +82,8 @@ agent performs action $a$. By using this notation, we can show formally what the
 about. This property holds when
 
 \begin{equation}
- Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm} \forall s \in S
+ Pr(s_{t+1} | s_{0}, a_{0}, s_{1}, a_{1}, ..., s_{t}, a_{t} ) = Pr(s_{t+1} | s_t, a_t ) \hspace{1cm}
+ \forall s \in S \wedge \forall a \in A
 \end{equation}
 
 where $t$ denotes the timestep where a particular state was reached.
@@ -213,7 +214,7 @@ but, depending on the task, more performant overall. We can describe the goal fu
 with finite horizon $h$ as:
 
 \begin{equation}
- \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h} R(s_t, a_t, s_{t+1}) \right ]
+ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h-1} R(s_t, a_t, s_{t+1}) \right ]
 \end{equation}
 
 A solution for a POMDP is called a \textit{policy}. We can define a policy $\pi$ as a function, that
