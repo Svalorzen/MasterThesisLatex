@@ -1,8 +1,14 @@
 \section{$\rho$-POMCP}
 
-As discussed \ys{put section number here}, the POMCP algorithm can't be applied directly to $\rho$-POMDPs. In this Section we present a modification of the algorithm POMCP which is able to deal with a belief-based reward
-function in POMDPs. We discuss in more details why POMCP cannot be applied directly to $\rho$-POMDPs
-in Section \ref{ref:rewestimation}.
+While the POMCP algorithm is very powerful, unfortunately it cannot be directly applied to
+$\rho$-POMDPs. This is because its exploration strategy through the action-observation tree relies
+on reward functions which depend on states only. Since in a $\rho$-POMDP the reward function depends
+on beliefs rather than states, it is necessary to modify the algorithm in order to be used on Active
+Perception tasks.
+
+In this Section we present a modification of the algorithm POMCP which is able to deal with a
+belief-based reward function. We discuss in more details why POMCP cannot be applied directly to
+$\rho$-POMDPs in Section \ref{ref:rewestimation}.
 
 We call our POMCP variant $\rho$-POMCP. An important fact to note is that $\rho$-POMCP is able to deal
 with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm can be
@@ -10,21 +16,21 @@ applied to problems where the agent can influence the state of the world, and al
 modifications to reintroduce state dependent rewards) when the reward function is both dependent on
 states and belief.
 
-\subsection{Non-PWLC Value Function}
-
-Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
-uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for exact
-offline planning since usual solving techniques rely on the PWLC property in order to detect beliefs
-where the currently computed optimal policy is not actually optimal. Once such a belief point is
-discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
-belief too. 
-
-This problem is approached generally via approximation. With $\rho$-POMCP, we directly approximate
-rewards for the possible futures of the current situation, without the need to solve a POMDP
-completely for any possible beliefs. Thus, witness points do not need to be discovered, and we can
-ignore the PWLC property.
-
-\ys{I dont get the point of this subsection}
+% \subsection{Non-PWLC Value Function}
+%
+% Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
+% uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for exact
+% offline planning since usual solving techniques rely on the PWLC property in order to detect beliefs
+% where the currently computed optimal policy is not actually optimal. Once such a belief point is
+% discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
+% belief too.
+%
+% This problem is approached generally via approximation. With $\rho$-POMCP, we directly approximate
+% rewards for the possible futures of the current situation, without the need to solve a POMDP
+% completely for any possible beliefs. Thus, witness points do not need to be discovered, and we can
+% ignore the PWLC property.
+%
+% \ys{I dont get the point of this subsection}
 
 \subsection{Reward Estimation}\label{ref:rewestimation}
 
@@ -33,16 +39,17 @@ reward information from a generative model of the environment. Since a belief is
 created by the agent, a generative model containing a belief-dependent reward function cannot exist.
 
 A possible approximate solution involves converting the belief-dependent reward function into a
-state-based reward function. The main drawback is that this results in an exponentially increasing
-number of actions the more accuracy is required, with consequent increase in the space of search
-that needs to be considered by the solution process \cite{cit:rpomdp}. \ys{can you re-phrase this statement, its very difficult to understand.}
+state-based reward function, approximating the $\rho$-POMDP problem back to a POMDP \cite{cit:rpomdp}.
+The main drawback of this approach is that it requires a very high number of additional actions in
+the approximated model in order to adequately describe the original model. This in turn
+significantly slows down online planning approaches, since their performance is directly bound to
+the size of the tree to explore.
 
-Instead, in our approach we estimate the immediate reward for a specific action-observation
-transition by using maximum-likelihood estimates of the belief extracted from the particle beliefs
-POMCP generates. However, since particle beliefs are updated constantly, computing a direct estimate
-of every belief reached during each sample episode would excessively hamper performance. We solved
-this problem differently for estimating max of belief rewards and negative entropy rewards.
-\ys{the above para is confusing}
+Instead, in our approach we estimate the immediate rewards within the tree from maximum-likelihood
+belief estimates computed from POMCP's particle beliefs. However, since all particle beliefs are
+updated constantly, continuously updating all ML estimates would excessively hamper performance. We
+solved this problem differently for estimating max of belief rewards and negative entropy rewards.
+
 For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in the
 particle belief $N(b)$, the number of particles for each particle type $N(s)$ and the most common
 type $max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
@@ -78,12 +85,10 @@ particle. We thus approximate the entropy, whose formula is:
 
 With the following computation:
 
-\[ -H(b) \approx \sum_s \frac{N(s)}{N} \log \frac{N(s)}{N} \]
-
-\ys{use a different symbol for estimate of entropy (say $\hat{H}$), the same goes for any other estimates that you might be using in any algorithm or equation}
+\[ -\hat{H}(b) \approx \sum_s \frac{N(s)}{N} \log \frac{N(s)}{N} \]
 
 Where $N$ is the total count for all states encountered. $\rho$-POMCP stores internally both the
-latest negative entropy estimate $-H(b)$, and each of the separate terms that compose it. At each
+latest negative entropy estimate $-\hat{H}(b)$, and each of the separate terms that compose it. At each
 particle $k$ \ys{what is $k$} insertion in a particle belief, we simply remove from our previous full estimate the
 relevant term for $k$, recompute the term and add it again. This approach is not mathematically
 correct as, in theory, all terms would need to be updated at each insertion, but in practice it
@@ -108,7 +113,7 @@ turns out not to be a problem as long as each type of particle $s$ is added with
 
 Such an approach is guaranteed to converge to the true entropy in the limit, when the number of
 samples tends to infinite. This maintains the POMCP property that leads to an optimal solution in
-the limit. \ys{cite paninski and pomcp here}
+the limit \cite{cit:pomcp}.
 
 % \ys{can you cite something to support this?}
 %
@@ -119,19 +124,17 @@ the limit. \ys{cite paninski and pomcp here}
 
 \subsection{Value Backup}
 
-A second problem is dependent on how returns are calculated in POMCP. $Q(b,a)$ \ys{$\pi$ and $h$} is computed as the
+A second problem is dependent on how returns are calculated in POMCP. $Q^\pi_h(b,a)$ is computed as the
 sum of two different factors: the immediate reward $\rho(b,a)$ plus a discounted term representing
 the expected return from then on.
 
-\[ Q_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V_{h-1}(b') \]
-
-\ys{policy is missing from the equation}
+\[ Q^\pi_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V^pi_{h-1}(b') \]
 
 POMCP tries to approximate the value of $\rho(b,a)$ as computed in Equation \ref{rhoeq} by averaging
 all results from $R(s,a)$ done using particles extracted from the all beliefs and actions
 encountered during sample episodes.
 
-\[ Q_h(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
+\[ \hat{Q}^\pi_h(b,a) \approx \frac{\sum_{s \in S} n_s R(s,a)}{N} + \gamma \cdot \frac{\sum_{o\in \Omega} n_o f_o}{N} \]
 
 Where $N$ is the number of times that action $a$ has been taken in belief $b$, $n_s$ the number of
 times state $s$ has been sampled from $b$ when taking action $a$, $n_o$ is the number of times that
@@ -147,7 +150,7 @@ This is because both max of belief and negative entropy rewards (represented by 
 only extracted from a belief, and do not depend on actions. Thus, the value for a belief-action pair
 becomes:
 
-\[ Q_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V_{h-1}(b') \]
+\[ Q\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V\pi_{h-1}(b') \]
 
 The problem is that our method of estimation for $\rho(b')$ does not allow a direct back-propagation
 of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. \ys{why does it not allow?} This
@@ -288,39 +291,44 @@ to be explored. This is because each new branch significantly increases the numb
 episodes that need to be performed in order to obtain an accurate estimate for the best action.
 
 The main branching factor in the problem we are considering, which is multi-sensor systems, is the
-number of targets to be tracked. This is because each target moves independently, and thus from a
+number of targets to be tracked. This is because each target moves simultaneously, and thus from a
 given state there are many more possible states reachable. Thus, the branching factor for a problem
 is exponential in the number of targets.
 
 In order to avoid dealing with this problem, we setup a system where we run concurrently many
-$\rho$-POMCP instances. Each solver computes an individual policy for a single target only and
-receives individual observations. This allows each solver to work on a relatively small tree,
-without exploding the number of branches. In addition, this allows to work with a variable number of
-targets, since it possible to dynamically adjust the number of online planners running at any time,
-depending on the number of targets present in the environment.
+$\rho$-POMCP instances. We assume that each target moves independently, and that targets do not
+affect observations of each other. Each solver computes an individual policy for a single target
+only and receives individual observations. This allows each solver to work on a relatively small
+tree, without exploding the number of branches. In addition, this allows to work with a variable
+number of targets, since it possible to dynamically adjust the number of online planners running at
+any time, depending on the number of targets present in the environment.
 
 We then estimate the final action to be performed by merging the separate results of all the
-solvers.  From each solver we then obtain a value estimate for each available action; the final
-action is then the one that maximizes the sum of all values across solvers. In order to obtain
-consistent evaluations of all root actions so that we can compare them between solvers, we disable
-UCT for the first depth level in the tree, and instead sample equally from each action.
+solvers. From each solver we obtain a value estimate for each available action at the root of the
+tree; the final action is then the one that maximizes the sum of all values across solvers. In order
+to obtain consistent evaluations of all root actions so that we can compare them between solvers, we
+disable UCT for the first depth level in the tree, and instead sample equally from each action.
 
-\section{Multiple Camera Selection}
+Once a final action is chosen it is applied, and all trees in all solvers are pruned consequently.
+The resulting observation is fed on all solvers, and finally a new round of planning takes action,
+in order to act in the next timestep.
 
-In the same way that increasing the number of targets influences the branching factor of the
-tracking problem, allowing the agent to concurrently select a subset of available cameras at each
-timestep makes the problem increasingly harder for $\rho$-POMCP. This is because the algorithm needs
-to consider all possible subsets of the available cameras in order to determine the best one.
-
-As for the other problems we have discussed, the most common solution is approximation. A possible
-method to approach this problem is submodularity. Submodularity evaluates actions singularly in a
-multi step selection process; at each step the best action is added to the subset, and then all
-remaining actions are re-evaluated taking into account that previously added actions will now be
-performed. This avoids selecting overlapping cameras that, while by themselves would provide much
-information, would not be optimal if used together due to redundant information. This solution is
-explored by \cite{cit:relworksatsangi}.
-
-In order to focus more directly on the performance of the $\rho$-POMCP algorithm, in this work we
-force the agent to select a single camera at each timestep, avoiding the multiple camera selection
-problem.
+% \section{Multiple Camera Selection}
+%
+% In the same way that increasing the number of targets influences the branching factor of the
+% tracking problem, allowing the agent to concurrently select a subset of available cameras at each
+% timestep makes the problem increasingly harder for $\rho$-POMCP. This is because the algorithm needs
+% to consider all possible subsets of the available cameras in order to determine the best one.
+%
+% As for the other problems we have discussed, the most common solution is approximation. A possible
+% method to approach this problem is submodularity. Submodularity evaluates actions singularly in a
+% multi step selection process; at each step the best action is added to the subset, and then all
+% remaining actions are re-evaluated taking into account that previously added actions will now be
+% performed. This avoids selecting overlapping cameras that, while by themselves would provide much
+% information, would not be optimal if used together due to redundant information. This solution is
+% explored by \cite{cit:relworksatsangi}.
+%
+% In order to focus more directly on the performance of the $\rho$-POMCP algorithm, in this work we
+% force the agent to select a single camera at each timestep, avoiding the multiple camera selection
+% problem.
 \ys{this subsection can go in future work/discussion, you can rather expand on multi-person tracking, if you wish. Make sure to point that we \textit{assume} that people walk independently of each other and they do not affect observations of each other}
