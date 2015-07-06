@@ -14,9 +14,15 @@ reward function can be converted into a state-based reward function by modifying
 the problem. In the new action space, each action represents at the same time one of the old
 actions, plus an addictional \textit{prediction action}, which is used by the agent in order to
 predict the state the environment is in at any given time. The new action space is thus the result
-of a cross-product between the set of old actions and the new prediction actions, which are $|S|$.
+of a cross-product between the set of old actions and the new prediction actions, which are $|S|$
+\cite{cit:rpomdp}.
 
-\ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction actions}
+% \ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction
+% actions}
+%
+% Well, my approach does not need prediction actions, but POMCP and RTBSS do need it. Since I spent
+% all the thesis outlining why POMCP could not be used, it makes sense to give an outline to it, or
+% no?
 
 The reward function is then defined in terms of the prediction actions: if the agent predicts the
 state of the environment correctly, it receives a reward of 1. Otherwise, it receives no reward. It
@@ -72,79 +78,36 @@ approach can be preferred over a myopic one.
 \label{ref:nonmyo1}
 \end{figure}
 
-Figure \ref{ref:myoentropyfig} and Figure \ref{ref:myombfig} show performance in terms of cumulative
-obtained reward for the different methods proposed. We also compare performances of POMCP/rPOMCP
-using different number of samples. In addition, we test rPOMCP with different $k$ parameters, tuning
-the mean-max backup operation towards one or the other. $k = 1$ results in a max backup
-operation, while $k = 10000$ results in an essentially mean backup operation of values.
+Figure \ref{ref:myoentropyfig} shows performance in terms of cumulative obtained reward for the
+different methods proposed. The $h$ parameter determines the horizon of the particular solver. $h =
+1$ results in a greedy solver. It is important to note that for POMCP and rPOMCP $h$ is merely an
+upper bound on the depth of the decision tree they are allowed to explore. This is because they
+build their decision tree incrementally, so that they may not reach its true bottom of their
+decision tree if the number of samples is not sufficient.
 
-The $h$ parameter determines the horizon of the particular solver. $h = 1$ results in a greedy
-solver. It is important to note that for POMCP and rPOMCP $h$ is merely an upper bound on the depth
-of the decision tree they are allowed to explore. This is because they build their decision tree
-incrementally, so that they may not reach its true bottom of their decision tree if the number of
-samples is not sufficient.
-
-\begin{figure}[ht]
+\begin{figure}[ht!]
         \centering
-        \begin{subfigure}[t]{0.3\textwidth}
+        \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/MyoResults/1e4/E/output}
-                \caption{Results using 1e4 samples.}
+                \caption{Results using 1e4 samples, with entropy as the reward function.}
                 \label{fig:m4e}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/MyoResults/1e5/E/output}
-                \caption{Results using 1e5 samples.}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/MyoResults/1e4/MB/output}
+                \caption{Results using 1e4 samples, with max-of-belief as the reward function.}
                 \label{fig:m5e}
         \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/MyoResults/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:m6e}
-        \end{subfigure}
-        \caption{Results in our first model using entropy, averaged over 3000 episodes.}
+        \caption{Results in our first model, averaged over 3000 episodes.}
         \label{ref:myoentropyfig}
 \end{figure}
-
-\ys{I think there are too many lines in this figures. For showing the performance with increasing number of samples, you can fix k = 1 or 1000, fix a horizon to 5 or 2 and then you can increase number of samples to show variations.}
-
-
-\begin{figure}[ht!]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/MyoResults/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:m4m}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/MyoResults/1e5/MB/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:m5m}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/MyoResults/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:m6m}
-        \end{subfigure}
-        \caption{Results in our first model using max-of-belief, averaged over 3000 episodes.}
-        \label{ref:myombfig}
-\end{figure}
-
-\ys{there is no need probably to show how max of belief/entropy differs with number of sample, unless the behaviour is extremely different. Instead you can compare the performance between max of belief and entropy by fixing number of sample, k and h and then show how max of belief/entropy matters}.
 
 We can see how a small horizon always results in a lower return over the 10 timesteps. This is
 because with a greedy approach the agent cannot leverage the fact that half of the environment is
 deterministic, and thus more useful to explore beforehand. This is most visible in the max-of-belief
 setting, while the entropy reward function does not suffer from a significant loss of performance.
 
-\clearpage
 \section{Second Model - Finite Budget}
 
 In this Section we apply the proposed algorithms to the following model: a 4-room world where a
@@ -160,7 +123,8 @@ used to simulate real-life resource constraints; for example when energy and/or 
 constraints limit the number of times a multi-camera system is allowed to observe the environment.
 
 The idea is that the agent should use up an observation only if has low knowledge about the world;
-otherwise it should keep its observation actions for later.
+otherwise it should keep its observation actions for later and try to extract as much reward from
+current knowledge as possible.
 
 \begin{figure}[ht]
 \centering
@@ -191,108 +155,40 @@ changed with respect to a differently predictable target.
 
 \begin{figure}[ht]
         \centering
-        \begin{subfigure}[t]{0.3\textwidth}
+        \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e4/E/output}
-                \caption{Results using 1e4 samples.}
+                \caption{Results using 1e4 samples, and entropy as the reward function.}
                 \label{fig:fb4e5}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e5/E/output}
-                \caption{Results using 1e5 samples.}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e4/MB/output}
+                \caption{Results using 1e4 samples, and max-of-belief as the reward function.}
                 \label{fig:fb5e5}
         \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:fb6e5}
-        \end{subfigure}
-        \caption{Results in the Finite Budget model with a transition factor of 0.5, using entropy, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.5, averaged over 3000 episodes.}
         \label{ref:fbentropyfig5}
 \end{figure}
 
 \begin{figure}[ht]
         \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:fb4m5}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e5/MB/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:fb5m5}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:fb6m5}
-        \end{subfigure}
-        \caption{Results in the Finite Budget model with a transition factor of 0.5, using max-of-belief, averaged over 3000 episodes.}
-        \label{ref:fbmbfig5}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
+        \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e4/E/output}
-                \caption{Results using 1e4 samples.}
+                \caption{Results using 1e4 samples, and entropy as the reward function.}
                 \label{fig:fb4e75}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e5/E/output}
-                \caption{Results using 1e5 samples.}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e4/MB/output}
+                \caption{Results using 1e4 samples, and max-of-belief as the reward function.}
                 \label{fig:fb5e75}
         \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:fb6e75}
-        \end{subfigure}
-        \caption{Results in the Finite Budget model with a transition factor of 0.75, using entropy, averaged over 3000 episodes.}
+        \caption{Results in the Finite Budget model with a transition factor of 0.75, averaged over 3000 episodes.}
         \label{ref:fbentropyfig75}
 \end{figure}
 
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:fb4m75}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e5/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:fb5m75}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e6/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:fb6m75}
-        \end{subfigure}
-        \caption{Results in the Finite Budget model with a transition factor of 0.75, using max-of-belief, averaged over 3000 episodes.}
-        \label{ref:fbmbfig75}
-\end{figure}
-
-\ys{I think it applied for most of the figures here, there is no need to have so many parameters change in each graph. Fix everything else and just change one parameter and tell what is the take away message from changing that parameter}.
-
-
-\clearpage
 \section{Third Model - Realistic Scenario}
 
 In this Section we test rPOMCP on yet another model. Here the target can walk in a grid world, in a
@@ -317,98 +213,19 @@ barely used with a greedy horizon for the small environment.
 
 \begin{figure}[ht]
         \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e4/E/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cws4e}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e6/E/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cws5e}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cws6e}
-        \end{subfigure}
-        \caption{Results in our realistic model using a 20x20 grid, using entropy, averaged over 3000 episodes.}\label{fig:cwse}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e4/MB/output}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e4/output}
                 \caption{Results using 1e4 samples.}
                 \label{fig:cws4mb}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e6/MB/output}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e4/output}
                 \caption{Results using 1e5 samples.}
                 \label{fig:cws5mb}
         \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cws6mb}
-        \end{subfigure}
         \caption{Results in our realistic model using a 20x20 grid, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwsmb}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e4/E/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cwb4e}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e6/E/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cwb5e}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cwb6e}
-        \end{subfigure}
-        \caption{Results in our realistic model using a 50x50 grid, using entropy, averaged over 3000 episodes.}\label{fig:cwbe}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cwb4mb}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e6/MB/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cwb5mb}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraBasicResults/Big_50x50/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cwb6mb}
-        \end{subfigure}
-        \caption{Results in our realistic model using a 50x50 grid, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwbmb}
 \end{figure}
 
 In Figure \ref{fig:cwb10} we show the results of applying rPOMCP to a multi-tracking scenario, where
@@ -446,98 +263,19 @@ takes too much time to complete.
 
 \begin{figure}[ht!]
         \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e4/E/output}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e4/output}
                 \caption{Results using 1e4 samples.}
                 \label{fig:cps4e}
         \end{subfigure}%
         ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
           %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e6/E/output}
+        \begin{subfigure}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e4/output}
                 \caption{Results using 1e5 samples.}
                 \label{fig:cps5e}
         \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cps6e}
-        \end{subfigure}
         \caption{Results in the Camera World 2 20x20, using entropy, averaged over 3000 episodes.}\label{fig:cpse}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cps4mb}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e6/MB/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cps5mb}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Small_20x20/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cps6mb}
-        \end{subfigure}
-        \caption{Results in the Camera World 2 20x20, using entropy, averaged over 3000 episodes.}\label{fig:cpsmb}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e4/E/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cpb4e}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e6/E/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cpb5e}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e6/E/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cpb6e}
-        \end{subfigure}
-        \caption{Results in the Camera World 2 50x50, using entropy, averaged over 3000 episodes.}\label{fig:cpbe}
-\end{figure}
-
-\begin{figure}[ht]
-        \centering
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e4/MB/output}
-                \caption{Results using 1e4 samples.}
-                \label{fig:cpb4mb}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e6/MB/output}
-                \caption{Results using 1e5 samples.}
-                \label{fig:cpb5mb}
-        \end{subfigure}
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[t]{0.3\textwidth}
-                \includegraphics[width=\textwidth]{Images/CameraPathResults/Big_50x50/1e6/MB/output}
-                \caption{Results using 1e6 samples.}
-                \label{fig:cpb6mb}
-        \end{subfigure}
-        \caption{Results in the Camera World 2 50x50, using entropy, averaged over 3000 episodes.}\label{fig:cpbmb}
 \end{figure}
 
 \begin{figure}[ht]
@@ -556,6 +294,3 @@ takes too much time to complete.
         \end{subfigure}
         \caption{Results in the Camera World 2 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cpb10}
 \end{figure}
-
-
-\ys{I dont think there is any need to repeat every graph for different number of samples. Fix the sample and then change other variables. That will definitely reduce the number of graphs you have to manageable number.}

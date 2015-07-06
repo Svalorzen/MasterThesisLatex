@@ -58,7 +58,7 @@ belief is computed using maximum likelihood as $N(max_s)/N(b)$.
 
 \begin{algorithm}[H]
     \caption{Max of Belief Reward Estimation}
-    \SetKwFunction{update}{Update Estimate}
+    \SetKwFunction{update}{Update Estimate of $\rho(b)$}
 
     \SetKwProg{main}{Algorithm}{}{}
     \main{\update}{
@@ -89,14 +89,14 @@ With the following computation:
 
 Where $N$ is the total count for all states encountered. $\rho$-POMCP stores internally both the
 latest negative entropy estimate $-\hat{H}(b)$, and each of the separate terms that compose it. At each
-particle $k$ \ys{what is $k$} insertion in a particle belief, we simply remove from our previous full estimate the
+insertion in a particle belief of a new particle $k$, we simply remove from our previous full estimate the
 relevant term for $k$, recompute the term and add it again. This approach is not mathematically
 correct as, in theory, all terms would need to be updated at each insertion, but in practice it
 turns out not to be a problem as long as each type of particle $s$ is added with relative frequency.
 
 \begin{algorithm}[H]
     \caption{Negative Entropy Reward Estimation}
-    \SetKwFunction{update}{Update Estimate}
+    \SetKwFunction{update}{Update Estimate of $\rho(b)$}
 
     \SetKwProg{main}{Algorithm}{}{}
     \main{\update}{
@@ -109,7 +109,14 @@ turns out not to be a problem as long as each type of particle $s$ is added with
     }
 
 \end{algorithm}
-\ys{indicate input and output of the algorithm ... also is there a step like 'for each particle $s$' missing from the algorithm?? -  same comment for the algorithm above}
+% \ys{indicate input and output of the algorithm ... also is there a step like 'for each particle
+% $s$' missing from the algorithm?? -  same comment for the algorithm above}
+%
+% The input is the KwData.. the output I think it's self-explanatory, since the algorithm is used to
+% estimate the reward, the output is \rho(b)..
+% Also no there's no for each particle, that's kind of the point to keep the whole thing fast.
+% Otherwise it'd take a lot of time to update estimates. The idea is use only the newest particle in
+% order to update the estimate.
 
 Such an approach is guaranteed to converge to the true entropy in the limit, when the number of
 samples tends to infinite. This maintains the POMCP property that leads to an optimal solution in
@@ -153,16 +160,25 @@ becomes:
 \[ Q\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V\pi_{h-1}(b') \]
 
 The problem is that our method of estimation for $\rho(b')$ does not allow a direct back-propagation
-of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. \ys{why does it not allow?} This
-means that whenever a new estimate for any given $\rho(b)$ is computed, $\rho$-POMCP needs to
-substitute the previous estimate all the way up the chain, and cannot be simply averaged in as it
-happened in POMCP.
+of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. This
+is because we are not approximating rewards as the average of simulations, but by improving our
+estimates of the beliefs. So after a new reward estimate for a given beliefs, all previous estimates
+are effectively useless and need to be discarded.
+
+This means that whenever a new estimate for any given $\rho(b)$ is computed, $\rho$-POMCP needs to
+substitute the previous estimate all the way up the chain, and cannot simply average in the new
+estimate.
 
 We solved this problem by keeping the average mechanism present in POMCP, with the difference that
 we average together fake datapoints built specifically to replace previous estimates. For
 example, suppose we have a particular estimate $r$ for $\rho(b, a)$.
 
-\ys{it can be bit confusion going back and forth between $\rho(b)$ and $\rho(b,a)$. Once you have defined $rho$ to be dependent only on $b$, stick to it or else the text does not come out as consistent}
+% \ys{it can be bit confusion going back and forth between $\rho(b)$ and $\rho(b,a)$. Once you have
+% defined $rho$ to be dependent only on $b$, stick to it or else the text does not come out as
+% consistent}
+%
+% Actually, the two definitions are different. I have defined both \rho(b), and \rho(b,a), and I'm
+% using them in different ways, just as Q and V are different.
 
 \[ \rho(b,a) \approx r \]
 
@@ -176,8 +192,11 @@ reward estimate for the new belief into $r'_{\tilde{o}}$. If we averaged normall
 \[ \rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + r'_{\tilde{o}} +
 \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
 
-This is not what we want, however. Instead, suppose we average in $n_{\tilde{o}}(r'_{\tilde{o}} -
-r_{\tilde{o}}) + r'_{\tilde{o}}$:
+This is not what we want, however, since as you can see the previous estimate for observation
+$\tilde{o}$, $r_{\tilde{o}}$, is still present in the equation even though we now consider it
+obsolete.
+
+Instead, suppose we average in $n_{\tilde{o}}(r'_{\tilde{o}} - r_{\tilde{o}}) + r'_{\tilde{o}}$:
 
 \[ \rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + n_{\tilde{o}}(r'_{\tilde{o}} -
 r_{\tilde{o}}) + r'_{\tilde{o}} +
@@ -190,12 +209,17 @@ r_{\tilde{o}}) + r'_{\tilde{o}} +
 \[ \rho(b,a) \approx \frac{ ( n_{\tilde{o}}+1) r'_{\tilde{o}} +
 \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \]
 
-Which is what we wanted. Similarly, we can create fake reward points to backup in the tree so that
-any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backed up would be:
+Which is what we wanted, since now the previous estimate for $\tilde{o}$ has disappeared, completely
+replaced by the updated one, $r'_{\tilde{o}}$. Similarly, we can create fake reward points to backup
+in the tree so that any $V(b)$ can be substituted with the more up-to-date $V'(b)$. The value backed
+up would be:
 
 \[ N ( V'(b) - V(b) ) + V'(b) \]
 
-\ys{I am not sure what is going on here, you might have to explain it better}
+% \ys{I am not sure what is going on here, you might have to explain it better}
+%
+% Hope this is more clear. We simply have to remove the old estimate from the values stored in the
+% tree, since once we have a newer one the older one is wrong. This is simply a way to do it.
 
 \subsection{Max vs Mean}
 
@@ -331,4 +355,4 @@ in order to act in the next timestep.
 % In order to focus more directly on the performance of the $\rho$-POMCP algorithm, in this work we
 % force the agent to select a single camera at each timestep, avoiding the multiple camera selection
 % problem.
-\ys{this subsection can go in future work/discussion, you can rather expand on multi-person tracking, if you wish. Make sure to point that we \textit{assume} that people walk independently of each other and they do not affect observations of each other}
+% \ys{this subsection can go in future work/discussion, you can rather expand on multi-person tracking, if you wish. Make sure to point that we \textit{assume} that people walk independently of each other and they do not affect observations of each other}
