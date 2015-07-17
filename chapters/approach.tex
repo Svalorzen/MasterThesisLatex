@@ -62,7 +62,7 @@ belief is computed using maximum likelihood as $N(max_s)/N(b)$.
 
     \SetKwProg{main}{Algorithm}{}{}
     \main{\update}{
-        \KwData{Particle Belief b, Particle s}
+        \KwIn{Particle Belief b, Particle s}
 \nl     N(s) = N(s) + 1\;
 \nl     \If{N(s) $>$ N(max\_s)}{
 \nl         max\_s = s\;
@@ -100,7 +100,7 @@ turns out not to be a problem as long as each type of particle $s$ is added with
 
     \SetKwProg{main}{Algorithm}{}{}
     \main{\update}{
-        \KwData{Particle Belief b, Particle Type s}
+        \KwIn{Particle Belief b, Particle Type s}
 \nl     $\rho(b)$ = $\rho(b)$ - $\rho(s)$\;
 \nl     N(s) = N(s) + 1\;
 \nl     p = $\frac{N(s)}{N(b)}$\;
@@ -135,7 +135,7 @@ A second problem is dependent on how returns are calculated in POMCP. $Q^\pi_h(b
 sum of two different factors: the immediate reward $\rho(b,a)$ plus a discounted term representing
 the expected return from then on.
 
-\[ Q^\pi_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V^pi_{h-1}(b') \]
+\[ Q^\pi_h(b,a) = \rho(b,a) + \gamma \cdot \sum_{o\in \Omega} O(o|b,a) V^\pi_{h-1}(b') \]
 
 POMCP tries to approximate the value of $\rho(b,a)$ as computed in Equation \ref{rhoeq} by averaging
 all results from $R(s,a)$ done using particles extracted from the all beliefs and actions
@@ -157,7 +157,7 @@ This is because both max of belief and negative entropy rewards (represented by 
 only extracted from a belief, and do not depend on actions. Thus, the value for a belief-action pair
 becomes:
 
-\[ Q\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V\pi_{h-1}(b') \]
+\[ Q^\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V^\pi_{h-1}(b') \]
 
 The problem is that our method of estimation for $\rho(b')$ does not allow a direct back-propagation
 of each $\rho$ estimation back up the chain through $V$, as it happened in POMCP via samples. This
@@ -251,7 +251,7 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
 
     \SetKwProg{main}{Algorithm}{}{}
     \main{\pomcp{b}}{
-        \KwData{Belief b}
+        \KwIn{Belief b}
 \nl     \While{enough time is available}{
 \nl         s $\sim$ b\;
 \nl         \simulate{\O, s, 0}\;
@@ -262,7 +262,7 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
     \setcounter{AlgoLine}{0}
     \SetKwProg{simul}{Procedure}{}{}
     \simul{\simulate{h, s, d}}{
-        \KwData{History h, State s, Depth d}
+        \KwIn{History h, State s, Depth d}
 \nl     N($h$) = N($h$) + 1\;
 \nl     select action $a$ with UCT\;
 \nl     ($s', o$) $\sim$ G($s,a$)\;
