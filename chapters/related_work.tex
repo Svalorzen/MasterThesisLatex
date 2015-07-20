@@ -24,6 +24,14 @@ The Active perception task has been approached in numerous ways.
 %
 % PROBLEM: I don't really get the paper, it's way too complex..
 
+\ys{If possible, put the name of the authors and then use 'cite'. Ex: Kreucher et. al. [14] ...}
+\ys{add related work on entropy estimation. A little bit about work from paninski} 
+\ys{add a little bit more about earlier solutions to dynamic sensor selection problem 
+\begin{itemize}
+\item Approximate dynamic programming for communication-constrained sensor network management. Do they use closed-loop polcies? Check for that, point that as difference, also you use UCT for planning that is another difference. 
+\item Sensor selection via convex optimization. The same points as above.
+\end{itemize}
+}
 \cite{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
 of each target position they use weighted Monte-Carlo particles which are updated using a model of
 the environment. Action selection tries to maximize the expected Rényi information divergence to
@@ -31,7 +39,7 @@ reduce entropy with respect to the posterior distribution of targets. They exten
 non-myopic solutions by direct enumeration of all possible outcomes. A key difference is that we
 track each target separately, thus reducing the complexity of the overall posterior distribution of
 targets. In addition, our usage of POMDPs to model the environment allows computations of non-myopic
-strategies in a much more natural way than direct enumeration.
+strategies in a much more natural way than direct enumeration. 
 
 \cite{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
 analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
