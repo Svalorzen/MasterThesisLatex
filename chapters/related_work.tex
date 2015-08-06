@@ -2,43 +2,30 @@
 
 The Active perception task has been approached in numerous ways.
 
-% \cite{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
-% a neural network. The neural network has the task of recognizing a particular visual pattern, which
-% is observed through a visual sensor, which can only read portions of the pattern at any single time.
-% The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
-% the pattern from different point of views. Their approach requires training for every recognized
-% pattern
-%
-% PROBLEM: It is RL, we do planning
+\citet{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
+a neural network. The neural network has the task of recognizing a particular visual pattern, which
+is observed through a visual sensor, which can only read portions of the pattern at any single time.
+The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
+the pattern from different point of views. Their approach requires training for every recognized
+pattern. In our work, since we do not have to fit the model within the neural network, we leverage
+the POMDP framework in order to describe the problem; this allows us to use a very efficient
+planning method, POMCP, which we modified as needed for Active Perception.
 
-% \cite{cit:relworkconvex} tackle the problem of selecting $k$ sensors out of a pool of $n$ sensors.
-% They approximate the information function defined from the usage of any $k$ sensors with a convex
-% function, that can be then solved efficiently with linear solvers. Once this is done, the found
-% solution is checked for improvements by testing possible swaps with the sensors that were not selected.
-%
-% PROBLEM: In the end I don't really tackle multi-sensor here..
-
-% \cite{cit:relworklagrange} tackle multi-sensor system management, considering dynamic programming
-% and linear solvers in order to balance the trade-offs between gathering information and energy costs
-% due to communication.
-%
-% PROBLEM: I don't really get the paper, it's way too complex..
-
-\ys{add related work on entropy estimation. A little bit about work from paninski} 
-\ys{add a little bit more about earlier solutions to dynamic sensor selection problem 
-\begin{itemize}
-\item Approximate dynamic programming for communication-constrained sensor network management. Do they use closed-loop polcies? Check for that, point that as difference, also you use UCT for planning that is another difference. 
-\item Sensor selection via convex optimization. The same points as above.
-\end{itemize}
-}
-\citet{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
+\citet{cit:relworktanks} track the movement of multiple targets using a scan sensor. To keep track
 of each target position they use weighted Monte-Carlo particles which are updated using a model of
 the environment. Action selection tries to maximize the expected Rényi information divergence to
 reduce entropy with respect to the posterior distribution of targets. They extend their approach to
 non-myopic solutions by direct enumeration of all possible outcomes. A key difference is that we
 track each target separately, thus reducing the complexity of the overall posterior distribution of
 targets. In addition, our usage of POMDPs to model the environment allows computations of non-myopic
-strategies in a much more natural way than direct enumeration. 
+strategies in a much more natural way than direct enumeration.
+
+\citet{cit:relworkconvex} tackle the problem of selecting $k$ sensors out of a pool of $n$ sensors.
+They approximate the information function defined from the usage of any $k$ sensors with a convex
+function, that can be then solved efficiently with linear solvers. Once this is done, the found
+solution is checked for improvements by testing possible swaps with the sensors that were not selected.
+Differently from our work, \citet{cit:relworkconvex} do not apply their solution using a closed-loop
+controller, preventing the usage of new information gathered from their sensors.
 
 \citet{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
 analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
@@ -56,8 +43,6 @@ the SYMBOLIC PERSEUS algorithm, a variant of PERSEUS \cite{cit:perseus}. A cruci
 is that our work does not rely on an offline planner, and thus does not have to recompute a solution
 in case of a change, and can be more easily applied to much bigger models.
 
-\citet{cit:relworksatsangi} use 
-
 \section{Online POMDP Solvers}
 
 One of the earliest explorations into online POMDP solvers has been been done by
@@ -74,14 +59,12 @@ bound strategy, to determine how to prune the tree to explore.
 
 These algorithms differs importantly in that they try to solve the current belief perfectly. This
 results in problems scaling when the number of possible actions and observations is high. By using
-a Monte Carlo approach we avoid that problem by sampling, which allow our algorhtm to focus on
+a Monte Carlo approach we avoid that problem by sampling, which allow our algorithm to focus on
 probable branches of the tree.
 
-% An alternative to tree exploration approaches is the RTDP-BEL algorithm \cite{cit:relworkonlineq}.
-% This algorithm learns progressively values for a discretized set of beliefs from direct interaction
-% with the environment, using a Q-Learning type of approach.
-%
-% PROBLEM: RL
+An alternative to tree exploration approaches is the RTDP-BEL algorithm \cite{cit:relworkonlineq}.
+This algorithm learns progressively values for a discretized set of beliefs from direct interaction
+with the environment, using a Q-Learning type of approach, which also allows for learning.
 
 Our work in particular is based upon POMCP, an online solver that takes its strengths from
 Monte-Carlo simulations \cite{cit:pomcp} which we discussed in Section \ref{ref:pomcp}. In
@@ -93,7 +76,3 @@ step. The difference with our approach is that POMCP cannot deal with belief dep
 thus cannot evaluate policies which are tasked with increasing knowledge.
 
 A good overview of existing POMDP online approaches can be found in \cite{cit:relworkonlineall}.
-
-\section{Reward Estimation}
-
-Our work employs reward estimation due to our
