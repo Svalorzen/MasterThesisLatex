@@ -24,7 +24,6 @@ The Active perception task has been approached in numerous ways.
 %
 % PROBLEM: I don't really get the paper, it's way too complex..
 
-\ys{If possible, put the name of the authors and then use 'cite'. Ex: Kreucher et. al. [14] ...}
 \ys{add related work on entropy estimation. A little bit about work from paninski} 
 \ys{add a little bit more about earlier solutions to dynamic sensor selection problem 
 \begin{itemize}
@@ -32,7 +31,7 @@ The Active perception task has been approached in numerous ways.
 \item Sensor selection via convex optimization. The same points as above.
 \end{itemize}
 }
-\cite{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
+\citet{cit:relworktanks} tracks the movement of multiple targets using a scan sensor. To keep track
 of each target position they use weighted Monte-Carlo particles which are updated using a model of
 the environment. Action selection tries to maximize the expected Rényi information divergence to
 reduce entropy with respect to the posterior distribution of targets. They extend their approach to
@@ -41,7 +40,7 @@ track each target separately, thus reducing the complexity of the overall poster
 targets. In addition, our usage of POMDPs to model the environment allows computations of non-myopic
 strategies in a much more natural way than direct enumeration. 
 
-\cite{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
+\citet{cit:relworkentropy} examine a localization problem using direction-of-arrival sensors. They
 analyze the usage of an entropy-based heuristic to select a single sensor at a time step, and show
 that on average the heuristic is able to select the sensor which maximizes the mutual information
 between target location and sensor observation. Their approach does not approximate heuristic
@@ -49,7 +48,7 @@ calculations, requiring $O(S^2)$ time to evaluate a single sensor, which becomes
 the space to observe is very large. We avoid this cost by using Monte Carlo simulations to
 approximate entropy estimations.
 
-\cite{cit:relworkspaan} uses POMDPs to approach the multi-sensor system management problem, where
+\citet{cit:relworkspaan} use POMDPs to approach the multi-sensor system management problem, where
 only a subset of $k$ sensors out of a pool of $n$ sensors can be selected. Their approach is based
 on state-based reward functions, where the agent is rewarded for activating cameras with a target in
 the field of view. Their approach focused on approximate offline planning for the model using
@@ -57,10 +56,12 @@ the SYMBOLIC PERSEUS algorithm, a variant of PERSEUS \cite{cit:perseus}. A cruci
 is that our work does not rely on an offline planner, and thus does not have to recompute a solution
 in case of a change, and can be more easily applied to much bigger models.
 
+\citet{cit:relworksatsangi} use 
+
 \section{Online POMDP Solvers}
 
 One of the earliest explorations into online POMDP solvers has been been done by
-\cite{cit:relworkonline1}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
+\citet{cit:relworkonline1}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
 algorithm creates a tree out of every possible result, and computes full belief updates and value
 backups in order to determine the best actions at each step. In order to decrease computational
 cost, a branch and bound strategy is employed to avoid exploring actions that have been proved not
@@ -92,3 +93,7 @@ step. The difference with our approach is that POMCP cannot deal with belief dep
 thus cannot evaluate policies which are tasked with increasing knowledge.
 
 A good overview of existing POMDP online approaches can be found in \cite{cit:relworkonlineall}.
+
+\section{Reward Estimation}
+
+Our work employs reward estimation due to our

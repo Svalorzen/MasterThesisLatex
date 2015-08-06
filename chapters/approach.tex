@@ -1,24 +1,24 @@
 \section{$\rho$-POMCP}
 
 While the POMCP algorithm is very powerful, unfortunately it cannot be directly applied to
-$\rho$-POMDPs. This is because its exploration strategy through the action-observation tree relies
-on reward functions which depend on states only. Since in a $\rho$-POMDP the reward function depends
+$\rho$POMDPs. This is because its exploration strategy through the action-observation tree relies
+on reward functions which depend on states only. Since in a $\rho$POMDP the reward function depends
 on beliefs rather than states, it is necessary to modify the algorithm in order to be used on Active
 Perception tasks.
 
 In this Section we present a modification of the algorithm POMCP which is able to deal with a
 belief-based reward function. We discuss in more details why POMCP cannot be applied directly to
-$\rho$-POMDPs in Section \ref{ref:rewestimation}.
+$\rho$POMDPs in Section \ref{ref:rewestimation}.
 
 We call our POMCP variant $\rho$-POMCP. An important fact to note is that $\rho$-POMCP is able to deal
-with any $\rho$-POMDP, and not only with Active Perception tasks. For example, this algorithm can be
+with any $\rho$POMDP, and not only with Active Perception tasks. For example, this algorithm can be
 applied to problems where the agent can influence the state of the world, and also (with minor
 modifications to reintroduce state dependent rewards) when the reward function is both dependent on
 states and belief.
 
 % \subsection{Non-PWLC Value Function}
 %
-% Negative entropy is not a PWLC function. This means that the value function of a $\rho$-POMDP which
+% Negative entropy is not a PWLC function. This means that the value function of a $\rho$POMDP which
 % uses it as reward function will not be PWLC too \cite{cit:rpomdp}. This is a problem for exact
 % offline planning since usual solving techniques rely on the PWLC property in order to detect beliefs
 % where the currently computed optimal policy is not actually optimal. Once such a belief point is
@@ -34,12 +34,12 @@ states and belief.
 
 \subsection{Reward Estimation}\label{ref:rewestimation}
 
-The main challenge when applying POMCP to a $\rho$-POMDP is that the algorithm can only extract
+The main challenge when applying POMCP to a $\rho$POMDP is that the algorithm can only extract
 reward information from a generative model of the environment. Since a belief is an abstraction
 created by the agent, a generative model containing a belief-dependent reward function cannot exist.
 
 A possible approximate solution involves converting the belief-dependent reward function into a
-state-based reward function, approximating the $\rho$-POMDP problem back to a POMDP \cite{cit:rpomdp}.
+state-based reward function, approximating the $\rho$POMDP problem back to a POMDP \cite{cit:rpomdp}.
 The main drawback of this approach is that it requires a very high number of additional actions in
 the approximated model in order to adequately describe the original model. This in turn
 significantly slows down online planning approaches, since their performance is directly bound to
@@ -243,9 +243,6 @@ best under different conditions.
 
 Here we describe the full $\rho$-POMCP algorithm in more detail.
 
-\ys{You dont need to show input in this algorithm, it is clear from the brackets accompanying the function name that what are the inputs.}
-
-
 \begin{algorithm}[H]
     \caption{$\rho$-Partially Observable Monte-Carlo Planning}
 \begin{multicols}{2}
@@ -253,7 +250,7 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
     \SetKwFunction{simulate}{Simulate}
 
     \SetKwProg{main}{Algorithm}{}{}
-    \main{\pomcp{b}}{
+    \main{\pomcp}{
         \KwIn{Belief b}
 \nl     \While{enough time is available}{
 \nl         s $\sim$ b\;
@@ -264,7 +261,7 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
 
     \setcounter{AlgoLine}{0}
     \SetKwProg{simul}{Procedure}{}{}
-    \simul{\simulate{h, s, d}}{
+    \simul{\simulate}{
         \KwIn{History h, State s, Depth d}
 \nl     N($h$) = N($h$) + 1\;
 \nl     select action $a$ with UCT\;

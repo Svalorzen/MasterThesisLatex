@@ -116,7 +116,7 @@ The limitation of POMCP with respect to the Active Perception task is that the a
 actions using rewards which depend on the state of the environment. Unfortunately, such evaluation
 cannot take into account the knowledge of the agent, and thus results useless to compute a good
 policy for the agent when it needs to maximize its knowledge. POMDPs where rewards are based on
-knowledge rather than state, called $\rho$-POMDPs, have been examined in \cite{cit:rpomdp}.
+knowledge rather than state, called $\rho$POMDPs, have been examined in \cite{cit:rpomdp}.
 
 % You propose a new variant of MCTS, suitable for belief-dependent rewards leading to better
 % estimates/performance.
@@ -124,7 +124,7 @@ knowledge rather than state, called $\rho$-POMDPs, have been examined in \cite{c
 We extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a
 reward function based on knowledge rather than state. Our solution is able to refine estimates of
 action rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online
-planner on Active Perception tasks and more generally on all $\rho$-POMDP problems.
+planner on Active Perception tasks and more generally on all $\rho$POMDP problems.
 
 % Finally we illustrate empirical success of our method.
 
