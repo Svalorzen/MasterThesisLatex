@@ -1,21 +1,21 @@
-In this Chapter we compare performances of our method against a number of different baselines on
-a series of different problems. The algorithms we compare against are POMCP, RTBSS and a belief
-based RTBSS (which we refer to as RTBSSb).
+In this Chapter we compare performances of our method against a number of different baselines on a
+series of different problems. The algorithms we compare against are POMCP, RTBSS and a belief based
+RTBSS (which we refer to as RTBSSb).
 
 RTBSS is an online branch-and-bound solver for POMDPs, which enumerates every possible outcome from
-a given state for a given horizon, and thus computes the true value function for that state and
-the best action that can be performed. RTBSSb works in the same way, but it computes rewards using a
+a given state for a given horizon, and thus computes the true value function for that state and the
+best action that can be performed. RTBSSb works in the same way, but it computes rewards using a
 given belief-based reward function. RTBSS trades its precision and accuracy with speed: since it has
 to explore most of the possible outcomes, the size of problems it can handle is limited.
 
 Even though POMCP and RTBSS are algorithms which require a state-based reward function, we can
-compare them against the performance of max-of-belief rPOMCP. This is possible since a max-of-belief
-reward function can be converted into a state-based reward function by modifying the action space of
-the problem. In the new action space, each action represents at the same time one of the old
-actions, plus an addictional \textit{prediction action}, which is used by the agent in order to
-predict the state the environment is in at any given time. The new action space is thus the result
-of a cross-product between the set of old actions and the new prediction actions, which are $|S|$
-\cite{cit:rpomdp}.
+compare them against the performance of max-of-belief $\rho$-POMCP. This is possible since a
+max-of-belief reward function can be converted into a state-based reward function by modifying the
+action space of the problem \cite{cit:rpomdp}. In the new action space, each action represents at
+the same time one of the old actions, plus an addictional \textit{prediction action}, which is used
+by the agent in order to predict the state the environment is in at any given time. The new action
+space is thus the result of a cross-product between the set of old actions and the new prediction
+actions, which are $|S|$.
 
 % \ys{be consistent with the framework you are using. Stick to rho POMDP, no need for prediction
 % actions}
@@ -33,7 +33,8 @@ rate equal to the maximum of its belief.
 The disadvantage of this transformation is that the action space becomes exponentially bigger the
 more states are available, which significantly impairs both POMCP and RTBSS.
 
-RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards.
+RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards, but still
+has to explore the action-observation tree in order to select the best action.
 
 \section{First Model - Simple Environment}
 
@@ -46,7 +47,15 @@ agent receives a reward of 1 if it can correctly guess the position of the targe
 This problem is also discussed in Appendix \ref{ref:appendix_proof} to show how a non-myopic
 approach can be preferred over a myopic one.
 
-\begin{figure}[ht]
+It is important to note that this reward scheme thus strongly favors the max-of-belief reward
+function over entropy, since the two functions maximize different things: max-of-belief will use its
+resources to try and determine the target's position with absolute certainty at the expense of
+general knowledge, while entropy will try to determine the target's general area but ignoring the
+details. So the methods using entropy will most probably obtain on average less reward than the ones
+using max-of-belief.
+
+
+\begin{figure}[ht!]
 \centering
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
 \tikzstyle{state} = [circle, draw=black, fill=green!30]
@@ -80,10 +89,12 @@ approach can be preferred over a myopic one.
 
 Figure \ref{ref:myoentropyfig} shows performance in terms of cumulative obtained reward for the
 different methods proposed. The $h$ parameter determines the horizon of the particular solver. $h =
-1$ results in a greedy solver. It is important to note that for POMCP and rPOMCP $h$ is merely an
+1$ results in a greedy solver. It is important to note that for POMCP and $\rho$-POMCP $h$ is merely an
 upper bound on the depth of the decision tree they are allowed to explore. This is because they
-build their decision tree incrementally, so that they may not reach its true bottom of their
-decision tree if the number of samples is not sufficient.
+build their decision tree incrementally, so that they may not reach the true bottom of their
+decision tree if the number of samples is not sufficient. This most often happens for POMCP since
+the technique used to apply it to Active Perception substantially increases the branching factor of
+the decision tree.
 
 \begin{figure}[ht!]
         \centering
@@ -107,6 +118,8 @@ We can see how a small horizon always results in a lower return over the 10 time
 because with a greedy approach the agent cannot leverage the fact that half of the environment is
 deterministic, and thus more useful to explore beforehand. This is most visible in the max-of-belief
 setting, while the entropy reward function does not suffer from a significant loss of performance.
+In addition, we can see how POMCP does not improve even with a larger horizon, probably due to being
+incapable of exploring the decision tree in great depth with its available samples.
 
 \section{Second Model - Finite Budget}
 
@@ -126,7 +139,7 @@ The idea is that the agent should use up an observation only if has low knowledg
 otherwise it should keep its observation actions for later and try to extract as much reward from
 current knowledge as possible.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
 \tikzstyle{state} = [circle, draw=black, fill=green!30]
@@ -153,7 +166,7 @@ two rooms available, increasing maximally the entropy at each timestep, and one 
 transitions to its left with a probability of $0.75$. This was done in order to see how the agent behavior
 changed with respect to a differently predictable target.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
         \centering
         \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.5/1e4/E/output}
@@ -171,7 +184,14 @@ changed with respect to a differently predictable target.
         \label{ref:fbentropyfig5}
 \end{figure}
 
-\begin{figure}[ht]
+In Figure \ref{ref:fbentropyfig5} we can see how always looking seems to be the best choice for the
+agent, if the uncertainty about the target is too high to risk losing it even for a brief time.
+Thus, the agent always uses all its resources as soon as it can in order to accrue as much reward as
+possible. The myopic IR solvers however seem to have trouble even with this concept, as they do not
+see the advantage of using their resources, instead focusing simply on the prediction action for the
+current timestep.
+
+\begin{figure}[ht!]
         \centering
         \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/FiniteBudgetResults/0.75/1e4/E/output}
@@ -189,29 +209,34 @@ changed with respect to a differently predictable target.
         \label{ref:fbentropyfig75}
 \end{figure}
 
+In Figure \ref{ref:fbentropyfig75} we see how payouts increase slightly due to the target being more
+predictable; but once again the best choice seems to avoid losing track of the target rather than
+guessing and then finding it again. This is surprising, given the small size of the environment,
+since the agent should be driven to guessing if the chance it can actually lose the target is low.
+
 \section{Third Model - Realistic Scenario}
 
-In this Section we test rPOMCP on yet another model. Here the target can walk in a grid world, in a
-north-south-east-west fashion. To produce a somewhat realistic environment, the target selects a
-random cell at any time, and then moves towards it. Once it reaches it, it selects another goal
+In this Section we test $\rho$-POMCP on yet another model. Here the target can walk in a grid world,
+in a north-south-east-west fashion. To produce a somewhat realistic environment, the target selects
+a random cell at any time, and then moves towards it. Once it reaches it, it selects another goal
 cell, and continues. However, the agent's model of the environment does not include this: the agent
 only knows that the target can move randomly towards an adjacent cell. The target always starts from
 the center of the grid, with the agent knowing it.
 
-The world is observed by cameras, where each camera can observe a 5x5 patch of the overall world.
-Each camera can observe imperfectly: the closer the target is towards the center of the patch, the
-more accurate the observations will be. Otherwise the camera will report the target on any cell
-adjacent to the true target. If the reported cell is outside the camera range, the camera will not
-report observing the target.
+The world is observed by cameras, where each camera can observe a 5x5 patch of the overall world,
+with no overlap. Each camera can observe imperfectly: the closer the target is towards the center
+of the patch, the more accurate the observations will be. Otherwise the camera will observe the
+target on any cell adjacent to the true target. If the adjacent cell is outside the camera range,
+the camera will not see the target.
 
-The agent is allowed to use a single camera at the time, and again needs to keep track of the target
-over 75 timesteps.
+The agent is allowed to use a single camera at the time, and needs to keep track of the target over
+75 timesteps.
 
 We show results with two different versions of the world: a small 20x20 environment, and a bigger
 50x50 one. Due to the big number of states, POMCP and RTBSS cannot be used here; RTBSSb can be
 barely used with a greedy horizon for the small environment.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
         \centering
         \begin{subfigure}[t]{0.45\textwidth}
                 \includegraphics[width=\textwidth]{Images/CameraBasicResults/Small_20x20/1e4/output}
@@ -225,14 +250,21 @@ barely used with a greedy horizon for the small environment.
                 \caption{Results using 1e5 samples.}
                 \label{fig:cws5mb}
         \end{subfigure}
-        \caption{Results in our realistic model using a 20x20 grid, using max-of-belief, averaged over 3000 episodes.}\label{fig:cwsmb}
+        \caption{Results in our realistic model using a 20x20 grid averaged over 3000 episodes.}\label{fig:cwsmb}
 \end{figure}
 
-In Figure \ref{fig:cwb10} we show the results of applying rPOMCP to a multi-tracking scenario, where
+The results in Figure \ref{fig:cws5mb} show that there does not seem a particular advantage in
+non-myopic planning. This is probably due to the very high symmetry of the environment. Since every
+direction that could be taken by the target would lead them into a new position with pretty much the
+same possible future development (aside from the edges of the grid), future expectations are
+necessarily mirrored no matter what the target does. This makes planning in the future not really
+useful.
+
+In Figure \ref{fig:cwb10} we show the results of applying $\rho$-POMCP to a multi-tracking scenario, where
 10 targets are allowed to roam the grid world concurrently. In this experiment, we run 10 instances
-of rPOMCP in a parallel fashion, one for each target. These 10 instances approximate values for
+of $\rho$-POMCP in a parallel fashion, one for each target. These 10 instances approximate values for
 every possible action, given their belief on their respective target. At every timestep, the action that
-maximizes overall value over all rPOMCP instances is chosen.
+maximizes overall value over all $\rho$-POMCP instances is chosen.
 
 \begin{figure}[ht!]
         \centering
@@ -248,8 +280,24 @@ maximizes overall value over all rPOMCP instances is chosen.
                 \caption{Results using 1e4 samples and max-of-belief.}
                 \label{fig:cwb5mb10}
         \end{subfigure}
-        \caption{Results in our realistic model 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cwb10}
+        \caption{Results in our realistic model 50x50 tracking 10 unique targets, averaged over 3000 episodes.}
+        \label{fig:cwb10}
 \end{figure}
+
+With multiple targets the behavior of the agent started to differ significantly whether we used the
+entropy reward function or the max-of-belief reward function.
+
+With the entropy reward function the agent tried to follow all targets equally, exploring the
+environment when targets were lost too much, trying to always have some idea of where each target
+was. This could be the reason why in Figure \ref{fig:cwb4e10} we see that planning with an horizon
+of 5 seems to give slightly better results.
+
+On the other hand, the max-of-belief reward function focused on keeping close track of a subset of
+targets, preferring to avoid losing resources into keeping track of targets whose position was not
+precisely known. This behavior allows the agent to get a high reward in terms of the number of
+targets exactly tracked, at the expense of completely losing tracks of other targets.
+
+\subsection{Realistic Scenario with Movement Prediction}
 
 In addition to the previous experiments, we also created a separate model where the agent's model of
 the target movements is improved. In this second version of Camera World, the model keeps track of
@@ -275,8 +323,12 @@ takes too much time to complete.
                 \caption{Results using 1e5 samples.}
                 \label{fig:cps5e}
         \end{subfigure}
-        \caption{Results in the Camera World 2 20x20, using entropy, averaged over 3000 episodes.}\label{fig:cpse}
+        \caption{Results in the Camera World 2 20x20, using entropy, averaged over 3000 episodes.}
+        \label{fig:cpse}
 \end{figure}
+
+In Figure \ref{fig:cpse} we see once again that non-myopic planning seems to be wasted in terms of
+added value, when we track a single target in a highly symmetric environment.
 
 \begin{figure}[ht]
         \centering
@@ -294,3 +346,19 @@ takes too much time to complete.
         \end{subfigure}
         \caption{Results in the Camera World 2 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cpb10}
 \end{figure}
+
+In Figure \ref{fig:cpb10} we discover a particular behaviour of the max-of-belief reward function:
+it seems to perform much better with myopic planning rather than with non-myopic planning, which
+generally should not happen - performances of both approaches should in the worst case be equal.
+
+This happens due to our implementation of multi-target tracking. Each planner is planning for a
+single target, completely ignoring the rest. Thus, non-myopic planning results in many parallel
+planners trying to discover the best actions in order to maximise the reward for their target,
+\textit{given that future actions will follow the policy they are planning}. In other terms, the
+value of each action given by each planner assumes that future actions will follow that planner's
+policy.
+
+Since instead each action is chosen by summing all values given by each planners to that action,
+future actions are not necessarily going to follow any particular planner's policy. Thus, non-myopic
+planning is actually interfering with the planning phase, since it ends up assigning wrong values to
+each action.
