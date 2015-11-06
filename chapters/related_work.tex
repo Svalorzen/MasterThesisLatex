@@ -11,6 +11,13 @@ pattern. In our work, since we do not have to fit the model within the neural ne
 the POMDP framework in order to describe the problem; this allows us to use a very efficient
 planning method, POMCP, which we modified as needed for Active Perception.
 
+\citet{cit:relworkplanningsee} use a POMDP model in order to guide sensors and detect shapes within
+a visual scenario. This consists in identifying features of the underlying state, invisible to the agent but
+for noisy observations, while minimizing the cost of the sensor actions. Their approach consists in a
+hierarchical method which is able to overcome the exponential increase in complexity when the POMDP 
+state space features increase. This is different from our approach which tries to reduce the cost of the
+planning phase by directly approximate the reward function, but keeping a simple state and action space.
+
 \citet{cit:relworktanks} track the movement of multiple targets using a scan sensor. To keep track
 of each target position they use weighted Monte-Carlo particles which are updated using a model of
 the environment. Action selection tries to maximize the expected Rényi information divergence to
@@ -46,7 +53,7 @@ in case of a change, and can be more easily applied to much bigger models.
 \section{Online POMDP Solvers}
 
 One of the earliest explorations into online POMDP solvers has been been done by
-\citet{cit:relworkonline1}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
+\citet{cit:rtbss}, resulting in the Real-Time Belief Space Search (RTBSS) algorithm. This
 algorithm creates a tree out of every possible result, and computes full belief updates and value
 backups in order to determine the best actions at each step. In order to decrease computational
 cost, a branch and bound strategy is employed to avoid exploring actions that have been proved not

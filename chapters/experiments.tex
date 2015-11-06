@@ -1,19 +1,19 @@
-In this \ys{c}Chapter we compare performances of our method against a number of different baselines on a
+In this % I have kept the big C since I've been using Section all over
+Chapter we compare performances of our method against a number of different baselines on a
 series of different problems. The algorithms we compare against are POMCP, RTBSS and a belief based
 RTBSS (which we refer to as RTBSSb).
 
-RTBSS \ys{cite} is an online branch-and-bound solver \ys{cite branc and bound} for POMDPs, which enumerates every possible outcome from
-a given state for a given horizon, and thus computes the true value function for that state and the
-best action that can be performed. \ys{does not RTBSS use branch and bound to prune actions and then compute the value function? if it does explain it here} RTBSSb works in the same way, but it computes rewards using a
+RTBSS \cite{cit:rtbss} is an online branch-and-bound solver \cite{cit:relworkonlineall} for POMDPs, which enumerates every possible outcome from
+a given state for a given horizon while pruning actions which can be proved non-optimal, and thus computes the true value function for that state and the
+best action that can be performed. RTBSSb works in the same way, but it computes rewards using a
 given belief-based reward function. RTBSS trades its precision and accuracy with speed: since it has
 to explore most of the possible outcomes, the size of problems it can handle is limited.
 
 Even though POMCP and RTBSS are algorithms which require a state-based reward function, we can
-compare them against the performance of max-of-belief $\rho$-POMCP. This is possible since a
+compare them against the performance of max-of-belief $\rho$-POMCP. This is possible since, as we have hinted before in Section \ref{ref:backrpomdp}, a
 max-of-belief reward function can be converted into a state-based reward function by modifying the
-action space of the problem \cite{cit:rpomdp}. \ys{i think this is not limited to just max of belief} \ys{I think you need to explain this really clearly. Actually I think what you have written here is wrong. [7] is $rho$POMDP paper, they make it possible to solve belief based reward by drawing tangents to the belief based reward. They dont propose any change in action space. } 
-\ys{In fact I think this description should not be here in experiments in the first place. The $rho$ POMDP method to solve for belief based reward should be in background. and the approach section already explains how you solve for max of belief and belief entropy.}In the new action space, each action represents at
-the same time one of the old actions, plus an addictional \textit{prediction action}, which is used
+action space of the problem \cite{cit:pomdpir}. In the new action space, each action represents at
+the same time one of the old actions, plus an additional \textit{prediction action}, which is used
 by the agent in order to predict the state the environment is in at any given time. The new action
 space is thus the result of a cross-product between the set of old actions and the new prediction
 actions, which are $|S|$.
@@ -31,33 +31,39 @@ follows that the expected returns with the new reward function are the same than
 max-of-belief reward function, as the agent will guess the state of the environment correctly with a
 rate equal to the maximum of its belief.
 
-\ys{I think it is good to highlight the fact that converting belief based reward to state based reward causes a computational overhead. But you should not refer to prediction action as there in no background about them in the thesis. Stick to $rho$POMDP. They dont have any prediction actions. Instead they have tangents. }
-
 The disadvantage of this transformation is that the action space becomes exponentially bigger the
-more states are available, which significantly impairs both POMCP and RTBSS.
+more states are available, which significantly impairs both POMCP and RTBSS. In the following Sections we refer to POMCP and RTBSS with POMCP-IR and RTBSS-IR respectively, to highlight that they have been used with models using prediction actions, and thus an extended action space.
 
 RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards, but still
 has to explore the action-observation tree in order to select the best action.
 
-\section{First Model - Simple Environment}
+\section{Simulated Data - Simple Environment}
 
-\ys{heading of the section should be just simulated data/environment}
 In this section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them
 as showed in \ref{ref:nonmyo1}. The agent can observe, at each timestep, whether the target is in a
 given room. The information gathered by the agent will be correct with probability $p=0.8$. In each
-episode the target starts in a random room, and the agent goal is to track it for 10 timesteps. \ys{no need for 10 time steps here} The
+episode the target starts in a random room, and the agent goal is to track it. The
 agent receives a reward of 1 if it can correctly guess the position of the target, and 0 otherwise.
 This problem is also discussed in Appendix \ref{ref:appendix_proof} to show how a non-myopic
 approach can be preferred over a myopic one.
 
 It is important to note that this reward scheme thus strongly favors the max-of-belief reward
-function over entropy, since the two functions maximize different things: max-of-belief will use its
-resources to try and determine the target's position with absolute certainty at the expense of
-general knowledge, while entropy will try to determine the target's general area but ignoring the
+function over entropy, since with limited resources the two functions maximize different things: max-of-belief will use its
+resources to try and determine the target's position with absolute certainty at the expense of reducing uncertainty in other states, while entropy will try to determine the target's general area but ignoring the
 details. So the methods using entropy will most probably obtain on average less reward than the ones
 using max-of-belief.
-\ys{I actually dont think this is true. What is the general knowledge we are talking about?}
+% \ys{I actually dont think this is true. What is the general knowledge we are talking about?}
+%
+% This is true for two reason: the easy one is that my experiments actually confirmed it,
+% and that I actually realized this by looking at the results.
+% The second one is that the reward scheme offered by the environment I'm testing
+% is exactly the max-of-belief one. Thus the
+% model using max-of-belief is perfectly modeling the environment, and thus will
+% necessarily have better performance of an imperfect model which uses a wrong
+% reward function with respect to the one encoded in the environment (as I said
+% reward is given when you guess the true position of the target, not for reducing
+% uncertainty).
 
 \begin{figure}[ht!]
 \centering
@@ -97,8 +103,8 @@ different methods proposed. The $h$ parameter determines the horizon of the part
 upper bound on the depth of the decision tree they are allowed to explore. This is because they
 build their decision tree incrementally, so that they may not reach the true bottom of their
 decision tree if the number of samples is not sufficient. This most often happens for POMCP since
-the technique used to apply it to \ys{a} Active \ys{p}Perception substantially increases the branching factor of
-the decision tree.
+the technique used to apply it to %also keeping Active Perception since I've been writing it like that, from the abstract forward
+Active Perception substantially increases the branching factor of the decision tree.
 
 \begin{figure}[ht!]
         \centering
@@ -117,7 +123,11 @@ the decision tree.
         \caption{Results in our first model, averaged over 3000 episodes.}
         \label{ref:myoentropyfig}
 \end{figure}
-\ys{The plots look nice}\ys{I dont get the difference between POMCP-IR and rPOMCP}
+% \ys{The plots look nice}\ys{I dont get the difference between POMCP-IR and rPOMCP}
+%
+% Explained above: POMCP-IR is POMCP applied to a POMDP model with prediction actions,
+% while rPOMCP is our approach applied to a rPOMDP.
+
 We can see how a small horizon always results in a lower return over the 10 timesteps. This is
 because with a greedy approach the agent cannot leverage the fact that half of the environment is
 deterministic, and thus more useful to explore beforehand. This is most visible in the max-of-belief
@@ -125,8 +135,8 @@ setting, while the entropy reward function does not suffer from a significant lo
 In addition, we can see how POMCP does not improve even with a larger horizon, probably due to being
 incapable of exploring the decision tree in great depth with its available samples.
 
-\section{Second Model - Finite Budget}
-\ys{call it just finite budget}
+\section{Simulated Data - Finite Budget}
+
 In this Section we apply the proposed algorithms to the following model: a 4-room world where a
 target can transition, at each timestep, from a room to any of the two rooms adjacent. The
 observation and reward function follow the logic of our first model: the agent can observe a single
@@ -195,8 +205,6 @@ possible. The myopic IR solvers however seem to have trouble even with this conc
 see the advantage of using their resources, instead focusing simply on the prediction action for the
 current timestep.
 
-\ys{I really cant understand this para, specially the last line. I think you should not use any terminology refering to prediction actions.. does IR stand for Information reward? Again, the thesis has nothing like that throughout, so its not easy for me to understand this. I suppose the committe will only find it more difficult to understand it. }
-
 \begin{figure}[ht!]
         \centering
         \begin{subfigure}[t]{0.45\textwidth}
@@ -221,10 +229,14 @@ predictable; but once again the best choice seems to avoid losing track of the t
 guessing and then finding it again. This is surprising, given the small size of the environment,
 since the agent should be driven to guessing if the chance it can actually lose the target is low.
 
-\ys{Yes this is bit surprising. Another thing I find surprising is that RTBSS seems to outperform other methods, any explaination for that?}
+%\ys{Yes this is bit surprising. Another thing I find surprising is that RTBSS seems to outperform other methods, any explaination for that?}
+%
+% RTBSS finds out the true best action and value, so it will always outperform anything
+% else, when given enough time. Disadvantage? HORRIBLY slow. Making its lines took
+% a LONG LONG time.
 
-\section{Third Model - Realistic Scenario}
-\ys{Why is it called the realisitic scenrio? Large Grid setting might be a better name}
+\section{Simulated Data - Large Grid}
+
 In this Section we test $\rho$-POMCP on yet another model. Here the target can walk in a grid world,
 in a north-south-east-west fashion. To produce a somewhat realistic environment, the target selects
 a random cell at any time, and then moves towards it. Once it reaches it, it selects another goal
@@ -263,11 +275,8 @@ barely used with a greedy horizon for the small environment.
 \end{figure}
 
 The results in Figure \ref{fig:cws5mb} show that there does not seem a particular advantage in
-non-myopic planning. This is probably due to the very high symmetry of the environment. Since every
-direction that could be taken by the target would lead them into a new position with pretty much the
-same possible future development (aside from the edges of the grid), future expectations are
-necessarily mirrored no matter what the target does. This makes planning in the future not really
-useful. \ys{the explaination is quite vague}
+non-myopic planning. This is probably due to the very high symmetry of the environment. 
+Since every state within the environment can transition, provide reward and be acted upon in a very similar way to all other states, all branches representing the future in the action-observation tree will look extremely similar. Planning is useful when different choices may reward differently, but when every outcome looks the same there is little that can be done in advance but acting for the present. While the edges of the grid are an exception, since the target is more limited in its movement there and planning may help save a couple of observations, these states are few with respect to the others so they don't influence much the final result.
 
 In Figure \ref{fig:cwb10} we show the results of applying $\rho$-POMCP to a multi-tracking scenario, where
 10 targets are allowed to roam the grid world concurrently. In this experiment, we run 10 instances
@@ -356,13 +365,13 @@ added value, when we track a single target in a highly symmetric environment.
         \caption{Results in the Camera World 2 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cpb10}
 \end{figure}
 
-In Figure \ref{fig:cpb10} we discover a particular behaviour of the max-of-belief reward function:
+In Figure \ref{fig:cpb10} we discover a particular behavior of the max-of-belief reward function:
 it seems to perform much better with myopic planning rather than with non-myopic planning, which
 generally should not happen - performances of both approaches should in the worst case be equal.
 
 This happens due to our implementation of multi-target tracking. Each planner is planning for a
 single target, completely ignoring the rest. Thus, non-myopic planning results in many parallel
-planners trying to discover the best actions in order to maximise the reward for their target,
+planners trying to discover the best actions in order to maximize the reward for their target,
 \textit{given that future actions will follow the policy they are planning}. In other terms, the
 value of each action given by each planner assumes that future actions will follow that planner's
 policy.
@@ -371,6 +380,4 @@ Since instead each action is chosen by summing all values given by each planners
 future actions are not necessarily going to follow any particular planner's policy. Thus, non-myopic
 planning is actually interfering with the planning phase, since it ends up assigning wrong values to
 each action.
-\ys{this is interesting}
-\ys{One major piece missing from experiments section is real data.  I think I gave you the data and the POMDP for it. I think its essential that you have some experiments on the real dataset. Whats the status on that? Apart from that I dont think you need any more experiments. These are more than enough.} 
 

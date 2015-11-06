@@ -311,7 +311,7 @@ The \textit{Q-Function} is extremely useful since the optimal policy can be easi
 it, simply by selecting at each belief the action that maximizes it. This work leverages this fact
 by approximating the Q-function and then extracting the optimal policy from it.
 
-\section{$\rho$POMDP}
+\section{$\rho$POMDP}\label{ref:backrpomdp}
 
 As we have already mentioned, in a belief MDP the reward is defined in terms of the belief and the
 normal reward function $R$, as shown in Equation \ref{rhoeq}.
@@ -336,8 +336,11 @@ all other elements of the original POMDP stay the same.
 In the $\rho$POMDP framework unfortunately the PWLC property of the value function does not hold
 anymore, and so the solving methods which rely on it cannot be used. While it has been proved in
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function
-will be PWLC as well, functions such as entropy are not PWLC in the first place. We discuss how we
-overcame this problem in Section \ref{ref:approach}.
+will be PWLC as well, functions such as entropy are not PWLC in the first place. 
+
+A possible solution is outlined in \cite{cit:pomdpir}: it is possible to approximate $\rho$ via a state-based reward function, by extending the action space with \textit{prediction actions}. The agent can use prediction actions to explicitly guess the underlying true state of the environment, gaining reward when correct. Thus, these additional actions have the effect of rewarding the agent for information gain, since if it is able to assert with a high degree of certainty the underlying true state of the environment it will be able to obtain a higher reward. Prediction actions are taken alongside the normal actions, resulting in an action space which is the cross-product of normal actions and prediction actions. The resulting approximated value function is PWLC, at the expense of a more complex POMDP that needs to be solved.
+
+Our approach, which we discuss in Section \ref{ref:approach}, is different, and relies on the properties of a particular class of solving techniques, but we compare against this approach in Section \ref{ref:experiments}.
 
 % \ys{you should explain $\rho$POMDP here. What you have written here, does not even talk about what $\rho$POMDP is. It only outlines the problem which $\rho$POMDP solves.}
 %

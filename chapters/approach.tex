@@ -51,8 +51,8 @@ updated constantly, continuously updating all ML estimates would excessively ham
 solved this problem differently for estimating max of belief rewards and negative entropy rewards.
 
 For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in the
-particle belief $N(b)$, the number of particles for each particle type $N(s)$ and the most common
-type $max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
+particle belief $N(b)$, the number of particles for each state $N(s)$ and the most common
+state $max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
 determines the new most common particle, either $k$ or the old $max_s$. Finally, the new max of
 belief is computed using maximum likelihood as $N(max_s)/N(b)$.
 
@@ -90,9 +90,8 @@ With the following computation:
 Where $N$ is the total count for all states encountered. $\rho$-POMCP stores internally both the
 latest negative entropy estimate $-\hat{H}(b)$, and each of the separate terms that compose it. At each
 insertion in a particle belief of a new particle $k$, we simply remove from our previous full estimate the
-relevant term for $k$, recompute the term and add it again. This approach is not mathematically
-correct as, in theory, all terms would need to be updated at each insertion, but in practice it
-turns out not to be a problem as long as each type of particle $s$ is added with relative frequency.
+relevant term for $k$, recompute the term and add it again. This approach results in an approximate
+estimator which in practice is good enough as long as particles of every state are added with relative frequency.
 
 \begin{algorithm}[H]
     \caption{Negative Entropy Reward Estimation}
@@ -117,10 +116,6 @@ turns out not to be a problem as long as each type of particle $s$ is added with
 % Also no there's no for each particle, that's kind of the point to keep the whole thing fast.
 % Otherwise it'd take a lot of time to update estimates. The idea is use only the newest particle in
 % order to update the estimate.
-
-Such an approach is guaranteed to converge to the true entropy in the limit, when the number of
-samples tends to infinite. This maintains the POMCP property that leads to an optimal solution in
-the limit \cite{cit:pomcp}.
 
 % \ys{can you cite something to support this?}
 %
@@ -149,13 +144,15 @@ observation $o$ has been seen from $b$ and $a$ and $f_o$ is the average of all r
 observation $o$. As with MCTS, as long as the better actions are chosen more often than the others,
 this procedure will converge to the true expected return.
 
-However, in our case, the reward function is structured in the following way:
+However, in our case, the reward function is different from \ref{rhoeq}. This is because we do not have $R$
+anymore. Instead, we need to base our definition for an immediate reward on the only function we have, 
+which is $\rho(b)$. The definition we use is the following:
 
 \[ \rho(b,a) = \sum_{o\in \Omega} O(o | b, a) \rho(b') \]
 
-This is because both max of belief and negative entropy rewards (represented by $\rho(b')$) can be
-only extracted from a belief, and do not depend on actions. Thus, the value for a belief-action pair
-becomes:
+We assign an immediate reward to an action based on the value of all beliefs reachable multiplied by the 
+probability of reaching them. The value of the possible next beliefs $\rho(b')$ is then extracted from our estimation. Thus, 
+the value for a belief-action pair becomes:
 
 \[ Q^\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V^\pi_{h-1}(b') \]
 
@@ -304,7 +301,66 @@ The algorithm then updates the value of all actions taken during the descent, wh
 datapoints to update all old reward estimates up in the tree.
 
 Notice that $\rho$-POMCP lacks a rollout procedure. This is because $\rho$-POMCP has no way to
-approximate rewards when outside the tree, and so skips random policy rollouts altogether.
+approximate rewards when outside the tree, and so skips random policy rollouts altogether.  A visualization of the process can be seen in Figure \ref{ref:rpomcpimg}.
+
+\begin{figure}[ht!]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, minimum size=.7cm, draw=black, fill=green!30]
+\tikzstyle{empty} = [coordinate,draw=none, fill=none]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (particleb) at (0,.8) [draw=none] {[\hl{$s_1$},$s_2$,...,$s_k$]};
+\node (b)  at (0,0)  [state] {$b$};
+\node (a1) at (0,-2) [empty] {};
+\node (a2) at (1.5,-2) [empty] {};
+\node (a3) at (3,-2) [empty] {};
+\node (a4) at (4.5,-2) [empty] {};
+\node (b1) at (0,-5) [state] {$b'$};
+\node (b2) at (1.5,-5) [state] { };
+\node (b3) at (3,-5) [state] { };
+\node (b4) at (4.5,-5) [state] { };
+\node (particleb1) at (0,-5.8) [draw=none] {[\hl{$s'$},...]};
+\node (g) at (-2.2,-2.3) [draw=none,rotate=90] {$G(s,a)$};
+\node (re) at (-3, -5) [align=center,draw=none,rotate=90] {Reward\\Estimation};
+\node (null) at (0, -7.6) [align=center,draw=none, minimum width=1.35cm, minimum height=.7cm] {...};
+
+\path
+     (b)  edge [] node [left,pos=0.7] (aa) {\hlc[Dandelion]{$a_1$}} (a1)
+          edge [] node [left,pos=0.7] {$a_2$} (a2)
+          edge [] node [left,pos=0.7] {$a_3$} (a3)
+          edge [dashed] node {} (a4)
+     (a1) edge [] node [left,pos=0.6] (oo) {\hlc[SkyBlue]{$o_1$}} (b1)
+          edge [] node [left,pos=0.6] {$o_2$} (b2)
+          edge [] node [left,pos=0.6] {$o_3$} (b3)
+          edge [dashed] node {} (b4);
+          
+\draw [draw=none] (particleb1) -- node [midway] (tmp) {} (null);
+
+\draw (particleb1) -- (null);
+\draw (tmp) -| (re);
+\draw (null) -| (re);
+
+\draw (re) |- node [above,pos=0.2,rotate=90] {\hlc[LimeGreen]{ $r$ }} (b);
+\draw (re) -- node [above,pos=0.6] {\hlc[LimeGreen]{ $r'$ }} (b1);
+
+\draw [-,line width=5pt,draw=white] (g.south) |- (particleb1);
+
+\draw [*->] (g.south) |- (oo);
+\draw [-,line width=5pt,draw=white] (g.south) |- (oo);
+\draw [*->] (g.south) |- (oo);
+
+\draw (g.south) |- (particleb1);
+
+\draw [-,line width=5pt,draw=white] (aa) -| (g.south);
+\draw (aa) -| (g.south);
+\draw (particleb) -| (g.south);
+
+
+\end{tikzpicture}
+\caption{A graphical representation of a single $\rho$-POMCP step. A particle state $s_1$ is chosen randomly from the root and an action $a_1$ is chosen with UCT. They generate an observation $o_1$ and a new state $s'$ which are used to update the next belief node in the tree (or to add a new one if needed). The new particle belief is then used to estimate the new reward $r$ for the transition, which replaces previous estimates. We repeat the process starting from $s'$ until we add a single node to the tree, and then we restart from the root with no rollout phase.}
+\label{ref:rpomcpimg}
+\end{figure}
 
 \section{Multiple Target Tracking}
 
