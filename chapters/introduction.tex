@@ -55,8 +55,8 @@ to maximize the information gathered in the future.
 % the aim of the agent is only to perceive the information. these type of tasks are called active
 % perception task, define active perception. .....
 
-The problem the agent faces falls under the \textit{Active Perception} \cite{cit:relworkspaan}
-\cite{cit:relworkspaancoop} \cite{cit:relworksatsangi} task.  Active Perception can be formalized as
+The problem the agent faces falls under the \textit{active perception} \cite{cit:relworkspaan}
+\cite{cit:relworkspaancoop} \cite{cit:relworksatsangi} task.  Active perception can be formalized as
 a task where a decision making entity called \textit{agent}, subject to resource constraints, needs
 to take actions in order to reduce some form of uncertainty about a particular target environment.
 The agent's role in this task is purely observational: it will not influence the overall evolution
@@ -65,7 +65,7 @@ knowledge.
 
 % \ys{this would be a good place to introduce the running example - surveillance task}
 
-In this work we approach a surveillance task as an Active Perception problem: our goal is to produce
+In this work we approach a surveillance task as an active perception problem: our goal is to produce
 an agent which will be able to track as best as possible a target moving through a partially
 observable environment. The agent will need to exploit its available resources to determine the
 target position over time. The agent will need to reason about the movements of the target even when
@@ -74,8 +74,8 @@ possible its estimates over time.
 
 %\item pomdp provide a natural framework to model such problems.
 
-Active Perception tasks can be conveniently modeled through a powerful and flexible
-decision-theoretic tool, called Partially Observable Markov Decision Process (POMDP)
+Active perception tasks can be conveniently modeled through a powerful and flexible
+decision-theoretic tool, called Partially observable Markov decision process (POMDP)
 \cite{cit:pomdp}. POMDPs provide a natural framework to model the interactions between the agent and
 a partially observable, stochastic environment.  In the POMDP framework the agent's objective is to
 maximize reward collection over time according to a predefined reward function.
@@ -84,8 +84,8 @@ POMDPs naturally allow for the computation of non-myopic strategies when reasoni
 required, as they are specifically structured as to allow this type of planning. This allows the
 agent to gather information in order to improve its expected knowledge of the environment in the
 future, while reasoning about all possibilities. We argue that while myopic strategies can sometimes
-suffice, many Active Perception problems require non-myopicity to achieve optimality, and provide a
-proof by example in Appendix \ref{ref:appendix_proof}.
+suffice, many active perception problems require a non-myopic approach to achieve optimality, and
+provide a proof by example in Appendix \ref{ref:appendix_proof}.
 
 % \ys{proof is a big word, generally they are associated with theorems, which we are not presenting. You can say a appendix provides convincing example case.}
 %
@@ -112,7 +112,7 @@ planners for POMDPs, Partially Observable Monte Carlo Planning (POMCP) \cite{cit
 method approximates beliefs about the world using particles, improving performance when the
 maintaining a complete belief over the state of the world can become too computationally expensive.
 
-The limitation of POMCP with respect to the Active Perception task is that the algorithm evaluates
+The limitation of POMCP with respect to the active perception task is that the algorithm evaluates
 actions using rewards which depend on the state of the environment. Unfortunately, such evaluation
 cannot take into account the knowledge of the agent, and thus results useless to compute a good
 policy for the agent when it needs to maximize its knowledge. POMDPs where rewards are based on
@@ -121,10 +121,10 @@ knowledge rather than state, called $\rho$POMDPs, have been examined in \cite{ci
 % You propose a new variant of MCTS, suitable for belief-dependent rewards leading to better
 % estimates/performance.
 
-We extend POMCP and create a variant, which we named $\rho$-POMCP, which is able to deal with a
+We extend POMCP and create a variant, which we named $\rho$POMCP, which is able to deal with a
 reward function based on knowledge rather than state. Our solution is able to refine estimates of
 action rewards from the imperfect particle beliefs of POMCP. This allows to apply a fast online
-planner on Active Perception tasks and more generally on all $\rho$POMDP problems.
+planner on active perception tasks and more generally on all $\rho$POMDP problems.
 
 % Finally we illustrate empirical success of our method.
 

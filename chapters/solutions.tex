@@ -79,8 +79,8 @@ The most widely known algorithm using Monte Carlo techniques is called \textit{M
 Search} (MCTS) \cite{cit:mcts}. This algorithm is an MDP online planner which has received high
 praise for its contributions in the development of highly performant board game AIs.
 
-MCTS was originally devised as a method to approach the board game Go. The algorithm runs Monte
-Carlo simulations from the current state, which is the input, and progressively builds
+MCTS was originally devised as a method to approach the board game Go \cite{cit:mcts}. The algorithm
+runs Monte Carlo simulations from the current state, which is the input, and progressively builds
 a tree of outcomes.
 
 \begin{algorithm}
@@ -110,6 +110,7 @@ a tree of outcomes.
 \nl         r = r + discount * $r'$\;
 \nl         discount = discount * $\gamma$\;
 \nl         $s$ = $s'$\;
+\nl         d = d + 1\;
         }
 \nl     \KwRet r\;
     }
@@ -183,16 +184,17 @@ within the tree and which ratio should be used between promising actions and the
 \textit{Upper Confidence Bounds for Trees} (UCT) \cite{cit:uct}. UCT tries to empirically derive a
 variance estimate from the data, sorting actions by their upper bounds on value.
 
-The upper bound estimate is composed of two parts: the currently estimated value of the action $v$,
-and the estimated UCT variance. Thus the value that UCT assigns at a given action $a$ is:
+The upper bound estimate is composed of two parts: the currently estimated value of the action, and
+the estimated UCT variance. Thus the value that UCT assigns at a given action $a$ is:
 
 \[ UCT(a) = v + c*\sqrt{\frac{\log{N}}{n}} \]
 
-Where $N$ is the number of times the node in the tree currently being considered has been visited,
-and $n$ is the number of times action $a$ has already been tried from the node. $c$ is a constant
-which is dependent on the problem, which defines the amplitude of the variance, which needs to be in
-tune with the magnitude of the rewards of the MDP. This number is generally tuned manually, and is
-around the maximum return that can be obtained by the agent.
+Where $v$ is the estimate for the value of the action based on returns, $N$ is the number of times
+the node in the tree currently being considered has been visited, and $n$ is the number of times
+action $a$ has already been tried from the node. $c$ is a constant which is dependent on the
+problem, which defines the amplitude of the variance, which needs to be in tune with the magnitude
+of the rewards of the MDP. This number is generally tuned manually, and is around the maximum return
+that can be obtained by the agent.
 
 Actions are then selected greedily with respect to the UCT value.
 
@@ -341,26 +343,25 @@ At this point, a new sample episode is started from the root of the tree. This p
           edge [dashed] node {} (b4)
      (particleb1) edge (null)
      (null) edge (roll);
-          
+
 \draw [draw=none] (b1) -- node [pos=0.6] (tmpx) {} (oo);
 \draw [draw=none] (g.south |- tmpx) -- node [midway] (tmp) {} (tmpx);
-   
+
 \draw (null) -| (tmp);
 \draw (roll) -| (tmp);
 \draw (b1 -| tmp.south) -- (b1);
 
 \draw [-,line width=5pt,draw=white] (g.south) |- (particleb1);
 
-\draw [*->] (g.south) |- (oo);
 \draw (g.south |- tmp.south) -- (tmp.south) |- node [below,pos=0.2,rotate=90] {\hlc[LimeGreen]{ $r$ }} (b);
 \draw [-,line width=5pt,draw=white] (g.south) |- (oo);
-\draw [*->] (g.south) |- (oo);
+\draw [*->,draw=black] (g.south) |- (oo);
 
 \draw (g.south) |- (particleb1);
 
 \draw [-,line width=5pt,draw=white] (aa) -| (g.south);
 \draw (aa) -| (g.south);
-\draw (particleb) -| (g.south);
+\draw [draw=black] (particleb) -| (g.south);
 
 
 \end{tikzpicture}

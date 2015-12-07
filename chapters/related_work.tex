@@ -1,15 +1,15 @@
 \section{Active Perception}
 
-The Active perception task has been approached in numerous ways.
+The active perception task has been approached in numerous ways.
 
-\citet{cit:relworkneuralnet} approach the Active Perception task using reinforcement learning through
+\citet{cit:relworkneuralnet} approach the active perception task using reinforcement learning through
 a neural network. The neural network has the task of recognizing a particular visual pattern, which
 is observed through a visual sensor, which can only read portions of the pattern at any single time.
 The neural network has the ability of moving the sensor in various ways, obtaining visualizations of
 the pattern from different point of views. Their approach requires training for every recognized
 pattern. In our work, since we do not have to fit the model within the neural network, we leverage
 the POMDP framework in order to describe the problem; this allows us to use a very efficient
-planning method, POMCP, which we modified as needed for Active Perception.
+planning method, POMCP, which we modified as needed for active perception.
 
 \citet{cit:relworkplanningsee} use a POMDP model in order to guide sensors and detect shapes within
 a visual scenario. This consists in identifying features of the underlying state, invisible to the agent but

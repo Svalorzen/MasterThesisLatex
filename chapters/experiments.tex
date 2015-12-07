@@ -7,10 +7,10 @@ RTBSS \cite{cit:rtbss} is an online branch-and-bound solver \cite{cit:relworkonl
 a given state for a given horizon while pruning actions which can be proved non-optimal, and thus computes the true value function for that state and the
 best action that can be performed. RTBSSb works in the same way, but it computes rewards using a
 given belief-based reward function. RTBSS trades its precision and accuracy with speed: since it has
-to explore most of the possible outcomes, the size of problems it can handle is limited.
+to explore most of the possible outcomes, the size of problems it can handle is very limited.
 
 Even though POMCP and RTBSS are algorithms which require a state-based reward function, we can
-compare them against the performance of max-of-belief $\rho$-POMCP. This is possible since, as we have hinted before in Section \ref{ref:backrpomdp}, a
+compare them against the performance of max-of-belief $\rho$POMCP. This is possible since, as we have hinted before in Section \ref{ref:backrpomdp}, a
 max-of-belief reward function can be converted into a state-based reward function by modifying the
 action space of the problem \cite{cit:pomdpir}. In the new action space, each action represents at
 the same time one of the old actions, plus an additional \textit{prediction action}, which is used
@@ -37,16 +37,19 @@ more states are available, which significantly impairs both POMCP and RTBSS. In 
 RTBSSb can instead be applied directly on both max-of-belief and entropy based rewards, but still
 has to explore the action-observation tree in order to select the best action.
 
+All the data shown is statistically significant, and there is no significant overlap of confidence
+intervals.
+
 \section{Simulated Data - Simple Environment}
 
 In this section we apply the proposed algorithms to the following model: a single target walking
 between six rooms. The target can be at any time in a single room, and can transition between them
 as showed in \ref{ref:nonmyo1}. The agent can observe, at each timestep, whether the target is in a
-given room. The information gathered by the agent will be correct with probability $p=0.8$. In each
-episode the target starts in a random room, and the agent goal is to track it. The
-agent receives a reward of 1 if it can correctly guess the position of the target, and 0 otherwise.
-This problem is also discussed in Appendix \ref{ref:appendix_proof} to show how a non-myopic
-approach can be preferred over a myopic one.
+given room. The information gathered by the agent will be correct with probability $p=0.8$ --- this
+for both true positives and true negatives. In each episode the target starts in a random room, and
+the agent goal is to track it. The agent receives a reward of 1 if it can correctly guess the
+position of the target, and 0 otherwise.  This problem is also discussed in Appendix
+\ref{ref:appendix_proof} to show how a non-myopic approach can be preferred over a myopic one.
 
 It is important to note that this reward scheme thus strongly favors the max-of-belief reward
 function over entropy, since with limited resources the two functions maximize different things: max-of-belief will use its
@@ -99,12 +102,12 @@ using max-of-belief.
 
 Figure \ref{ref:myoentropyfig} shows performance in terms of cumulative obtained reward for the
 different methods proposed. The $h$ parameter determines the horizon of the particular solver. $h =
-1$ results in a greedy solver. It is important to note that for POMCP and $\rho$-POMCP $h$ is merely an
+1$ results in a greedy solver. It is important to note that for POMCP and $\rho$POMCP $h$ is merely an
 upper bound on the depth of the decision tree they are allowed to explore. This is because they
 build their decision tree incrementally, so that they may not reach the true bottom of their
 decision tree if the number of samples is not sufficient. This most often happens for POMCP since
-the technique used to apply it to %also keeping Active Perception since I've been writing it like that, from the abstract forward
-Active Perception substantially increases the branching factor of the decision tree.
+the technique used to apply it to %also keeping active Perception since I've been writing it like that, from the abstract forward
+active perception substantially increases the branching factor of the decision tree.
 
 \begin{figure}[ht!]
         \centering
@@ -237,7 +240,7 @@ since the agent should be driven to guessing if the chance it can actually lose 
 
 \section{Simulated Data - Large Grid}
 
-In this Section we test $\rho$-POMCP on yet another model. Here the target can walk in a grid world,
+In this Section we test $\rho$POMCP on yet another model. Here the target can walk in a grid world,
 in a north-south-east-west fashion. To produce a somewhat realistic environment, the target selects
 a random cell at any time, and then moves towards it. Once it reaches it, it selects another goal
 cell, and continues. However, the agent's model of the environment does not include this: the agent
@@ -245,12 +248,12 @@ only knows that the target can move randomly towards an adjacent cell. The targe
 the center of the grid, with the agent knowing it.
 
 The world is observed by cameras, where each camera can observe a 5x5 patch of the overall world,
-with no overlap. Each camera can observe imperfectly: the closer the target is towards the center
+with no overlap. Each camera observes imperfectly: the closer the target is towards the center
 of the patch, the more accurate the observations will be. Otherwise the camera will observe the
 target on any cell adjacent to the true target. If the adjacent cell is outside the camera range,
 the camera will not see the target.
 
-The agent is allowed to use a single camera at the time, and needs to keep track of the target over
+The agent is allowed to use a single camera at all times, and needs to keep track of the target over
 75 timesteps.
 
 We show results with two different versions of the world: a small 20x20 environment, and a bigger
@@ -275,14 +278,20 @@ barely used with a greedy horizon for the small environment.
 \end{figure}
 
 The results in Figure \ref{fig:cws5mb} show that there does not seem a particular advantage in
-non-myopic planning. This is probably due to the very high symmetry of the environment. 
-Since every state within the environment can transition, provide reward and be acted upon in a very similar way to all other states, all branches representing the future in the action-observation tree will look extremely similar. Planning is useful when different choices may reward differently, but when every outcome looks the same there is little that can be done in advance but acting for the present. While the edges of the grid are an exception, since the target is more limited in its movement there and planning may help save a couple of observations, these states are few with respect to the others so they don't influence much the final result.
+non-myopic planning. This is probably due to the very high symmetry of the environment.  Since every
+state within the environment can transition, provide reward and be acted upon in a very similar way
+to all other states, all branches representing the future in the action-observation tree will look
+extremely similar. Planning is useful when different choices may reward differently, but when every
+outcome looks the same there is little that can be done in advance but acting for the present. While
+the edges of the grid are an exception, since the target is more limited in its movement there and
+planning may help save a couple of observations, these states are few with respect to the others so
+they don't influence much the final result.
 
-In Figure \ref{fig:cwb10} we show the results of applying $\rho$-POMCP to a multi-tracking scenario, where
+In Figure \ref{fig:cwb10} we show the results of applying $\rho$POMCP to a multi-tracking scenario, where
 10 targets are allowed to roam the grid world concurrently. In this experiment, we run 10 instances
-of $\rho$-POMCP in a parallel fashion, one for each target. These 10 instances approximate values for
+of $\rho$POMCP in a parallel fashion, one for each target. These 10 instances approximate values for
 every possible action, given their belief on their respective target. At every timestep, the action that
-maximizes overall value over all $\rho$-POMCP instances is chosen.
+maximizes overall value over all $\rho$POMCP instances is chosen.
 
 \begin{figure}[ht!]
         \centering

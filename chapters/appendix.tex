@@ -1,13 +1,13 @@
 POMDPs can be used naturally to compute non-myopic policies to solve a particular task. We show here
-that some Active Perception tasks require the usage of non-myopic solutions to achieve optimality,
+that some active perception tasks require the usage of non-myopic solutions to achieve optimality,
 and thus we can use POMDPs to model efficiently such tasks.
 
-We propose two different POMDP models of Active Perception problems. For one of the models we will
+We propose two different POMDP models of active perception problems. For one of the models we will
 prove that a non-myopic solution is required in order to obtain an optimal solution. For the second
 we will prove that a non-myopic solution is not required. The results we show are for both max of
 belief and negative entropy reward functions.
 
-\section{Non-Myopicity Proof}
+\section{Non-Myopic Solution}
 
 Let's consider a world where the agent is tasked with tracking a single person that is walking. The
 person can, at any moment, be in one of a series of rooms, and can transition between them. In each
@@ -15,10 +15,10 @@ room there is a camera which can observe the room itself and nothing else. If th
 the camera situated in a room the person just entered there is a $0.8$ probability that the agent will
 obtain a ``found'' observation, and a $0.2$ probability that it will obtain a ``null'' observation.
 On the other hand, if the agent activates any other camera, it will obtain a ``null'' observation
-with $0.8$ probability and a ``found'' observation with $0.2$ probability. Each time a camera is
-activated, the person will move to another accessible room. The agent's goal is to guess correctly
-where the person has moved for two times in a row, knowing only that at the start the person could
-be in any room.
+with $0.8$ probability and a ``found'' observation with $0.2$ probability. At each timestep
+the person will move to another accessible room, and then the agent will activate a single camera.
+The agent's goal is to guess correctly where the person has moved for two times in a row, knowing
+only that at the start the person could be in any room.
 
 We will now create an instance of the problem we have just finished describing. Let's now suppose
 that in our world there are 6 rooms, and we know that the person will transition from one to another
@@ -82,9 +82,9 @@ to do with a myopic solution.
 Note that the problem considered can be extended into uncountably many models where the same
 properties apply. This could be done for example by adding a certain number of rooms that the person
 needs to go through before ending up in the model presented, and so on. Thus a non-myopic solution
-is required for uncountably many Active Perception tasks.
+is required for uncountably many active perception tasks.
 
-\section{Myopicity Proof}
+\section{Myopic Solution}
 
 A different instance of the previous problem is one where there are only 4 rooms, and the person
 will transition from state to state with the following probabilities:
@@ -118,6 +118,6 @@ $\rho$ is negative entropy, certain pair of actions have a higher expected retur
 for each $a_1$ there is a $a_2$ which obtains the maximum expected return possible.
 
 Thus, non-myopic in this particular model has no particular advantage over a more simple myopic
-solution. Once again this problem can be extended into uncountably infinite examples of Active
-Perception tasks.
+solution. Once again this problem can be extended into uncountably infinite examples of active
+perception tasks.
 

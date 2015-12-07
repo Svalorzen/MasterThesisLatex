@@ -1,17 +1,17 @@
-\section{$\rho$-POMCP}
+\section{$\rho$POMCP}
 
 While the POMCP algorithm is very powerful, unfortunately it cannot be directly applied to
 $\rho$POMDPs. This is because its exploration strategy through the action-observation tree relies
 on reward functions which depend on states only. Since in a $\rho$POMDP the reward function depends
-on beliefs rather than states, it is necessary to modify the algorithm in order to be used on Active
-Perception tasks.
+on beliefs rather than states, it is necessary to modify the algorithm in order to be used on active
+perception tasks.
 
 In this Section we present a modification of the algorithm POMCP which is able to deal with a
 belief-based reward function. We discuss in more details why POMCP cannot be applied directly to
 $\rho$POMDPs in Section \ref{ref:rewestimation}.
 
-We call our POMCP variant $\rho$-POMCP. An important fact to note is that $\rho$-POMCP is able to deal
-with any $\rho$POMDP, and not only with Active Perception tasks. For example, this algorithm can be
+We call our POMCP variant $\rho$POMCP. An important fact to note is that $\rho$POMCP is able to deal
+with any $\rho$POMDP, and not only with active perception tasks. For example, this algorithm can be
 applied to problems where the agent can influence the state of the world, and also (with minor
 modifications to reintroduce state dependent rewards) when the reward function is both dependent on
 states and belief.
@@ -25,7 +25,7 @@ states and belief.
 % discovered (called \textit{witness point}), the optimal policy is updated to be optimal in that
 % belief too.
 %
-% This problem is approached generally via approximation. With $\rho$-POMCP, we directly approximate
+% This problem is approached generally via approximation. With $\rho$POMCP, we directly approximate
 % rewards for the possible futures of the current situation, without the need to solve a POMDP
 % completely for any possible beliefs. Thus, witness points do not need to be discovered, and we can
 % ignore the PWLC property.
@@ -39,20 +39,20 @@ reward information from a generative model of the environment. Since a belief is
 created by the agent, a generative model containing a belief-dependent reward function cannot exist.
 
 A possible approximate solution involves converting the belief-dependent reward function into a
-state-based reward function, approximating the $\rho$POMDP problem back to a POMDP \cite{cit:rpomdp}.
-The main drawback of this approach is that it requires a very high number of additional actions in
-the approximated model in order to adequately describe the original model. This in turn
-significantly slows down online planning approaches, since their performance is directly bound to
-the size of the tree to explore.
+state-based reward function, approximating the $\rho$POMDP problem back to a POMDP
+\cite{cit:rpomdp}.  The main drawback of this approach is that it requires a very high number of
+additional actions in the approximated model in order to adequately describe the original model
+\cite{cit:pomdpir}. This in turn significantly slows down online planning approaches, since their
+performance is directly bound to the size of the tree to explore.
 
 Instead, in our approach we estimate the immediate rewards within the tree from maximum-likelihood
 belief estimates computed from POMCP's particle beliefs. However, since all particle beliefs are
 updated constantly, continuously updating all ML estimates would excessively hamper performance. We
 solved this problem differently for estimating max of belief rewards and negative entropy rewards.
 
-For estimation of max of belief, $\rho$-POMCP simply keeps track of the number of particles in the
-particle belief $N(b)$, the number of particles for each state $N(s)$ and the most common
-state $max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
+For estimation of max of belief, $\rho$POMCP simply keeps track of the number of particles in the
+particle belief $N(b)$, the number of particles for each state $N(s)$ and the most common state
+$max_s$. At each particle $k$ insertion $N(k)$ is compared with $N(max_s)$. Whichever is higher
 determines the new most common particle, either $k$ or the old $max_s$. Finally, the new max of
 belief is computed using maximum likelihood as $N(max_s)/N(b)$.
 
@@ -76,10 +76,10 @@ discrete samples is bound to be biased, and there is no way to remove this bias 
 \cite{cit:badentropy}. On the other hand, techniques to decrease bias are computationally heavy and
 rely on usage of additional complex distributions to account for bias \cite{cit:entropyfixes}.
 
-In practice bias becomes small as long as the number of samples is high. Thus, we kept our
-estimation algorithm as simple as possible in order to maximize the number of samples that can be
-done in any given time. We compute negative entropy as a summation of terms, one for each type of
-particle. We thus approximate the entropy, whose formula is:
+In practice bias becomes small as long as the number of samples is high \cite{cit:badentropy}. Thus,
+we kept our estimation algorithm as simple as possible in order to maximize the number of samples
+that can be done in any given time. We compute negative entropy as a summation of terms, one for
+each type of particle. We thus approximate the entropy, whose formula is:
 
 \[ -H(b) = \sum_s p(s) \log p(s) \]
 
@@ -87,7 +87,7 @@ With the following computation:
 
 \[ -\hat{H}(b) \approx \sum_s \frac{N(s)}{N} \log \frac{N(s)}{N} \]
 
-Where $N$ is the total count for all states encountered. $\rho$-POMCP stores internally both the
+Where $N$ is the total count for all states encountered. $\rho$POMCP stores internally both the
 latest negative entropy estimate $-\hat{H}(b)$, and each of the separate terms that compose it. At each
 insertion in a particle belief of a new particle $k$, we simply remove from our previous full estimate the
 relevant term for $k$, recompute the term and add it again. This approach results in an approximate
@@ -145,13 +145,13 @@ observation $o$. As with MCTS, as long as the better actions are chosen more oft
 this procedure will converge to the true expected return.
 
 However, in our case, the reward function is different from \ref{rhoeq}. This is because we do not have $R$
-anymore. Instead, we need to base our definition for an immediate reward on the only function we have, 
+anymore. Instead, we need to base our definition for an immediate reward on the only function we have,
 which is $\rho(b)$. The definition we use is the following:
 
 \[ \rho(b,a) = \sum_{o\in \Omega} O(o | b, a) \rho(b') \]
 
-We assign an immediate reward to an action based on the value of all beliefs reachable multiplied by the 
-probability of reaching them. The value of the possible next beliefs $\rho(b')$ is then extracted from our estimation. Thus, 
+We assign an immediate reward to an action based on the value of all beliefs reachable multiplied by the
+probability of reaching them. The value of the possible next beliefs $\rho(b')$ is then extracted from our estimation. Thus,
 the value for a belief-action pair becomes:
 
 \[ Q^\pi_h(b,a) = \sum_{o\in \Omega} O(o | b,a) \rho(b') + \gamma\sum_{o\in\Omega} O(o|b,a) V^\pi_{h-1}(b') \]
@@ -162,7 +162,7 @@ is because we are not approximating rewards as the average of simulations, but b
 estimates of the beliefs. So after a new reward estimate for a given beliefs, all previous estimates
 are effectively useless and need to be discarded.
 
-This means that whenever a new estimate for any given $\rho(b)$ is computed, $\rho$-POMCP needs to
+This means that whenever a new estimate for any given $\rho(b)$ is computed, $\rho$POMCP needs to
 substitute the previous estimate all the way up the chain, and cannot simply average in the new
 estimate.
 
@@ -226,24 +226,23 @@ the limit, which lets the final estimated value for it converge to the true valu
 procedure needs to sample many more times to make up for the fact that, at first, results for
 suboptimal actions are averaged into estimates too.
 
-POMCP inherits this behavior from the original MCTS algorithm. However, in the original paper from
-2006 a number of different approaches to merge together backed up values were tried
-\cite{cit:mcts}. The authors decided to stick with using the mean operator to backup values since,
-with the computational power available at the time, it gave better and more consistent results.
-However, the authors also demonstrated that if enough samples are available, using a max operator
-over actions actually improves performance.
+POMCP inherits this behavior from the original MCTS algorithm. However, \citet{cit:mcts} tried also
+a number of different approaches to merge together backed up values. The authors decided to stick
+with using the mean operator to backup values since, with the computational power available at the
+time, it gave better and more consistent results.  However, the authors also demonstrated that if
+enough samples are available, using a max operator over actions actually improves performance.
 
-We implemented both backup methods for $\rho$-POMCP in order to determine which one would perform
+We implemented both backup methods for $\rho$POMCP in order to determine which one would perform
 best under different conditions.
 
 \subsection{Pseudocode}
 
-Here we describe the full $\rho$-POMCP algorithm in more detail.
+Here we describe the full $\rho$POMCP algorithm in more detail.
 
 \begin{algorithm}[H]
     \caption{$\rho$-Partially Observable Monte-Carlo Planning}
 \begin{multicols}{2}
-    \SetKwFunction{pomcp}{$\rho$-POMCP}
+    \SetKwFunction{pomcp}{$\rho$POMCP}
     \SetKwFunction{simulate}{Simulate}
 
     \SetKwProg{main}{Algorithm}{}{}
@@ -285,9 +284,9 @@ Here we describe the full $\rho$-POMCP algorithm in more detail.
 \end{multicols}
 \end{algorithm}
 
-$\rho$-POMCP starts off as POMCP, by simulating episodes from the root of the tree.
+$\rho$POMCP starts off as POMCP, by simulating episodes from the root of the tree.
 
-Starting from the root, $\rho$-POMCP samples a single state $s$ from the root's particle belief.
+Starting from the root, $\rho$POMCP samples a single state $s$ from the root's particle belief.
 Then, using UCT, it selects a state $a$, and uses it with $s$ to sample a new state $s'$, a reward
 $r$ and an observation $o$. The root child representing the sequence $(a,o)$ is selected, or if it
 did not exist, it is created. The algorithm then updates the particle belief of the child before
@@ -300,7 +299,7 @@ selected child's belief.
 The algorithm then updates the value of all actions taken during the descent, while backing up fake
 datapoints to update all old reward estimates up in the tree.
 
-Notice that $\rho$-POMCP lacks a rollout procedure. This is because $\rho$-POMCP has no way to
+Notice that $\rho$POMCP lacks a rollout procedure. This is because $\rho$POMCP has no way to
 approximate rewards when outside the tree, and so skips random policy rollouts altogether.  A visualization of the process can be seen in Figure \ref{ref:rpomcpimg}.
 
 \begin{figure}[ht!]
@@ -334,7 +333,7 @@ approximate rewards when outside the tree, and so skips random policy rollouts a
           edge [] node [left,pos=0.6] {$o_2$} (b2)
           edge [] node [left,pos=0.6] {$o_3$} (b3)
           edge [dashed] node {} (b4);
-          
+
 \draw [draw=none] (particleb1) -- node [midway] (tmp) {} (null);
 
 \draw (particleb1) -- (null);
@@ -346,37 +345,36 @@ approximate rewards when outside the tree, and so skips random policy rollouts a
 
 \draw [-,line width=5pt,draw=white] (g.south) |- (particleb1);
 
-\draw [*->] (g.south) |- (oo);
 \draw [-,line width=5pt,draw=white] (g.south) |- (oo);
-\draw [*->] (g.south) |- (oo);
+\draw [*->,draw=black] (g.south) |- (oo);
 
 \draw (g.south) |- (particleb1);
 
 \draw [-,line width=5pt,draw=white] (aa) -| (g.south);
 \draw (aa) -| (g.south);
-\draw (particleb) -| (g.south);
+\draw [draw=black] (particleb) -| (g.south);
 
 
 \end{tikzpicture}
-\caption{A graphical representation of a single $\rho$-POMCP step. A particle state $s_1$ is chosen randomly from the root and an action $a_1$ is chosen with UCT. They generate an observation $o_1$ and a new state $s'$ which are used to update the next belief node in the tree (or to add a new one if needed). The new particle belief is then used to estimate the new reward $r$ for the transition, which replaces previous estimates. We repeat the process starting from $s'$ until we add a single node to the tree, and then we restart from the root with no rollout phase.}
+\caption{A graphical representation of a single $\rho$POMCP step. A particle state $s_1$ is chosen randomly from the root and an action $a_1$ is chosen with UCT. They generate an observation $o_1$ and a new state $s'$ which are used to update the next belief node in the tree (or to add a new one if needed). The new particle belief is then used to estimate the new reward $r$ for the transition, which replaces previous estimates. We repeat the process starting from $s'$ until we add a single node to the tree, and then we restart from the root with no rollout phase.}
 \label{ref:rpomcpimg}
 \end{figure}
 
 \section{Multiple Target Tracking}
 
-One of the main limiting factors for Monte-Carlo online methods is the branching factor of the
-tackled problem. While MCTS, POMCP and $\rho$-POMCP can deal with incredibly large state and
+One of the main limiting factors for Monte-Carlo online planning methods is the branching factor of
+the tackled problem. While MCTS, POMCP and $\rho$POMCP can deal with incredibly large state and
 observation spaces, they cannot deal easily with a problem that leads to a vast number of branches
 to be explored. This is because each new branch significantly increases the number of sample
 episodes that need to be performed in order to obtain an accurate estimate for the best action.
 
-The main branching factor in the problem we are considering, which is multi-sensor systems, is the
-number of targets to be tracked. This is because each target moves simultaneously, and thus from a
-given state there are many more possible states reachable. Thus, the branching factor for a problem
-is exponential in the number of targets.
+One of the main branching factors in the problem we are considering, which is multi-sensor systems,
+is the number of targets to be tracked. This is because each target moves simultaneously, and thus
+from a given state there are many more possible states reachable. Thus, the branching factor for a
+problem is exponential in the number of targets.
 
 In order to avoid dealing with this problem, we setup a system where we run concurrently many
-$\rho$-POMCP instances. We assume that each target moves independently, and that targets do not
+$\rho$POMCP instances. We assume that each target moves independently, and that targets do not
 affect observations of each other. Each solver computes an individual policy for a single target
 only and receives individual observations. This allows each solver to work on a relatively small
 tree, without exploding the number of branches. In addition, this allows to work with a variable
@@ -397,7 +395,7 @@ in order to act in the next timestep.
 %
 % In the same way that increasing the number of targets influences the branching factor of the
 % tracking problem, allowing the agent to concurrently select a subset of available cameras at each
-% timestep makes the problem increasingly harder for $\rho$-POMCP. This is because the algorithm needs
+% timestep makes the problem increasingly harder for $\rho$POMCP. This is because the algorithm needs
 % to consider all possible subsets of the available cameras in order to determine the best one.
 %
 % As for the other problems we have discussed, the most common solution is approximation. A possible
@@ -408,7 +406,7 @@ in order to act in the next timestep.
 % information, would not be optimal if used together due to redundant information. This solution is
 % explored by \cite{cit:relworksatsangi}.
 %
-% In order to focus more directly on the performance of the $\rho$-POMCP algorithm, in this work we
+% In order to focus more directly on the performance of the $\rho$POMCP algorithm, in this work we
 % force the agent to select a single camera at each timestep, avoiding the multiple camera selection
 % problem.
 % \ys{this subsection can go in future work/discussion, you can rather expand on multi-person tracking, if you wish. Make sure to point that we \textit{assume} that people walk independently of each other and they do not affect observations of each other}

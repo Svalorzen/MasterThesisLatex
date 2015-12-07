@@ -1,38 +1,46 @@
-In this thesis we tackle Active Perception for resource allocation in multi-camera systems. In
-particular, we try to track a number of targets over an extended period of time, while trying to make an
-optimal usage of available resources under specific constraints, namely partial
+In this thesis we tackle active perception for resource allocation in multi-camera systems. In
+particular, we try to track a number of targets over an extended period of time, while trying to
+make an optimal usage of available resources under specific constraints, namely partial
 observability, environment size and limited access to cameras.
 
-In order to fulfill our goal we have improved over an existing approach in order to fit our particular
-prerequisites, removing shortcomings which prevented its application in our setting. Starting from the POMCP algorithm, which uses online Monte Carlo techniques to
-approximately plan in POMDP models, we have extended it in order to be applied to belief-based
-POMDPs, called $\rho$POMDPs, using entropy or max-of-belief as reward functions. Our approach,
-called $\rho$-POMCP, can tackle problems orders of magnitude bigger than existing alternatives and
-can be applied to all $\rho$POMDP problems, not only those proposed in this work.
+In order to fulfill our goal we have improved over POMCP \cite{cit:pomcp} in order to fit our
+particular prerequisites, removing shortcomings which prevented its application in our setting.
+Starting from the POMCP algorithm, which uses online Monte Carlo techniques to approximately plan in
+POMDP models, we have extended it in order to be applied to belief-based POMDPs, called
+$\rho$POMDPs, using entropy or max-of-belief as reward functions. Our approach, called $\rho$POMCP,
+can tackle problems orders of magnitude bigger than existing alternatives and can be applied to all
+$\rho$POMDP problems, not only those proposed in this work.
 
-$\rho$-POMCP achieves these results by estimating the belief-based reward function directly on the particle beliefs, without the need for full beliefs to be propagated within the search tree. In addition each updated estimate can be cheaply backpropagated up in the tree substituting previous estimates, guaranteeing that the UTC process always uses the most current available information in order to select the best available action. The method does not require significant additional computation with respect to the original method POMCP, which allows it to be applied to large sized problems.
+$\rho$POMCP achieves these results by estimating the belief-based reward function directly on the
+particle beliefs, without the need for full beliefs to be propagated within the search tree. In
+addition each updated estimate can be cheaply backpropagated up in the tree substituting previous
+estimates, guaranteeing that the UCT process always uses the most current available information in
+order to select the best available action. The method does not require significant additional
+computation with respect to the original method POMCP, which allows it to be applied to large sized
+problems.
 
 We have compared our approach to already existing methods, and shown the differences in performance
-between them. In particular, $\rho$-POMCP can scale successfully on problems orders of magnitude
+between them. In particular, $\rho$POMCP can scale successfully on problems orders of magnitude
 bigger than what was possible with previous approaches, and can be used to track multiple targets
 concurrently in a very effective and parallelizable manner. In particular, our approach can be
 easily distributed between separate computing nodes, and the amount of information and bandwidth
 that needs to be shared between any such nodes is very limited.
 
 At the same time, our results indicate that while theoretically non-myopic solutions are sometimes
-necessary for optimal solutions in Active Perception, in a multi-camera system setting the added
+necessary for optimal solutions in active perception, in a multi-camera system setting the added
 overhead required by planning over more than a single timestep may not be justified by the
 additional gained rewards - if the model of the environment even allows for any. This seems to
-replicate results obtained by \cite{cit:relworktanks}, which show that planning for more than one timestep in a realistic
-setting does not seem to improve effectiveness much, while it is needed when the problem is
-artificially constrained so to require forethinking by the agent.
+replicate results obtained by \cite{cit:relworktanks}, which show that planning for more than one
+timestep in a realistic setting does not seem to improve effectiveness much, while it is needed when
+the problem is artificially constrained so to require forethinking by the agent.
 
 \section{Future Work}
 
 Additional efforts may be useful in order to evaluate the effectiveness of our method on
 $\rho$POMDPs where actions actually do influence the environment. In such cases the value in
-planning for the future and avoid myopicity is increased as the agent's actions need to be selected
-taking into consideration how the environment will change with respect to the agent's choice.
+planning for the future and avoiding a myopic approach is increased as the agent's actions need to
+be selected taking into consideration how the environment will change with respect to the agent's
+choice.
 
 Another improvement would be to extend our reward approximations with respect to reward functions
 other than entropy and max-of-belief.

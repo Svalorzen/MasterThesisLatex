@@ -1,7 +1,7 @@
 \section{Partially Observable Markov Decision Process}\label{ref:pomdp}
 \sectionmark{POMDP}
 
-The \textit{Partially Observable Markov Decision Process} (POMDP) \cite{cit:pomdp} is a framework
+The \textit{Partially observable Markov decision process} (POMDP) \cite{cit:pomdp} is a framework
 which allows to model the dynamics of an environment in order to produce a policy that fulfills a
 given task. POMDPs structure reasoning around a probabilistic automaton \cite{cit:probautomata}. An
 agent \textit{acts} upon the environment, which is in a particular \textit{state}. As a result, the
@@ -248,7 +248,7 @@ policy and horizon. Formally then we can define the value of a belief as:
 \end{equation}
 
 This value is very important because it lets us compare and evaluate policies. This is because a
-better policy does have a equal or higher value for every possible belief than an inferior policy
+better policy does have a higher value for every possible belief than an inferior policy
 \cite{cit:suttonbarto}.
 
 A value function can be expressed recursively with the \textit{Bellman equation}. This equation
@@ -311,7 +311,7 @@ The \textit{Q-Function} is extremely useful since the optimal policy can be easi
 it, simply by selecting at each belief the action that maximizes it. This work leverages this fact
 by approximating the Q-function and then extracting the optimal policy from it.
 
-\section{$\rho$POMDP}\label{ref:backrpomdp}
+\section{$\rho$POMDP and POMDP-IR}\label{ref:backrpomdp}
 
 As we have already mentioned, in a belief MDP the reward is defined in terms of the belief and the
 normal reward function $R$, as shown in Equation \ref{rhoeq}.
@@ -336,9 +336,9 @@ all other elements of the original POMDP stay the same.
 In the $\rho$POMDP framework unfortunately the PWLC property of the value function does not hold
 anymore, and so the solving methods which rely on it cannot be used. While it has been proved in
 \cite{cit:rpomdp} that as long as the newly defined $\rho$ function is PWLC then the value function
-will be PWLC as well, functions such as entropy are not PWLC in the first place. 
+will be PWLC as well, functions such as entropy are not PWLC in the first place.
 
-A possible solution is outlined in \cite{cit:pomdpir}: it is possible to approximate $\rho$ via a state-based reward function, by extending the action space with \textit{prediction actions}. The agent can use prediction actions to explicitly guess the underlying true state of the environment, gaining reward when correct. Thus, these additional actions have the effect of rewarding the agent for information gain, since if it is able to assert with a high degree of certainty the underlying true state of the environment it will be able to obtain a higher reward. Prediction actions are taken alongside the normal actions, resulting in an action space which is the cross-product of normal actions and prediction actions. The resulting approximated value function is PWLC, at the expense of a more complex POMDP that needs to be solved.
+A possible solution, called POMDP-IR, is outlined in \cite{cit:pomdpir}: it is possible to approximate $\rho$ via a state-based reward function, by extending the action space with \textit{prediction actions}. The agent can use prediction actions to explicitly guess the underlying true state of the environment, gaining reward when correct. Thus, these additional actions have the effect of rewarding the agent for information gain, since if it is able to assert with a high degree of certainty the underlying true state of the environment it will be able to obtain a higher reward. Prediction actions are taken alongside the normal actions, resulting in an action space which is the cross-product of normal actions and prediction actions. The resulting approximated value function is PWLC, at the expense of a more complex POMDP that needs to be solved.
 
 Our approach, which we discuss in Section \ref{ref:approach}, is different, and relies on the properties of a particular class of solving techniques, but we compare against this approach in Section \ref{ref:experiments}.
 

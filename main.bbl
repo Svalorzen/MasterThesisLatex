@@ -9,12 +9,12 @@
 Matthijs T.~J. Spaan and Pedro~U. Lima.
 \newblock A decision-theoretic approach to dynamic sensor selection in camera
   networks.
-\newblock In \emph{Int.\ Conf.\ on Automated Planning and Scheduling}, pages
-  279--304, 2009.
+\newblock In \emph{International Conference on Automated Planning and
+  Scheduling}, pages 279--304, 2009.
 
 \bibitem[Spaan(2008)]{cit:relworkspaancoop}
 Matthijs T.~J. Spaan.
-\newblock Cooperative active perception using {POMDPs}.
+\newblock Cooperative active perception using pomdps.
 \newblock In \emph{AAAI 2008 Workshop on Advancements in POMDP Solvers}, July
   2008.
 
@@ -30,16 +30,14 @@ Yash Satsangi, Shimon Whiteson, and Frans Oliehoek.
 Leslie~Pack Kaelbling, Michael~L. Littman, and Anthony~R. Cassandra.
 \newblock Planning and acting in partially observable stochastic domains.
 \newblock \emph{Artificial Intelligence}, 101, 1998.
-\newblock URL \url{http://people.csail.mit.edu/lpk/papers/aij98-pomdp.pdf}.
 
 \bibitem[Ross et~al.(2008)Ross, Pineau, Paquet, and
   Chaib-draa]{cit:relworkonlineall}
 St{\'e}phane Ross, Joelle Pineau, S{\'e}bastien Paquet, and Brahim Chaib-draa.
 \newblock Online planning algorithms for pomdps.
-\newblock \emph{J. Artif. Int. Res.}, 32\penalty0 (1):\penalty0 663--704, July
-  2008.
+\newblock \emph{Journal of Artificial Intelligence Research}, 32\penalty0
+  (1):\penalty0 663--704, July 2008.
 \newblock ISSN 1076-9757.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1622673.1622690}.
 
 \bibitem[Silver and Veness(2010)]{cit:pomcp}
 David Silver and Joel Veness.
@@ -53,8 +51,6 @@ Mauricio Araya, Olivier Buffet, Vincent Thomas, and Fran\c{c}cois Charpillet.
 \newblock In J.D. Lafferty, C.K.I. Williams, J.~Shawe-Taylor, R.S. Zemel, and
   A.~Culotta, editors, \emph{Advances in Neural Information Processing Systems
   23}, pages 64--72. Curran Associates, Inc., 2010.
-\newblock URL
-  \url{http://papers.nips.cc/paper/3971-a-pomdp-extension-with-belief-dependent-rewards.pdf}.
 
 \bibitem[Rabin(1963)]{cit:probautomata}
 Michael~O. Rabin.
@@ -62,7 +58,6 @@ Michael~O. Rabin.
 \newblock \emph{Information and Control}, 6\penalty0 (3):\penalty0 230--245,
   1963.
 \newblock \doi{10.1016/S0019-9958(63)90290-0}.
-\newblock URL \url{http://dx.doi.org/10.1016/S0019-9958(63)90290-0}.
 
 \bibitem[Sutton and Barto(1998)]{cit:suttonbarto}
 Richard~S. Sutton and Andrew~G. Barto.
@@ -78,7 +73,6 @@ MatthijsT.J. Spaan, TiagoS. Veiga, and PedroU. Lima.
   (6):\penalty0 1157--1185, 2015.
 \newblock ISSN 1387-2532.
 \newblock \doi{10.1007/s10458-014-9279-8}.
-\newblock URL \url{http://dx.doi.org/10.1007/s10458-014-9279-8}.
 
 \bibitem[Coulom(2007)]{cit:mcts}
 R{\'e}mi Coulom.
@@ -87,7 +81,6 @@ R{\'e}mi Coulom.
 \newblock In \emph{Proceedings of the 5th International Conference on Computers
   and Games}, CG'06, pages 72--83, Berlin, Heidelberg, 2007. Springer-Verlag.
 \newblock ISBN 3-540-75537-3, 978-3-540-75537-1.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1777826.1777833}.
 
 \bibitem[Kocsis and Szepesv\'{a}ri(2006)]{cit:uct}
 Levente Kocsis and Csaba Szepesv\'{a}ri.
@@ -97,54 +90,47 @@ Levente Kocsis and Csaba Szepesv\'{a}ri.
   Springer-Verlag.
 \newblock ISBN 3-540-45375-X, 978-3-540-45375-8.
 \newblock \doi{10.1007/11871842\_29}.
-\newblock URL \url{http://dx.doi.org/10.1007/11871842\_29}.
 
 \bibitem[Paninski(2003)]{cit:badentropy}
 Liam Paninski.
 \newblock Estimation of entropy and mutual information.
-\newblock \emph{Neural Comput.}, 15\penalty0 (6):\penalty0 1191--1253, June
+\newblock \emph{Neural Computation}, 15\penalty0 (6):\penalty0 1191--1253, June
   2003.
 \newblock ISSN 0899-7667.
 \newblock \doi{10.1162/089976603321780272}.
-\newblock URL \url{http://dx.doi.org/10.1162/089976603321780272}.
 
 \bibitem[Archer et~al.(2013)Archer, Park, and Pillow]{cit:entropyfixes}
 Evan Archer, Il~Memming Park, and Jonathan~W. Pillow.
 \newblock Bayesian entropy estimation for countable discrete distributions.
 \newblock \emph{CoRR}, abs/1302.0328, 2013.
 
-\bibitem[Shibata et~al.()Shibata, Nishino, and Okabe]{cit:relworkneuralnet}
+\bibitem[Shibata et~al.(1995)Shibata, Nishino, and Okabe]{cit:relworkneuralnet}
 Katsunari Shibata, Tetsuo Nishino, and Yoichi Okabe.
-\newblock Active perception based on reinforcement learning.
+\newblock Active perception based on reinforcement learning, 1995.
 
 \bibitem[Sridharan et~al.(2010)Sridharan, Wyatt, and
   Dearden]{cit:relworkplanningsee}
 Mohan Sridharan, Jeremy Wyatt, and Richard Dearden.
 \newblock Planning to see: A hierarchical approach to planning visual actions
-  on a robot using \{POMDPs\}.
+  on a robot using pomdps.
 \newblock \emph{Artificial Intelligence}, 174\penalty0 (11):\penalty0 704 --
   725, 2010.
 \newblock ISSN 0004-3702.
 \newblock \doi{http://dx.doi.org/10.1016/j.artint.2010.04.022}.
-\newblock URL
-  \url{http://www.sciencedirect.com/science/article/pii/S0004370210000664}.
 
 \bibitem[Kreucher et~al.(2005)Kreucher, Kastella, and Hero]{cit:relworktanks}
 Chris Kreucher, Keith Kastella, and Alfred~O. Hero, III.
 \newblock Sensor management using an active sensing approach.
-\newblock \emph{Signal Process.}, 85\penalty0 (3):\penalty0 607--624, March
+\newblock \emph{Signal Processing}, 85\penalty0 (3):\penalty0 607--624, March
   2005.
 \newblock ISSN 0165-1684.
 \newblock \doi{10.1016/j.sigpro.2004.11.004}.
-\newblock URL \url{http://dx.doi.org/10.1016/j.sigpro.2004.11.004}.
 
 \bibitem[Joshi and Boyd(2009)]{cit:relworkconvex}
 Siddharth Joshi and Stephen Boyd.
 \newblock Sensor selection via convex optimization.
 \newblock \emph{IEEE Transactions on Signal Processing}, 57\penalty0
   (2):\penalty0 451--462, 2009.
-\newblock URL
-  \url{http://dblp.uni-trier.de/db/journals/tsp/tsp57.html\#JoshiB09}.
 
 \bibitem[Wang et~al.(2004)Wang, Pottie, Yao, and Estrin]{cit:relworkentropy}
 Hanbiao Wang, G.~Pottie, K.~Yao, and D.~Estrin.
@@ -159,7 +145,15 @@ Matthijs T.~J. Spaan and Nikos Vlassis.
 \newblock \emph{J. Artif. Int. Res.}, 24\penalty0 (1):\penalty0 195--220,
   August 2005.
 \newblock ISSN 1076-9757.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1622519.1622525}.
+
+\bibitem[Paquet et~al.(2005)Paquet, Tobin, and Chaib-draa]{cit:rtbss}
+Sébastien Paquet, Ludovic Tobin, and Brahim Chaib-draa.
+\newblock Real-time decision making for large pomdps.
+\newblock In Balázs Kégl and Guy Lapalme, editors, \emph{Advances in
+  Artificial Intelligence}, volume 3501 of \emph{Lecture Notes in Computer
+  Science}, pages 450--455. Springer Berlin Heidelberg, 2005.
+\newblock ISBN 978-3-540-25864-3.
+\newblock \doi{10.1007/11424918\_49}.
 
 \bibitem[Washington(1997)]{cit:relworkonlinebi}
 Richard Washington.
@@ -170,7 +164,6 @@ Richard Washington.
   440--451. Springer Berlin Heidelberg, 1997.
 \newblock ISBN 978-3-540-63912-1.
 \newblock \doi{10.1007/3-540-63912-8\_105}.
-\newblock URL \url{http://dx.doi.org/10.1007/3-540-63912-8\_105}.
 
 \bibitem[Ross and Chaib-draa(2007)]{cit:relworkonlineaems}
 Stéphane Ross and Brahim Chaib-draa.
@@ -185,17 +178,6 @@ Blai Bonet and H{\'e}ctor Geffner.
 \newblock In \emph{Proceedings of the 21st International Jont Conference on
   Artifical Intelligence}, IJCAI'09, pages 1641--1646, San Francisco, CA, USA,
   2009. Morgan Kaufmann Publishers Inc.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=1661445.1661709}.
-
-\bibitem[Paquet et~al.(2005)Paquet, Tobin, and Chaib-draa]{cit:rtbss}
-Sébastien Paquet, Ludovic Tobin, and Brahim Chaib-draa.
-\newblock Real-time decision making for large pomdps.
-\newblock In Balázs Kégl and Guy Lapalme, editors, \emph{Advances in
-  Artificial Intelligence}, volume 3501 of \emph{Lecture Notes in Computer
-  Science}, pages 450--455. Springer Berlin Heidelberg, 2005.
-\newblock ISBN 978-3-540-25864-3.
-\newblock \doi{10.1007/11424918\_49}.
-\newblock URL \url{http://dx.doi.org/10.1007/11424918\_49}.
 
 \bibitem[Boutilier et~al.(2011)Boutilier, Dean, and Hanks]{cit:boutilier}
 Craig Boutilier, Thomas~L. Dean, and Steve Hanks.
@@ -229,7 +211,6 @@ Anthony~R. Cassandra, Leslie~Pack Kaelbling, and Michael~L. Littman.
   Intelligence (Vol. 2)}, AAAI'94, pages 1023--1028, Menlo Park, CA, USA, 1994.
   American Association for Artificial Intelligence.
 \newblock ISBN 0-262-61102-3.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=199480.199520}.
 
 \bibitem[Welsh and Farrington(2009)]{cit:cctv}
 Brandon~C. Welsh and David~P. Farrington.
@@ -237,15 +218,14 @@ Brandon~C. Welsh and David~P. Farrington.
   and meta-analysis.
 \newblock \emph{Justice Quarterly}, 26\penalty0 (4):\penalty0 716--745, 2009.
 \newblock \doi{10.1080/07418820802506206}.
-\newblock URL \url{http://dx.doi.org/10.1080/07418820802506206}.
 
 \bibitem[Pottie and Kaiser(2000)]{cit:cctvenergy}
 G.~J. Pottie and W.~J. Kaiser.
 \newblock Wireless integrated network sensors.
-\newblock \emph{Commun. ACM}, 43\penalty0 (5):\penalty0 51--58, May 2000.
+\newblock \emph{Communications of the ACM}, 43\penalty0 (5):\penalty0 51--58,
+  May 2000.
 \newblock ISSN 0001-0782.
 \newblock \doi{10.1145/332833.332838}.
-\newblock URL \url{http://doi.acm.org/10.1145/332833.332838}.
 
 \bibitem[Williams et~al.(2007)Williams, Fisher~III, and
   Willsky]{cit:relworklagrange}
@@ -254,6 +234,5 @@ Jason~L. Williams, John~W. Fisher~III, and Alan~S. Willsky.
   network management.
 \newblock \emph{IEEE Transactions on Signal Processing}, 55\penalty0
   (8):\penalty0 3995--4003, August 2007.
-\newblock URL \url{publications/papers/williams07a.pdf}.
 
 \end{thebibliography}
