@@ -1,0 +1,15 @@
+This thesis aims at improving state-of-the-art techniques for optimal resource allocation in
+multi-camera systems under resource constraints and partial observability. This work models the
+problem with a decision-theoretic framework called Partially Observable Markov Decision Process
+(POMDP), and improves upon an existing Monte Carlo algorithm called POMCP [\bibentry{cit:pomcp}]. The
+resulting algorithm, $\rho$POMCP can be applied directly to belief-based POMDPs using entropy or
+max-of-belief reward functions. Our approach is applicable to problems orders of magnitude bigger
+than existing alternatives and can be generally applied to all belief-based POMDPs. $\rho$POMCP
+achieves these results by estimating the belief-based reward function directly on the particle
+beliefs, without the need for full beliefs to be propagated within the search tree. In addition each
+updated estimate substitutes previous estimates, guaranteeing that the planning process always uses
+the most current available information in order to select the best available action. Our approach
+is compared against already existing methods, showing that $\rho$POMCP can provide results as good
+as existing methods in a fraction of the time. In particular, $\rho$POMCP can be distributed and
+executed concurrently, and can scale successfully on real time problems orders of magnitude bigger
+than what was possible with previous approaches.
