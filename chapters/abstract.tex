@@ -1,15 +1,15 @@
-This thesis aims at improving state-of-the-art techniques for optimal resource allocation in
+This thesis aims at \ys{no need for thesis aims at. start with something like "Resouce allocation in multi-camera system is key challenge."} improving state-of-the-art techniques for optimal resource allocation in
 multi-camera systems under resource constraints and partial observability. This work models the
-problem with a decision-theoretic framework called Partially Observable Markov Decision Process
-(POMDP), and improves upon an existing Monte Carlo algorithm called POMCP [\bibentry{cit:pomcp}]. The
-resulting algorithm, $\rho$POMCP can be applied directly to belief-based POMDPs using entropy or
-max-of-belief reward functions. Our approach is applicable to problems orders of magnitude bigger
-than existing alternatives and can be generally applied to all belief-based POMDPs. $\rho$POMCP
+problem with a decision-theoretic framework called \ys{remove called} Partially Observable Markov Decision Process
+(POMDP), and improves upon an existing Monte Carlo algorithm called \ys{remove called} POMCP [\bibentry{cit:pomcp}] \ys{something weird is going on with the bibentry}. The
+resulting algorithm \ys{Our algorithm}, $\rho$POMCP can be applied directly to belief-based POMDPs \ys{first say it is not straighforward to apply mcts to belief-based rewards and why} using entropy or
+max-of-belief reward functions. Our approach is applicable to problems orders of magnitude bigger 
+than existing alternatives and can be generally applied to all belief-based POMDPs. \ys{instead of this statement say something like, 'by exploiting independence properties (or whatever the correct reason is}, w$\rho$POMCP scales much better; something like this}. $\rho$POMCP
 achieves these results by estimating the belief-based reward function directly on the particle
 beliefs, without the need for full beliefs to be propagated within the search tree. In addition each
 updated estimate substitutes previous estimates, guaranteeing that the planning process always uses
-the most current available information in order to select the best available action. Our approach
+the most current available information in order to select the best available action.  Our approach
 is compared against already existing methods, showing that $\rho$POMCP can provide results as good
 as existing methods in a fraction of the time. In particular, $\rho$POMCP can be distributed and
 executed concurrently, and can scale successfully on real time problems orders of magnitude bigger
-than what was possible with previous approaches.
+than what was possible with previous approaches. \ys{last statement is not needed, distributed algorithms is not even related to this thesis. Finish the abstract saying that in experiments we show high performance at low computational cost leading to better scalability}.
