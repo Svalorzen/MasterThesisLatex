@@ -2,12 +2,12 @@ Resource allocation in multi-camera system is key challenge. This work models th
 decision-theoretic framework Partially Observable Markov Decision Process (POMDP), and improves upon
 an existing Monte Carlo algorithm POMCP. Unfortunately it is not straightforward to apply POMCP to
 POMDPs with belief-dependent rewards, as the algorithm requires state-based rewards in order to
-produce meaningful rollouts from the MCTS procedure. Our algorithm, $\rho$POMCP, can be applied
-directly to belief-based POMDPs using entropy or max-of-belief reward functions. By efficiently
-estimating the belief-based reward function directly on the particle beliefs, without requiring full
-beliefs to be propagated within the search tree, and keeping all estimates updated at all times,
-guaranteeing that planning always uses the best available information in order to select an action,
-our approach is applicable to problems orders of magnitude bigger than existing alternatives and can
-be generally applied to all belief-based POMDPs. Our approach is compared against already existing
-methods, showing that $\rho$POMCP can provide results as good as existing methods in a fraction of
-the time, demonstrating high performance and scalability.
+produce meaningful rollouts from the tree search procedure. Our algorithm, $\rho$POMCP, can be
+applied directly to belief-based POMDPs using entropy or max-of-belief reward functions. By
+efficiently estimating the belief-based reward function directly on the particle beliefs, without
+requiring full beliefs to be propagated within the search tree, and keeping all estimates updated at
+all times, guaranteeing that planning always uses the best available information in order to select
+an action, our approach is applicable to problems orders of magnitude bigger than existing
+alternatives and can be generally applied to all belief-based POMDPs. Our approach is compared
+against already existing methods, showing that $\rho$POMCP can provide results as good as existing
+methods in a fraction of the time, demonstrating high performance and scalability.
