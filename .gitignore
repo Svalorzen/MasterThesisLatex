@@ -3,3 +3,7 @@
 *.aux
 *.toc
 *.swp
+*.nav
+*.out
+*.snm
+*.vrb
