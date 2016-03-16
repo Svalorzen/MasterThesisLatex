@@ -179,7 +179,7 @@ The environment \textit{transitions} to a new state afterwards.
 \frametitle{POMDP network}
 \begin{figure}
 \centerline{\includegraphics[height=6cm]{images/pomdp.png}}
-\caption{From \textit{http://artint.info/html/ArtInt\_230.html}}
+\caption{From \textit{http://www.cs.ubc.ca/~kooshakh/research.html}}
 \end{figure}
 \end{frame}
 
@@ -199,17 +199,17 @@ The environment \textit{transitions} to a new state afterwards.
 \begin{block}{Action space ($A$)}
     Defines all the actions that the agent can take.
 \end{block}
-\begin{block}{Observation space ($O$)}
+\begin{block}{Observation space ($\Omega$)}
     Defines all the observations that the agent can obtain.
 \end{block}
 \end{frame}
 
 \begin{frame}
-\frametitle{$T$ and $\Omega$}
+\frametitle{$T$ and $O$}
 \begin{block}{Transition function ($T$)}
     Defines the probability of happening for each possible transition from state to state.
 \end{block}
-\begin{block}{Observation function ($\Omega$)}
+\begin{block}{Observation function ($O$)}
     Defines the probability of obtaining a certain observation from a state and action.
 \end{block}
 \end{frame}
@@ -507,7 +507,166 @@ The end result is that the new average will be equal to our new estimation.
 \end{frame}
 
 \section{Results}
+\subsection{Simple Environment}
 \begin{frame}
+\frametitle{Simple Environment}
+\begin{figure}[ht!]
+\centering
+\resizebox{!}{6cm}{%
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (s1) at (0,0) [state] {S1};
+\node (s2) at (2,3) [state] {S2};
+\node (s3) at (4,0) [state] {S3};
+\node (s4) at (6,0) [state] {S4};
+\node (s5) at (8,3) [state] {S5};
+\node (s6) at (10,0) [state] {S6};
+
+\path
+    (s1) edge [loop below] node {0.333} (s1)
+         edge [bend left] node {0.333} (s2)
+         edge [bend left=10] node[below] {0.333} (s3)
+    (s2) edge [loop above] node {0.333} (s2)
+         edge [bend left=10] node[above,rotate=60] {0.333} (s1)
+         edge [bend left] node {0.333} (s3)
+    (s3) edge [loop below] node {0.333} (s3)
+         edge [bend left=10] node[above,rotate=-60] {0.333} (s2)
+         edge [bend left] node {0.333} (s1)
+    (s4) edge [bend left] node {1.0} (s5)
+    (s5) edge [bend left] node {1.0} (s6)
+    (s6) edge [bend left] node {1.0} (s4);
+
+\end{tikzpicture}
+}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Results}
+\begin{figure}[ht!]
+        \centering
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/MyoResults/1e4/E/output}
+                \caption{Results using 1e4 samples, with entropy as the reward function.}
+                \label{fig:m4e}
+        \end{minipage}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/MyoResults/1e4/MB/output}
+                \caption{Results using 1e4 samples, with max-of-belief as the reward function.}
+                \label{fig:m5e}
+        \end{minipage}
+        \caption{Results in our first model, averaged over 3000 episodes.}
+        \label{ref:myoentropyfig}
+\end{figure}
+\end{frame}
+
+\subsection{Finite Budget}
+\begin{frame}
+    \frametitle{Finite Budget}
+
+\begin{figure}[ht!]
+\centering
+\resizebox{!}{6cm}{%
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,<->,>=stealth]
+
+\node (s1) at (0,3) [state] {S1};
+\node (s2) at (3,3) [state] {S2};
+\node (s3) at (0,0) [state] {S3};
+\node (s4) at (3,0) [state] {S4};
+
+\path
+    (s1) edge [arrow] node {0.5} (s2)
+    (s2) edge [arrow] node {0.5} (s4)
+    (s3) edge [arrow] node {0.5} (s1)
+    (s4) edge [arrow] node {0.5} (s3);
+
+\end{tikzpicture}
+}
+\label{ref:finbudget1}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Results}
+
+\begin{figure}[ht!]
+        \centering
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/FiniteBudgetResults/0.5/1e4/E/output}
+                \caption{Results using 1e4 samples, and entropy as the reward function.}
+                \label{fig:fb4e5}
+        \end{minipage}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the minipage onto a new line)
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/FiniteBudgetResults/0.5/1e4/MB/output}
+                \caption{Results using 1e4 samples, and max-of-belief as the reward function.}
+                \label{fig:fb5e5}
+        \end{minipage}
+        \caption{Results in the Finite Budget model with a transition factor of 0.5, averaged over 3000 episodes.}
+        \label{ref:fbentropyfig5}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Results}
+
+\begin{figure}[ht!]
+        \centering
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/FiniteBudgetResults/0.75/1e4/E/output}
+                \caption{Results using 1e4 samples, and entropy as the reward function.}
+                \label{fig:fb4e75}
+        \end{minipage}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the minipage onto a new line)
+        \begin{minipage}[t]{0.45\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/FiniteBudgetResults/0.75/1e4/MB/output}
+                \caption{Results using 1e4 samples, and max-of-belief as the reward function.}
+                \label{fig:fb5e75}
+        \end{minipage}
+        \caption{Results in the Finite Budget model with a transition factor of 0.75, averaged over 3000 episodes.}
+        \label{ref:fbentropyfig75}
+\end{figure}
+\end{frame}
+
+\subsection{Large Grid}
+\begin{frame}
+    \frametitle{Large Grid}
+    \begin{block}{}
+        Grid of either 20x20 or 50x50 cells. \\~\\
+        Cameras observe non-overlapping 5x5 patches, imperfectly. \\~\\
+        Targets are followed for 75 timesteps. \\~\\
+        Multi-trackig achieved by parallelizing $\rho$POMCP for each target. \\~\\
+        Other methods cannot be applied as the state space is too large.
+    \end{block}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Multi Target Results}
+
+\begin{figure}[ht]
+        \centering
+        \begin{minipage}[t]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/CameraPathResults/Big_50x50/Multi/E/output}
+                \caption{Results using 1e4 samples and entropy.}
+                \label{fig:cpb4e10}
+        \end{minipage}%
+        ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
+          %(or a blank line to force the minipage onto a new line)
+        \begin{minipage}[t]{0.5\textwidth}
+                \includegraphics[width=\textwidth]{../images/Images/CameraPathResults/Big_50x50/Multi/MB/output}
+                \caption{Results using 1e4 samples and max-of-belief.}
+                \label{fig:cpb5mb10}
+        \end{minipage}
+        \caption{Results in the Large Grid 50x50 tracking 10 unique targets, averaged over 3000 episodes.}\label{fig:cpb10}
+\end{figure}
 \end{frame}
 
 %------------------------------------------------
