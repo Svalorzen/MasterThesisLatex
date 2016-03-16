@@ -15,7 +15,7 @@
 %	PACKAGES AND THEMES
 %----------------------------------------------------------------------------------------
 
-\documentclass{beamer}
+\documentclass[xcolor={dvipsnames}]{beamer}
 
 \mode<presentation> {
 
@@ -79,6 +79,20 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{multimedia}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\usepackage{soul}
+
+\makeatletter
+\newcommand\SoulColor{%
+  \let\set@color\beamerorig@set@color
+  \let\reset@color\beamerorig@reset@color}
+\makeatother
+
+\newcommand{\hlc}[2][yellow]{ {\sethlcolor{#1} \SoulColor\hl{#2}} }
+\usepackage{color}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -150,137 +164,350 @@ target environment.}
 \section{Background} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
 
-\subsection{Partially Observable Markov Decision Processes} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\subsection{Partially Observable Markov Decision Processes}
 
 \begin{frame}
-\frametitle{POMDPs}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{$\rho$POMDPs}
-% \begin{itemize}
-% \item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-% \item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-% \item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-% \item Nam cursus est eget velit posuere pellentesque
-% \item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
-% \end{itemize}
-\end{frame}
-
-%------------------------------------------------
-
-\subsection{XxX}
-\begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
+\frametitle{POMDP}
+\begin{block}{}
+Agent acts upon an \textit{environment}.  \\~\\
+Obtains \textit{observations} and \textit{reward}. \\~\\
+The environment \textit{transitions} to a new state afterwards.
 \end{block}
 \end{frame}
 
+\begin{frame}
+\frametitle{POMDP network}
+\begin{figure}
+\centerline{\includegraphics[height=6cm]{images/pomdp.png}}
+\caption{From \textit{http://artint.info/html/ArtInt\_230.html}}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Formal Definition}
+\begin{block}{POMDP}
+\begin{equation}
+ POMDP = <S,A,T,R,\Omega,O,h> \nonumber
+\end{equation}
+\end{block}
+\begin{block}{Horizon ($h$)}
+    Defines the number of timesteps the agent is going to plan in advance for.
+\end{block}
+\begin{block}{State space ($S$)}
+    Defines all the states that the environment can ever be.
+\end{block}
+\begin{block}{Action space ($A$)}
+    Defines all the actions that the agent can take.
+\end{block}
+\begin{block}{Observation space ($O$)}
+    Defines all the observations that the agent can obtain.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{$T$ and $\Omega$}
+\begin{block}{Transition function ($T$)}
+    Defines the probability of happening for each possible transition from state to state.
+\end{block}
+\begin{block}{Observation function ($\Omega$)}
+    Defines the probability of obtaining a certain observation from a state and action.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{How do we keep track of the state?}
+\centerline{\includegraphics[height=6cm]{images/camera.png}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Belief}
+\begin{equation}
+ b'(s') = \frac{O(s', a, o)\sum_{s\in S}T(s,a,s')b(s)}{Pr(o|a,b)} \nonumber
+\end{equation}
+\end{frame}
+
+\begin{frame}
+\frametitle{Belief}
+\begin{center}
+\begin{tikzpicture}
+  \begin{axis}[title  = Belief,
+    ybar,
+    axis y line       = none,
+    xtick = data,
+    tickwidth         = 0pt,
+    symbolic x coords = {$s_1$, $s_2$, $s_3$, $s_4$, ..., $s_n$},
+    nodes near coords,
+  ]
+  \addplot coordinates { ($s_1$, 0.2) ($s_2$, 0.35)
+                         ($s_3$, 0.1)  ($s_4$, 0.25)
+                         (..., 0.0) ($s_n$, 0.1)};
+  \end{axis}
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\subsection{$\rho$POMDP}
+
+\begin{frame}
+\frametitle{Reward Function}
+\begin{block}{Reward function ($R$)}
+    Defines the reward obtained during specific state transitions.
+\end{block}
+\begin{block}{Belief-dependent Reward Function ($\rho$)}
+    Defines the reward obtained during specific belief transitions.
+\end{block}
+\begin{block}{$\rho$POMDP}
+    A POMDP that uses $\rho$ rather than $R$.
+\end{block}
+\end{frame}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
-
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
+\frametitle{Policies}
+\begin{block}{Objectives}
+Maximize \textit{expected reward}:
+\begin{equation}
+ \mathbb{E}[\text{return}] = \mathbb{E} \left [ \sum_{t=0}^{h-1} R(s_t, a_t, s_{t+1}) \right ] \nonumber
+\end{equation}
+\end{block}
 \end{frame}
-
-%------------------------------------------------
-\section{Second Section}
-%------------------------------------------------
 
 \begin{frame}
-\frametitle{Table}
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
+\frametitle{Planning Problems with $\rho$}
+\begin{block}{}
+How to plan for infinite beliefs? We need infinite plans!
+\end{block}
+\begin{block}{}
+Possible approach is to approximate $rho$. Then we have a finite number of possibilities to take
+into account.
+\end{block}
+\begin{block}{}
+Other approach is to plan online. We plan during real execution, only for the current belief. No
+more infinities.
+\end{block}
 \end{frame}
 
 %------------------------------------------------
+
+\section[MCTS]{Monte Carlo Tree Search}
+\subsection{Online Planning in MDPs}
+\begin{frame}
+\frametitle{Monte Carlo Tree Search}
+\begin{block}{}
+Very fast approximate online algorithm. \\~\\
+Originally conceived for Go (and the base for AlphaGo!). \\~\\
+Only requires a black box simulator of the environment. \\~\\
+Can handle very large state spaces.
+\end{block}
+\end{frame}
 
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
+\frametitle{MCTS Algorithm}
+\centerline{\includegraphics[height=5cm]{images/mcts.png}}
 \end{frame}
 
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
+\section[POMCP]{Partially Observable Monte Carlo Planning}
+\subsection{Online Planning in POMDPs}
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
+\frametitle{Partially Observable Monte Carlo Planning}
+\begin{block}{}
+MCTS \textit{could} work with POMDPs, but belief updates are expensive. \\~\\
+POMCP extends MCTS in order to allow partially obserable states. \\~\\
+Approximates beliefs using particles, to avoid expensive updates.
+\end{block}
 \end{frame}
-
-%------------------------------------------------
 
 \begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
-\end{frame}
+\frametitle{POMCP Algorithm}
+\begin{figure}[ht!]
+\centering
+\resizebox{!}{6cm}{%
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, minimum size=.7cm, draw=black, fill=green!30]
+\tikzstyle{empty} = [coordinate,draw=none, fill=none]
+\tikzstyle{arrow} = [thick,->,>=stealth]
 
-%------------------------------------------------
+\node (particleb) at (0,.8) [draw=none] {[\hlc[Yellow]{$s_1$},$s_2$,...,$s_k$]};
+\node (b)  at (0,0)  [state] {$b$};
+\node (a1) at (0,-2) [empty] {};
+\node (a2) at (1.5,-2) [empty] {};
+\node (a3) at (3,-2) [empty] {};
+\node (a4) at (4.5,-2) [empty] {};
+\node (b1) at (0,-5) [state] {$b'$};
+\node (b2) at (1.5,-5) [state] { };
+\node (b3) at (3,-5) [state] { };
+\node (b4) at (4.5,-5) [state] { };
+\node (particleb1) at (0,-5.8) [draw=none] {[\hlc[Yellow]{$s'$},...]};
+\node (g) at (-2.2,-2.3) [draw=none,rotate=90] {$G(s,a)$};
+\node (null) at (0, -7.1) [draw=none, minimum width=1.35cm, minimum height=.5cm] {  ...  };
+\node (roll) at (0, -8.1) [draw=none] {Rollout};
 
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
+\path
+     (b)  edge [] node [left,pos=0.7] (aa) {\hlc[Dandelion]{$a_1$}} (a1)
+          edge [] node [left,pos=0.7] {$a_2$} (a2)
+          edge [] node [left,pos=0.7] {$a_3$} (a3)
+          edge [dashed] node {} (a4)
+     (a1) edge [] node [left,pos=0.6] (oo) {\hlc[SkyBlue]{$o_1$}} (b1)
+          edge [] node [left,pos=0.6] {$o_2$} (b2)
+          edge [] node [left,pos=0.6] {$o_3$} (b3)
+          edge [dashed] node {} (b4)
+     (particleb1) edge (null)
+     (null) edge (roll);
 
-This statement requires citation \cite{p1}.
-\end{frame}
+\draw [draw=none] (b1) -- node [pos=0.6] (tmpx) {} (oo);
+\draw [draw=none] (g.south |- tmpx) -- node [midway] (tmp) {} (tmpx);
 
-%------------------------------------------------
+\draw (null) -| (tmp);
+\draw (roll) -| (tmp);
+\draw (b1 -| tmp.south) -- (b1);
 
-\begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
-\end{thebibliography}
+\draw [-,line width=5pt,draw=white] (g.south) |- (particleb1);
+
+\draw (g.south |- tmp.south) -- (tmp.south) |- node [below,pos=0.2,rotate=90] {\hlc[LimeGreen]{ $r$ }} (b);
+\draw [-,line width=5pt,draw=white] (g.south) |- (oo);
+\draw [*->,draw=black] (g.south) |- (oo);
+
+\draw (g.south) |- (particleb1);
+
+\draw [-,line width=5pt,draw=white] (aa) -| (g.south);
+\draw (aa) -| (g.south);
+\draw [draw=black] (particleb) -| (g.south);
+
+\end{tikzpicture}
 }
+\end{figure}
+\end{frame}
+
+\section{$\rho$POMCP}
+\subsection{Problems}
+\begin{frame}
+\frametitle{$\rho$POMCP}
+\begin{block}{}
+POMCP cannot directly handle belief based reward functions. \\~\\
+How to compute $\rho$ on particle beliefs? \\~\\
+How to update estimates of $\rho$ back in the tree?
+\end{block}
+\end{frame}
+
+\subsection{Reward Function Estimation}
+\begin{frame}
+\frametitle{Estimating $\rho$}
+\begin{block}{Max of Belief}
+Maximum likelihood approximation:
+\begin{equation}
+N(max_s)/N(b) \nonumber
+\end{equation}
+\end{block}
+
+\begin{block}{Entropy}
+Ideal approximation:
+\begin{equation}
+-\hat{H}(b) \approx \sum_s \frac{N(s)}{N} \log \frac{N(s)}{N} \nonumber
+\end{equation}
+For large particle beliefs this would require recomputing too many terms.
+Instead we only recompute the last one:
+\begin{equation}
+-\hat{H}(b) \approx -\hat{H}_{old}(b) - \frac{N(s)}{N} \log \frac{N(s)}{N} + \frac{N(s)+1}{N+1} \log \frac{N(s)+1}{N+1}  \nonumber
+\end{equation}
+\end{block}
+\end{frame}
+
+\subsection{Backpropagating Rewards}
+\begin{frame}
+\frametitle{Reward Backpropagation}
+\begin{block}{}
+Both in MCTS and POMCP, rewards are sampled from $R$ \\~\\
+All rewards obtained this way are valid, and they are averaged together.
+\end{block}
+\begin{block}{}
+$\rho$POMCP does not sample rewards! \\~\\
+Need a way to backpropagate estimates as they change, revising previous values. \\~\\
+Must revise only estimates for specific child observations!
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reward Backpropagation}
+\begin{block}{}
+We keep the mechanism of averaging rewards, but we pass crafted rewards.
+\begin{equation}
+n_{\tilde{o}}(r'_{\tilde{o}} - r_{\tilde{o}}) + r'_{\tilde{o}} \nonumber
+\end{equation}
+The end result is that the new average will be equal to our new estimation.
+\begin{equation}
+\rho(b,a) \approx \frac{\sum_{o\in\Omega} n_o r_o}{N} \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N} \nonumber
+\end{equation}
+\begin{equation}
+\rho(b,a) \approx \frac{ n_{\tilde{o}} r_{\tilde{o}} + n_{\tilde{o}}(r'_{\tilde{o}} - r_{\tilde{o}}) + r'_{\tilde{o}} + \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \nonumber
+\end{equation}
+\begin{equation}
+\rho(b,a) \approx \frac{ ( n_{\tilde{o}}+1) r'_{\tilde{o}} + \sum_{o \neq \tilde{o} \in \Omega} n_o r_o}{N+1} \nonumber
+\end{equation}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{$\rho$POMCP Algorithm}
+\begin{figure}[ht!]
+\centering
+\resizebox{!}{6cm}{%
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,thick,main node/.style={circle,draw,font=\Large\bfseries}]
+\tikzstyle{state} = [circle, minimum size=.7cm, draw=black, fill=green!30]
+\tikzstyle{empty} = [coordinate,draw=none, fill=none]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\node (particleb) at (0,.8) [draw=none] {[\hlc[Yellow]{$s_1$},$s_2$,...,$s_k$]};
+\node (b)  at (0,0)  [state] {$b$};
+\node (a1) at (0,-2) [empty] {};
+\node (a2) at (1.5,-2) [empty] {};
+\node (a3) at (3,-2) [empty] {};
+\node (a4) at (4.5,-2) [empty] {};
+\node (b1) at (0,-5) [state] {$b'$};
+\node (b2) at (1.5,-5) [state] { };
+\node (b3) at (3,-5) [state] { };
+\node (b4) at (4.5,-5) [state] { };
+\node (particleb1) at (0,-5.8) [draw=none] {[\hlc[Yellow]{$s'$},...]};
+\node (g) at (-2.2,-2.3) [draw=none,rotate=90] {$G(s,a)$};
+\node (re) at (-3, -5) [align=center,draw=none,rotate=90] {Reward\\Estimation};
+\node (null) at (0, -7.6) [align=center,draw=none, minimum width=1.35cm, minimum height=.7cm] {...};
+
+\path
+     (b)  edge [] node [left,pos=0.7] (aa) {\hlc[Dandelion]{$a_1$}} (a1)
+          edge [] node [left,pos=0.7] {$a_2$} (a2)
+          edge [] node [left,pos=0.7] {$a_3$} (a3)
+          edge [dashed] node {} (a4)
+     (a1) edge [] node [left,pos=0.6] (oo) {\hlc[SkyBlue]{$o_1$}} (b1)
+          edge [] node [left,pos=0.6] {$o_2$} (b2)
+          edge [] node [left,pos=0.6] {$o_3$} (b3)
+          edge [dashed] node {} (b4);
+
+\draw [draw=none] (particleb1) -- node [midway] (tmp) {} (null);
+
+\draw (particleb1) -- (null);
+\draw (tmp) -| (re);
+\draw (null) -| (re);
+
+\draw (re) |- node [above,pos=0.2,rotate=90] {\hlc[LimeGreen]{ $r$ }} (b);
+\draw (re) -- node [above,pos=0.6] {\hlc[LimeGreen]{ $r'$ }} (b1);
+
+\draw [-,line width=5pt,draw=white] (g.south) |- (particleb1);
+
+\draw [-,line width=5pt,draw=white] (g.south) |- (oo);
+\draw [*->,draw=black] (g.south) |- (oo);
+
+\draw (g.south) |- (particleb1);
+
+\draw [-,line width=5pt,draw=white] (aa) -| (g.south);
+\draw (aa) -| (g.south);
+\draw [draw=black] (particleb) -| (g.south);
+
+\end{tikzpicture}
+}
+\end{figure}
+\end{frame}
+
+\section{Results}
+\begin{frame}
 \end{frame}
 
 %------------------------------------------------
